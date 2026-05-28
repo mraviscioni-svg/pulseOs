@@ -1,20 +1,49 @@
-<form method="post" action="<?= url('/settings') ?>" class="card max-w-2xl space-y-4">
+<form method="post" action="<?= url('/settings') ?>" class="form-card max-w-2xl">
   <?= csrf_field() ?>
-  <h3 class="font-semibold">Empresa</h3>
-  <input name="tenant_name" value="<?= e($tenant['name'] ?? '') ?>" required class="input-field" placeholder="Nombre del negocio">
-  <input name="tax_id" value="<?= e($tenant['tax_id'] ?? '') ?>" class="input-field" placeholder="CUIT">
-  <input name="phone" value="<?= e($tenant['phone'] ?? '') ?>" class="input-field" placeholder="Teléfono">
-  <textarea name="address" class="input-field" placeholder="Dirección"><?= e($tenant['address'] ?? '') ?></textarea>
+  <h3 class="mb-1 text-lg font-semibold">Configuración</h3>
+  <p class="mb-6 text-sm text-slate-400">Datos de tu negocio y preferencias de operación.</p>
 
-  <h3 class="font-semibold pt-2">Operación</h3>
-  <div class="grid gap-4 sm:grid-cols-2">
-    <div><label class="label">Moneda</label><input name="currency" value="<?= e($settings['currency'] ?? 'ARS') ?>" class="input-field"></div>
-    <div><label class="label">IVA %</label><input type="number" step="0.01" name="tax_rate" value="<?= e($settings['tax_rate'] ?? '0') ?>" class="input-field"></div>
+  <div class="form-section mb-6 space-y-4">
+    <p class="form-section-title">Empresa</p>
+    <?php
+    $name = 'tenant_name'; $label = 'Nombre del negocio'; $type = 'input'; $value = $tenant['name'] ?? ''; $required = true;
+    require __DIR__ . '/../partials/form_group.php';
+    $name = 'tax_id'; $label = 'CUIT'; $type = 'input'; $value = $tenant['tax_id'] ?? ''; $placeholder = '20-12345678-9';
+    require __DIR__ . '/../partials/form_group.php';
+    $name = 'phone'; $label = 'Teléfono'; $type = 'input'; $value = $tenant['phone'] ?? '';
+    require __DIR__ . '/../partials/form_group.php';
+    $name = 'address'; $label = 'Dirección'; $type = 'textarea'; $value = $tenant['address'] ?? '';
+    require __DIR__ . '/../partials/form_group.php';
+    ?>
   </div>
-  <textarea name="pos_receipt_footer" class="input-field" placeholder="Pie de ticket POS"><?= e($settings['pos_receipt_footer'] ?? '') ?></textarea>
-  <label class="inline-flex gap-2"><input type="checkbox" name="low_stock_alert" value="1" <?= ($settings['low_stock_alert'] ?? 1) ? 'checked' : '' ?>> Alertas stock bajo</label>
-  <label class="inline-flex gap-2"><input type="checkbox" name="dark_mode" value="1" <?= ($settings['dark_mode'] ?? 1) ? 'checked' : '' ?>> Modo oscuro</label>
 
-  <p class="text-sm text-slate-400">Los módulos del sistema (POS, compras, reportes, etc.) los habilita el administrador de PulseOS.</p>
-  <button class="btn-primary">Guardar configuración</button>
+  <div class="form-section mb-6 space-y-4">
+    <p class="form-section-title">Operación</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <?php
+      $name = 'currency'; $label = 'Moneda'; $type = 'input'; $value = $settings['currency'] ?? 'ARS';
+      require __DIR__ . '/../partials/form_group.php';
+      $name = 'tax_rate'; $label = 'IVA %'; $type = 'number'; $value = $settings['tax_rate'] ?? '0';
+      require __DIR__ . '/../partials/form_group.php';
+      ?>
+    </div>
+    <?php
+    $name = 'pos_receipt_footer'; $label = 'Pie de ticket POS'; $type = 'textarea'; $value = $settings['pos_receipt_footer'] ?? '';
+    $placeholder = 'Gracias por su compra';
+    require __DIR__ . '/../partials/form_group.php';
+    ?>
+    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 px-4 py-3 hover:bg-slate-900/50">
+      <input type="checkbox" name="low_stock_alert" value="1" class="h-4 w-4 rounded border-slate-600" <?= ($settings['low_stock_alert'] ?? 1) ? 'checked' : '' ?>>
+      <span class="text-sm">Alertas de stock bajo</span>
+    </label>
+    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 px-4 py-3 hover:bg-slate-900/50">
+      <input type="checkbox" name="dark_mode" value="1" class="h-4 w-4 rounded border-slate-600" <?= ($settings['dark_mode'] ?? 1) ? 'checked' : '' ?>>
+      <span class="text-sm">Modo oscuro</span>
+    </label>
+  </div>
+
+  <p class="mb-4 text-sm text-slate-500">Los módulos del sistema (POS, compras, reportes, etc.) los habilita el administrador de PulseOS.</p>
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">Guardar configuración</button>
+  </div>
 </form>

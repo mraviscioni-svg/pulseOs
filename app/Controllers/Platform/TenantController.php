@@ -9,8 +9,10 @@ use App\Core\Session;
 use App\Core\Validator;
 use App\Models\UserModel;
 use App\Services\AuditService;
+use App\Services\AuthService;
 use App\Services\PlatformTenantService;
 use App\Services\TenantRegistrationService;
+use App\Models\UserModel;
 
 final class TenantController extends Controller
 {
@@ -68,7 +70,6 @@ final class TenantController extends Controller
             $tenantId = (new TenantRegistrationService())->register($data);
             (new AuditService())->log(null, null, 'platform.tenant.created', 'tenant', $tenantId);
 
-            Session::flash('success', 'Comercio creado. El usuario owner puede ingresar en /login.');
             $this->redirect('/admin/tenants/' . $tenantId);
         } catch (\Throwable $e) {
             Session::flash('error', 'No se pudo crear: ' . $e->getMessage());
@@ -91,13 +92,37 @@ final class TenantController extends Controller
             $activeModules = config('business_types')[$detail['tenant']['business_type']]['modules'] ?? [];
         }
 
+        $ownerUserId = (new UserModel())->findOwnerUserIdForTenant((int) $detail['tenant']['id']);
+
         $this->view('admin/tenants/show', [
             'title' => $detail['tenant']['name'],
             'detail' => $detail,
             'businessTypes' => config('business_types'),
             'moduleLabels' => config('platform_modules'),
             'activeModules' => $activeModules,
+            'ownerUserId' => $ownerUserId,
+            'tenantLoginUrl' => url('/login'),
         ], 'layouts/admin');
+    }
+
+    public function enter(array $params): void
+    {
+        $tenantId = (int) $params['id'];
+        $userId = (new UserModel())->findOwnerUserIdForTenant($tenantId);
+
+        if (!$userId) {
+            Session::flash('error', 'Este comercio no tiene un usuario activo para ingresar.');
+            $this->redirect('/admin/tenants/' . $tenantId);
+        }
+
+        if (!(new AuthService())->impersonateTenantUser($userId, $tenantId)) {
+            Session::flash('error', 'No se pudo abrir el panel del comercio.');
+            $this->redirect('/admin/tenants/' . $tenantId);
+        }
+
+        (new AuditService())->log(null, null, 'platform.tenant.enter', 'tenant', $tenantId);
+        Session::flash('success', 'Ingresaste al panel del comercio. Usá «Volver al admin» para salir.');
+        $this->redirect('/dashboard');
     }
 
     public function update(array $params): void

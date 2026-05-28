@@ -99,6 +99,11 @@ function is_platform_admin(): bool
     return \App\Services\PlatformAuthService::check();
 }
 
+function is_platform_impersonating(): bool
+{
+    return (bool) \App\Core\Session::get('platform_impersonating');
+}
+
 function normalize_username(string $value): string
 {
     $value = strtolower(trim($value));

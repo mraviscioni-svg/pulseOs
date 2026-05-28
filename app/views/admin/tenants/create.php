@@ -2,60 +2,59 @@
   <a href="<?= url('/admin/tenants') ?>" class="text-sm text-violet-400 hover:underline">← Volver al listado</a>
 </div>
 
-<div class="card max-w-2xl">
+<div class="form-card max-w-2xl">
   <h2 class="mb-1 text-lg font-semibold">Alta de comercio</h2>
-  <p class="mb-6 text-sm text-slate-400">Solo el administrador de plataforma puede crear tenants. El usuario owner ingresará en el login de comercios.</p>
+  <p class="mb-6 text-sm text-slate-400">Se precargan categorías y marcas del rubro elegido. El owner ingresa en el login de comercios.</p>
 
-  <form method="post" action="<?= url('/admin/tenants') ?>" class="space-y-4">
+  <form method="post" action="<?= url('/admin/tenants') ?>" class="space-y-6">
     <?= csrf_field() ?>
-    <div>
-      <label class="label">Nombre del negocio</label>
-      <input name="company_name" value="<?= e(old('company_name')) ?>" required class="input-field">
-    </div>
-    <div>
-      <label class="label">Nombre del responsable (owner)</label>
-      <input name="owner_name" value="<?= e(old('owner_name')) ?>" required class="input-field">
-    </div>
-    <div>
-      <label class="label">Usuario de acceso</label>
-      <input name="username" value="<?= e(old('username')) ?>" required minlength="3" pattern="[a-zA-Z0-9._-]+"
-        class="input-field" autocomplete="off" placeholder="ej: taller.boedo">
-      <p class="mt-1 text-xs text-slate-500">Único en todo PulseOS.</p>
-    </div>
-    <div>
-      <label class="label">Rubro</label>
-      <select name="business_type" required class="input-field">
-        <?php foreach ($businessTypes as $key => $type): ?>
-        <option value="<?= e($key) ?>" <?= old('business_type', 'otro') === $key ? 'selected' : '' ?>><?= e($type['label']) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="grid gap-4 sm:grid-cols-2">
-      <div>
-        <label class="label">Email de contacto</label>
-        <input type="email" name="email" value="<?= e(old('email')) ?>" required class="input-field">
+
+    <div class="form-section space-y-4">
+      <p class="form-section-title">Negocio y owner</p>
+      <?php
+      $name = 'company_name'; $label = 'Nombre del negocio'; $type = 'input'; $value = old('company_name'); $required = true;
+      require __DIR__ . '/../../partials/form_group.php';
+      $name = 'owner_name'; $label = 'Nombre del responsable'; $type = 'input'; $value = old('owner_name'); $required = true;
+      require __DIR__ . '/../../partials/form_group.php';
+      $name = 'username'; $label = 'Usuario de acceso'; $type = 'input'; $value = old('username'); $required = true;
+      $placeholder = 'ej: taller.boedo';
+      $hint = 'Único en todo PulseOS. Mínimo 3 caracteres.';
+      require __DIR__ . '/../../partials/form_group.php';
+      $name = 'business_type'; $label = 'Rubro'; $type = 'select'; $value = old('business_type', 'otro'); $required = true;
+      $options = [];
+      foreach ($businessTypes as $key => $typeRow) {
+          $options[] = ['value' => $key, 'label' => $typeRow['label']];
+      }
+      require __DIR__ . '/../../partials/form_group.php';
+      ?>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <?php
+        $name = 'email'; $label = 'Email de contacto'; $type = 'email'; $value = old('email'); $required = true; $hint = null;
+        require __DIR__ . '/../../partials/form_group.php';
+        $name = 'phone'; $label = 'Teléfono'; $type = 'input'; $value = old('phone');
+        require __DIR__ . '/../../partials/form_group.php';
+        ?>
       </div>
-      <div>
-        <label class="label">Teléfono</label>
-        <input name="phone" value="<?= e(old('phone')) ?>" class="input-field">
-      </div>
+      <?php
+      $name = 'password'; $label = 'Contraseña inicial del owner'; $type = 'password'; $value = ''; $required = true;
+      $hint = 'Mínimo 8 caracteres.';
+      require __DIR__ . '/../../partials/form_group.php';
+      ?>
     </div>
-    <div>
-      <label class="label">Contraseña inicial del owner</label>
-      <input type="password" name="password" required minlength="8" class="input-field" autocomplete="new-password">
-    </div>
-    <div class="border-t border-slate-800 pt-4">
-      <h4 class="mb-1 font-semibold">Módulos activos</h4>
-      <p class="mb-3 text-sm text-slate-400">Por defecto según el rubro; podés ajustarlos antes de crear.</p>
+
+    <div class="form-section">
+      <p class="form-section-title mb-3">Módulos activos</p>
+      <p class="form-hint mb-3">Por defecto según el rubro; podés ajustarlos antes de crear.</p>
       <?php
       $moduleLabels = $moduleLabels ?? config('platform_modules');
       $activeModules = $activeModules ?? [];
       require __DIR__ . '/../partials/module_checkboxes.php';
       ?>
     </div>
-    <div class="flex gap-3 pt-2">
+
+    <div class="form-actions">
       <button type="submit" class="btn-primary">Crear comercio</button>
-      <a href="<?= url('/admin/tenants') ?>" class="rounded-lg border border-slate-700 px-4 py-2 hover:bg-slate-900">Cancelar</a>
+      <a href="<?= url('/admin/tenants') ?>" class="btn-secondary">Cancelar</a>
     </div>
   </form>
 </div>

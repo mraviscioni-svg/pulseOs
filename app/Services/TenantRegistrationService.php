@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\Database;
+use App\Core\Session;
 use PDO;
 
 final class TenantRegistrationService
@@ -65,8 +66,18 @@ final class TenantRegistrationService
             ]);
             $userId = (int) $db->lastInsertId();
 
+            $businessType = (string) ($data['business_type'] ?? 'otro');
+            $imported = (new BusinessCatalogService())->seedTenant($tenantId, $businessType);
+
             $db->commit();
             $this->audit->log($tenantId, $userId, 'tenant.registered');
+
+            Session::flash(
+                'success',
+                'Comercio creado. Se precargaron '
+                . $imported['categories'] . ' categorías y '
+                . $imported['brands'] . ' marcas del rubro.'
+            );
 
             return $tenantId;
         } catch (\Throwable $e) {

@@ -25,6 +25,43 @@ final class AuthService
             return false;
         }
 
+        return $this->establishSession($user, 'auth.login');
+    }
+
+    /** Ingreso directo desde admin de plataforma (sin contraseña). */
+    public function impersonateTenantUser(int $userId, int $returnTenantId): bool
+    {
+        if (!PlatformAuthService::check()) {
+            return false;
+        }
+
+        $user = $this->users->findForImpersonation($userId);
+        if (!$user || (int) $user['tenant_id'] !== $returnTenantId) {
+            return false;
+        }
+
+        Session::set('platform_impersonating', $returnTenantId);
+        Session::set('platform_return_url', url('/admin/tenants/' . $returnTenantId));
+
+        return $this->establishSession($user, 'auth.impersonate');
+    }
+
+    public function stopImpersonation(): void
+    {
+        if (!Session::get('platform_impersonating')) {
+            return;
+        }
+
+        foreach (['user_id', 'tenant_id', 'user_name', 'user_email', 'role_slug', 'tenant_name', 'permissions', 'tenant_modules', 'business_type'] as $key) {
+            Session::forget($key);
+        }
+        Session::forget('platform_impersonating');
+        Session::forget('platform_return_url');
+    }
+
+    /** @param array<string, mixed> $user */
+    private function establishSession(array $user, string $auditAction): bool
+    {
         $permissions = $this->users->permissionsForRole((int) $user['role_id']);
 
         Session::set('user_id', (int) $user['id']);
@@ -42,7 +79,7 @@ final class AuthService
         }
 
         $this->users->updateLastLogin((int) $user['id']);
-        $this->audit->log((int) $user['tenant_id'], (int) $user['id'], 'auth.login');
+        $this->audit->log((int) $user['tenant_id'], (int) $user['id'], $auditAction);
 
         return true;
     }

@@ -10,6 +10,16 @@ final class CategoryModel extends Model
 {
     protected string $table = 'product_categories';
 
+    public function existsByName(int $tenantId, string $name): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT id FROM product_categories WHERE tenant_id = :tenant_id AND LOWER(name) = LOWER(:name) LIMIT 1'
+        );
+        $stmt->execute(['tenant_id' => $tenantId, 'name' => trim($name)]);
+
+        return (bool) $stmt->fetch();
+    }
+
     /** @param array<string, mixed> $data */
     public function create(int $tenantId, array $data): int
     {

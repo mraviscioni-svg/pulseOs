@@ -11,6 +11,46 @@ final class UserModel extends Model
     protected string $table = 'users';
 
     /** @return array<string, mixed>|null */
+    public function findForImpersonation(int $userId): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT u.*, r.slug AS role_slug, t.name AS tenant_name, t.is_active AS tenant_active
+             FROM users u
+             JOIN roles r ON r.id = u.role_id
+             JOIN tenants t ON t.id = u.tenant_id
+             WHERE u.id = :id AND u.is_active = 1 AND t.is_active = 1
+             LIMIT 1'
+        );
+        $stmt->execute(['id' => $userId]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    public function findOwnerUserIdForTenant(int $tenantId): ?int
+    {
+        $stmt = $this->db->prepare(
+            'SELECT u.id FROM users u
+             JOIN roles r ON r.id = u.role_id
+             WHERE u.tenant_id = :tenant_id AND u.is_active = 1 AND r.slug = :slug
+             ORDER BY u.id ASC LIMIT 1'
+        );
+        $stmt->execute(['tenant_id' => $tenantId, 'slug' => 'owner']);
+        $row = $stmt->fetch();
+        if ($row) {
+            return (int) $row['id'];
+        }
+
+        $stmt = $this->db->prepare(
+            'SELECT id FROM users WHERE tenant_id = :tenant_id AND is_active = 1 ORDER BY id ASC LIMIT 1'
+        );
+        $stmt->execute(['tenant_id' => $tenantId]);
+        $row = $stmt->fetch();
+
+        return $row ? (int) $row['id'] : null;
+    }
+
+    /** @return array<string, mixed>|null */
     public function findByUsernameGlobal(string $username): ?array
     {
         $stmt = $this->db->prepare(

@@ -65,6 +65,8 @@ return function ($router, array $mw) {
     $router->post('/brands', [CategoryController::class, 'storeBrand'], array_merge($auth, [$perm('products.manage')]));
     $router->post('/categories/{id}/delete', [CategoryController::class, 'deleteCategory'], array_merge($auth, [$perm('products.manage')]));
     $router->post('/brands/{id}/delete', [CategoryController::class, 'deleteBrand'], array_merge($auth, [$perm('products.manage')]));
+    $router->post('/categories/import', [CategoryController::class, 'importCategory'], array_merge($auth, [$perm('products.manage')]));
+    $router->post('/brands/import', [CategoryController::class, 'importBrand'], array_merge($auth, [$perm('products.manage')]));
 
     $router->get('/inventory', [InventoryController::class, 'index'], array_merge($auth, [$perm('stock.manage')]));
     $router->post('/inventory/adjust', [InventoryController::class, 'adjust'], array_merge($auth, [$perm('stock.manage')]));

@@ -7,6 +7,7 @@ namespace App\Controllers\Platform;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Services\AuthService;
 use App\Services\PlatformAuthService;
 
 final class AuthController extends Controller
@@ -52,5 +53,13 @@ final class AuthController extends Controller
     {
         (new PlatformAuthService())->logout();
         $this->redirect('/admin/login');
+    }
+
+    public function stopImpersonate(): void
+    {
+        $return = (string) Session::get('platform_return_url', url('/admin/tenants'));
+        (new AuthService())->stopImpersonation();
+        Session::flash('success', 'Volviste al panel de administración.');
+        $this->redirect($return);
     }
 }

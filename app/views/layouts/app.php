@@ -6,6 +6,15 @@
 <body class="min-h-full bg-slate-950 text-slate-100">
 <?php require __DIR__ . '/../partials/sidebar.php'; ?>
 <div class="pl-64">
+  <?php if (is_platform_impersonating()): ?>
+  <div class="impersonation-banner">
+    <span>Estás viendo el panel como administrador de plataforma.</span>
+    <form method="post" action="<?= url('/admin/stop-impersonate') ?>" class="inline">
+      <?= csrf_field() ?>
+      <button type="submit" class="btn-secondary !py-1.5 !text-xs">← Volver al admin</button>
+    </form>
+  </div>
+  <?php endif; ?>
   <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 backdrop-blur">
     <h1 class="text-lg font-semibold"><?= e($title ?? '') ?></h1>
     <div class="flex items-center gap-4 text-sm">

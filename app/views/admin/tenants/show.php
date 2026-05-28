@@ -9,14 +9,37 @@
       <div>
         <h2 class="text-xl font-bold"><?= e($t['name']) ?></h2>
         <p class="text-sm text-slate-400">Slug: <?= e($t['slug']) ?> · ID: <?= (int) $t['id'] ?></p>
+        <?php
+        $ownerUser = null;
+        foreach ($detail['users'] as $u) {
+            if (($u['role_name'] ?? '') === 'Owner' || str_contains(strtolower($u['role_name'] ?? ''), 'owner')) {
+                $ownerUser = $u;
+                break;
+            }
+        }
+        if (!$ownerUser && !empty($detail['users'])) {
+            $ownerUser = $detail['users'][0];
+        }
+        if ($ownerUser): ?>
+        <p class="mt-1 text-sm text-slate-500">Login comercio: <span class="font-mono text-violet-300"><?= e($ownerUser['username'] ?? '') ?></span></p>
+        <?php endif; ?>
       </div>
-      <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>">
-        <?= csrf_field() ?>
-        <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
-        <button class="<?= $t['is_active'] ? 'bg-rose-600 hover:bg-rose-500' : 'bg-emerald-600 hover:bg-emerald-500' ?> rounded-lg px-4 py-2 text-sm font-medium text-white">
-          <?= $t['is_active'] ? 'Suspender' : 'Activar' ?>
-        </button>
-      </form>
+      <div class="flex flex-wrap gap-2">
+        <?php if ($t['is_active'] && !empty($ownerUserId)): ?>
+        <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/enter') ?>">
+          <?= csrf_field() ?>
+          <button type="submit" class="btn-primary">Abrir panel del comercio</button>
+        </form>
+        <?php endif; ?>
+        <a href="<?= e($tenantLoginUrl ?? url('/login')) ?>" target="_blank" rel="noopener" class="btn-secondary">Login comercios ↗</a>
+        <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>">
+          <?= csrf_field() ?>
+          <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
+          <button class="<?= $t['is_active'] ? 'bg-rose-600 hover:bg-rose-500' : 'bg-emerald-600 hover:bg-emerald-500' ?> rounded-xl px-4 py-2.5 text-sm font-medium text-white">
+            <?= $t['is_active'] ? 'Suspender' : 'Activar' ?>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
   <div class="card space-y-2 text-sm">
@@ -27,46 +50,48 @@
   </div>
 </div>
 
-<div class="card mt-6 max-w-2xl">
-  <h3 class="mb-4 font-semibold">Configuración del comercio</h3>
-  <form method="post" action="<?= url('/admin/tenants/' . $t['id']) ?>" class="space-y-4">
+<div class="form-card mt-6 max-w-2xl">
+  <h3 class="mb-1 text-lg font-semibold">Configuración del comercio</h3>
+  <p class="mb-6 text-sm text-slate-400">Datos generales y permisos de módulos.</p>
+  <form method="post" action="<?= url('/admin/tenants/' . $t['id']) ?>" class="space-y-6">
     <?= csrf_field() ?>
-    <div>
-      <label class="label">Nombre</label>
-      <input name="name" value="<?= e($t['name']) ?>" required class="input-field">
-    </div>
-    <div>
-      <label class="label">Rubro</label>
-      <select name="business_type" required class="input-field">
-        <?php foreach ($businessTypes as $key => $type): ?>
-        <option value="<?= e($key) ?>" <?= $t['business_type'] === $key ? 'selected' : '' ?>><?= e($type['label']) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="grid gap-4 sm:grid-cols-2">
-      <div>
-        <label class="label">Email</label>
-        <input type="email" name="email" value="<?= e($t['email'] ?? '') ?>" required class="input-field">
+    <div class="form-section space-y-4">
+      <p class="form-section-title">Datos del negocio</p>
+      <?php
+      $name = 'name'; $label = 'Nombre'; $type = 'input'; $value = $t['name']; $required = true;
+      require __DIR__ . '/../../partials/form_group.php';
+      $name = 'business_type'; $label = 'Rubro'; $type = 'select'; $value = $t['business_type']; $required = true;
+      $options = [];
+      foreach ($businessTypes as $key => $typeRow) {
+          $options[] = ['value' => $key, 'label' => $typeRow['label']];
+      }
+      require __DIR__ . '/../../partials/form_group.php';
+      ?>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <?php
+        $name = 'email'; $label = 'Email'; $type = 'email'; $value = $t['email'] ?? ''; $required = true;
+        require __DIR__ . '/../../partials/form_group.php';
+        $name = 'phone'; $label = 'Teléfono'; $type = 'input'; $value = $t['phone'] ?? '';
+        require __DIR__ . '/../../partials/form_group.php';
+        ?>
       </div>
-      <div>
-        <label class="label">Teléfono</label>
-        <input name="phone" value="<?= e($t['phone'] ?? '') ?>" class="input-field">
-      </div>
+      <?php
+      $name = 'address'; $label = 'Dirección'; $type = 'input'; $value = $t['address'] ?? '';
+      require __DIR__ . '/../../partials/form_group.php';
+      ?>
     </div>
-    <div>
-      <label class="label">Dirección</label>
-      <input name="address" value="<?= e($t['address'] ?? '') ?>" class="input-field">
-    </div>
-    <div class="border-t border-slate-800 pt-4">
-      <h4 class="mb-1 font-semibold">Módulos activos</h4>
-      <p class="mb-3 text-sm text-slate-400">Solo vos podés habilitar qué funciones ve este comercio en su menú.</p>
+    <div class="form-section">
+      <p class="form-section-title mb-3">Módulos activos</p>
+      <p class="form-hint mb-3">Solo el administrador de plataforma habilita qué ve este comercio en su menú.</p>
       <?php
       $moduleLabels = $moduleLabels ?? config('platform_modules');
       $activeModules = $activeModules ?? [];
       require __DIR__ . '/../partials/module_checkboxes.php';
       ?>
     </div>
-    <button type="submit" class="btn-primary">Guardar cambios</button>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Guardar cambios</button>
+    </div>
   </form>
 </div>
 

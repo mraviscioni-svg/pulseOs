@@ -98,6 +98,15 @@ final class AuthController extends Controller
 
     public function logout(): void
     {
+        if (is_platform_impersonating()) {
+            $return = (string) Session::get('platform_return_url', url('/admin/tenants'));
+            (new AuthService())->stopImpersonation();
+            Session::flash('success', 'Volviste al panel de administración.');
+            $this->redirect($return);
+
+            return;
+        }
+
         (new AuthService())->logout();
         $this->redirect('/login');
     }
