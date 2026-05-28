@@ -21,9 +21,32 @@ function config(string $file): array
     return app()->config($file);
 }
 
+/** Ruta base de la app (ej. /PulseOS-prep/public) */
+function base_path(): string
+{
+    return rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+}
+
+/** Path para cookie de sesión en subcarpetas */
+function session_cookie_path(): string
+{
+    $base = base_path();
+
+    return $base === '' ? '/' : $base . '/';
+}
+
+function is_https_request(): bool
+{
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        return true;
+    }
+
+    return ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+}
+
 function url(string $path = ''): string
 {
-    $base = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+    $base = base_path();
     $path = '/' . ltrim($path, '/');
 
     return $base . ($path === '/' ? '' : $path);

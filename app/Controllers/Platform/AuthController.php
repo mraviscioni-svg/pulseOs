@@ -28,8 +28,20 @@ final class AuthController extends Controller
             $this->redirect('/admin/login');
         }
 
-        if (!(new PlatformAuthService())->attempt($data['username'], $data['password'])) {
-            Session::flash('error', 'Usuario o contraseña incorrectos.');
+        try {
+            if (!(new PlatformAuthService())->attempt($data['username'], $data['password'])) {
+                Session::flash('error', 'Usuario o contraseña incorrectos (probá admin / password).');
+                $this->redirect('/admin/login');
+            }
+            \App\Core\Session::regenerate();
+        } catch (\PDOException $e) {
+            Session::flash('error', 'Error de base de datos. Importá 003 y 004 en phpMyAdmin.');
+            if (config('app')['debug']) {
+                Session::flash('error', 'DB: ' . $e->getMessage());
+            }
+            $this->redirect('/admin/login');
+        } catch (\Throwable $e) {
+            Session::flash('error', config('app')['debug'] ? $e->getMessage() : 'Error al iniciar sesión.');
             $this->redirect('/admin/login');
         }
 

@@ -22,5 +22,6 @@
   </p>
   <p class="mt-2 text-center text-xs text-slate-600">
     <a href="<?= url('/admin/login') ?>" class="hover:text-slate-400">Administración plataforma</a>
+    · <a href="<?= url('/health') ?>" class="hover:text-slate-400" target="_blank" rel="noopener">Diagnóstico</a>
   </p>
 </form>

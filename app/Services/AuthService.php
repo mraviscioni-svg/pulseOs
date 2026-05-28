@@ -34,7 +34,12 @@ final class AuthService
         Session::set('role_slug', $user['role_slug']);
         Session::set('tenant_name', $user['tenant_name']);
         Session::set('permissions', $permissions);
-        (new ModuleService())->loadIntoSession((int) $user['tenant_id']);
+        try {
+            (new ModuleService())->loadIntoSession((int) $user['tenant_id']);
+        } catch (\Throwable) {
+            Session::set('tenant_modules', []);
+            Session::set('business_type', '');
+        }
 
         $this->users->updateLastLogin((int) $user['id']);
         $this->audit->log((int) $user['tenant_id'], (int) $user['id'], 'auth.login');

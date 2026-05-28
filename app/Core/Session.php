@@ -12,27 +12,42 @@ final class Session
             return;
         }
 
+        $cookiePath = session_cookie_path();
+        $secure = is_https_request();
+
         ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_only_cookies', '1');
         ini_set('session.cookie_httponly', '1');
         ini_set('session.cookie_samesite', 'Lax');
-
-        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        ini_set('session.cookie_path', $cookiePath);
+        if ($secure) {
             ini_set('session.cookie_secure', '1');
         }
 
         session_set_cookie_params([
             'lifetime' => $lifetime,
-            'path' => '/',
+            'path' => $cookiePath,
+            'secure' => $secure,
             'httponly' => true,
             'samesite' => 'Lax',
         ]);
 
-        session_start();
+        if (!@session_start()) {
+            throw new \RuntimeException('No se pudo iniciar la sesión PHP. Revisá permisos en el hosting.');
+        }
 
         if (!isset($_SESSION['_created'])) {
             session_regenerate_id(true);
             $_SESSION['_created'] = time();
         } elseif (time() - $_SESSION['_created'] > 1800) {
+            session_regenerate_id(true);
+            $_SESSION['_created'] = time();
+        }
+    }
+
+    public static function regenerate(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
             session_regenerate_id(true);
             $_SESSION['_created'] = time();
         }
@@ -73,7 +88,15 @@ final class Session
 
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params);
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params['path'] ?? session_cookie_path(),
+                $params['domain'] ?? '',
+                (bool) ($params['secure'] ?? false),
+                (bool) ($params['httponly'] ?? true)
+            );
         }
 
         session_destroy();

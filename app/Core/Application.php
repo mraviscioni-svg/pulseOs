@@ -46,6 +46,20 @@ final class Application
 
     public function run(): void
     {
+        $debug = (bool) ($this->config('app')['debug'] ?? false);
+        set_exception_handler(function (\Throwable $e) use ($debug): void {
+            http_response_code(500);
+            if ($debug) {
+                View::render('errors/500', [
+                    'title' => 'Error',
+                    'message' => $e->getMessage(),
+                    'debug' => true,
+                ], null);
+            } else {
+                View::render('errors/500', ['title' => 'Error'], null);
+            }
+        });
+
         Session::start($this->config('app')['session_lifetime'] ?? 7200);
         $this->router->dispatch();
     }

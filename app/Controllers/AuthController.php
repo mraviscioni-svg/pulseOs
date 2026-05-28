@@ -32,9 +32,21 @@ final class AuthController extends Controller
             $this->redirect('/login');
         }
 
-        $auth = new AuthService();
-        if (!$auth->attempt($data['username'], $data['password'])) {
-            Session::flash('error', 'Usuario o contraseña incorrectos.');
+        try {
+            $auth = new AuthService();
+            if (!$auth->attempt($data['username'], $data['password'])) {
+                Session::flash('error', 'Usuario o contraseña incorrectos. Si no tenés cuenta, registrate primero.');
+                $this->redirect('/login');
+            }
+            \App\Core\Session::regenerate();
+        } catch (\PDOException $e) {
+            Session::flash('error', 'Error de base de datos. Verificá migraciones y .env en el servidor.');
+            if (config('app')['debug']) {
+                Session::flash('error', 'DB: ' . $e->getMessage());
+            }
+            $this->redirect('/login');
+        } catch (\Throwable $e) {
+            Session::flash('error', config('app')['debug'] ? $e->getMessage() : 'Error al iniciar sesión.');
             $this->redirect('/login');
         }
 

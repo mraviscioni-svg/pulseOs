@@ -7,6 +7,7 @@ use App\Controllers\AuthController;
 use App\Controllers\CashRegisterController;
 use App\Controllers\CategoryController;
 use App\Controllers\DashboardController;
+use App\Controllers\HealthController;
 use App\Controllers\InventoryController;
 use App\Controllers\ModulePlaceholderController;
 use App\Controllers\PosController;
@@ -22,6 +23,8 @@ return function ($router, array $mw) {
     $auth = [$mw['csrf'], $mw['auth'], $mw['tenant']];
     $guest = [$mw['csrf'], $mw['guest']];
     $perm = fn (string $p) => PermissionMiddleware::require($p);
+
+    $router->get('/health', [HealthController::class, 'index']);
 
     $router->get('/', function () {
         header('Location: ' . url('/dashboard'));
