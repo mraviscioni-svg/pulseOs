@@ -1,7 +1,8 @@
-<form method="post" action="<?= url('/login') ?>" class="form-card shadow-xl">
+<form method="post" action="<?= url('/login') ?>" class="form-card">
   <?= csrf_field() ?>
-  <h2 class="mb-1 text-lg font-semibold text-white">Ingresá a tu comercio</h2>
-  <p class="mb-6 text-sm text-slate-400">Usuario y contraseña que te dio el administrador.</p>
+  <p class="page-eyebrow">Acceso</p>
+  <h2 class="mt-1 text-xl font-bold text-navy-900">Ingresá a tu comercio</h2>
+  <p class="mb-6 mt-1 text-sm text-slate-500">Usuario y contraseña que te dio el administrador.</p>
 
   <div class="space-y-4">
     <?php
@@ -17,12 +18,12 @@
   </div>
 
   <p class="mt-5 text-center text-sm text-slate-500">
-    <a href="<?= url('/forgot-password') ?>" class="text-indigo-400 hover:underline">¿Olvidaste tu contraseña?</a>
+    <a href="<?= url('/forgot-password') ?>" class="link-accent">¿Olvidaste tu contraseña?</a>
   </p>
-  <p class="mt-4 text-center text-xs text-slate-500">
+  <p class="mt-4 text-center text-xs text-slate-400">
     El alta de comercios la gestiona el administrador de la plataforma.
   </p>
-  <p class="mt-2 text-center text-xs text-slate-600">
-    <a href="<?= url('/admin/login') ?>" class="hover:text-slate-400">Administración plataforma</a>
+  <p class="mt-2 text-center text-xs text-slate-400">
+    <a href="<?= url('/admin/login') ?>" class="link-accent">Administración plataforma</a>
   </p>
 </form>

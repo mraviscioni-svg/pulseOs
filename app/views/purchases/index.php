@@ -1,6 +1,9 @@
 <div class="page-header">
-  <h2>Compras</h2>
-  <p>Órdenes de compra y recepción de mercadería.</p>
+  <div class="page-header-main">
+    <p class="page-eyebrow">Compras</p>
+    <h2>Compras</h2>
+    <p>Órdenes de compra y recepción de mercadería.</p>
+  </div>
 </div>
 
 <?php
@@ -30,7 +33,7 @@ require __DIR__ . '/../partials/crud_toolbar.php';
     <tbody>
     <?php foreach ($purchases as $p): ?>
     <tr>
-      <td class="font-mono font-medium text-indigo-300">#<?= (int) $p['id'] ?></td>
+      <td class="font-mono font-medium text-accent-600">#<?= (int) $p['id'] ?></td>
       <td><?= e($p['supplier_name'] ?? '—') ?></td>
       <td class="font-medium"><?= money($p['total']) ?></td>
       <td>

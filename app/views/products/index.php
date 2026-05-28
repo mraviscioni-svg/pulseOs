@@ -1,6 +1,9 @@
 <div class="page-header">
-  <h2>Productos</h2>
-  <p>Catálogo, precios y stock de tu comercio.</p>
+  <div class="page-header-main">
+    <p class="page-eyebrow">Catálogo</p>
+    <h2>Productos</h2>
+    <p>Catálogo, precios y stock de tu comercio.</p>
+  </div>
 </div>
 
 <?php
@@ -34,17 +37,17 @@ require __DIR__ . '/../partials/crud_toolbar.php';
         <?php if (!empty($p['image_path'])): ?>
         <img src="<?= upload_url($p['image_path']) ?>" alt="" class="h-10 w-10 rounded-lg object-cover ring-1 ring-slate-700">
         <?php else: ?>
-        <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-xs text-slate-500">—</span>
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-xs text-slate-400">—</span>
         <?php endif; ?>
       </td>
       <td>
-        <p class="font-medium text-white"><?= e($p['name']) ?></p>
+        <p class="font-medium text-navy-900"><?= e($p['name']) ?></p>
         <?php if (!empty($p['category_name'])): ?>
         <p class="text-xs text-slate-500"><?= e($p['category_name']) ?></p>
         <?php endif; ?>
       </td>
-      <td class="font-mono text-xs text-slate-400"><?= e($p['sku'] ?? '—') ?></td>
-      <td class="font-mono text-xs text-slate-400"><?= e($p['barcode'] ?? '—') ?></td>
+      <td class="font-mono text-xs text-accent-600"><?= e($p['sku'] ?? '—') ?></td>
+      <td class="font-mono text-xs text-slate-500"><?= e($p['barcode'] ?? '—') ?></td>
       <td class="<?= (float)$p['stock'] <= (float)$p['min_stock'] ? 'font-medium text-amber-400' : '' ?>"><?= e($p['stock']) ?></td>
       <td class="font-medium"><?= money($p['price']) ?></td>
       <td><?php $active = (bool) $p['is_active']; require __DIR__ . '/../partials/status_badge.php'; ?></td>

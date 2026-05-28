@@ -1,8 +1,13 @@
+<div class="page-header">
+  <div class="page-header-main">
+    <p class="page-eyebrow">Comercio</p>
+    <h2>Configuración</h2>
+    <p>Datos de tu negocio y preferencias de operación.</p>
+  </div>
+</div>
+
 <form method="post" action="<?= url('/settings') ?>" class="form-card max-w-2xl">
   <?= csrf_field() ?>
-  <h3 class="mb-1 text-lg font-semibold">Configuración</h3>
-  <p class="mb-6 text-sm text-slate-400">Datos de tu negocio y preferencias de operación.</p>
-
   <div class="form-section mb-6 space-y-4">
     <p class="form-section-title">Empresa</p>
     <?php
@@ -32,11 +37,11 @@
     $placeholder = 'Gracias por su compra';
     require __DIR__ . '/../partials/form_group.php';
     ?>
-    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 px-4 py-3 hover:bg-slate-900/50">
+    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 hover:bg-slate-50">
       <input type="checkbox" name="low_stock_alert" value="1" class="h-4 w-4 rounded border-slate-600" <?= ($settings['low_stock_alert'] ?? 1) ? 'checked' : '' ?>>
       <span class="text-sm">Alertas de stock bajo</span>
     </label>
-    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 px-4 py-3 hover:bg-slate-900/50">
+    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 hover:bg-slate-50">
       <input type="checkbox" name="dark_mode" value="1" class="h-4 w-4 rounded border-slate-600" <?= ($settings['dark_mode'] ?? 1) ? 'checked' : '' ?>>
       <span class="text-sm">Modo oscuro</span>
     </label>

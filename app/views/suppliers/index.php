@@ -1,6 +1,9 @@
 <div class="page-header">
-  <h2>Proveedores</h2>
-  <p>Gestioná quién te provee mercadería y servicios.</p>
+  <div class="page-header-main">
+    <p class="page-eyebrow">Proveedores</p>
+    <h2>Proveedores</h2>
+    <p>Gestioná quién te provee mercadería y servicios.</p>
+  </div>
 </div>
 
 <?php

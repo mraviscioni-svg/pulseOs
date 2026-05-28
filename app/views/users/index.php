@@ -1,6 +1,9 @@
 <div class="page-header">
-  <h2>Usuarios</h2>
-  <p>Equipo con acceso al panel de tu comercio.</p>
+  <div class="page-header-main">
+    <p class="page-eyebrow">Equipo</p>
+    <h2>Usuarios</h2>
+    <p>Equipo con acceso al panel de tu comercio.</p>
+  </div>
 </div>
 
 <?php
@@ -27,7 +30,7 @@ require __DIR__ . '/../partials/crud_toolbar.php';
       <tbody>
       <?php foreach ($users as $u): ?>
       <tr class="<?= !$u['is_active'] ? 'opacity-60' : '' ?>">
-        <td class="font-mono text-sm text-indigo-300"><?= e($u['username'] ?? '') ?></td>
+        <td class="font-mono text-sm text-accent-600"><?= e($u['username'] ?? '') ?></td>
         <td class="font-medium"><?= e($u['name']) ?></td>
         <td class="text-slate-400 text-xs"><?= e($u['email']) ?></td>
         <td><?= e($u['role_name']) ?></td>

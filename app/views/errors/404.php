@@ -1,5 +1,5 @@
-<div class="text-center py-20">
-  <p class="text-6xl font-bold text-slate-700">404</p>
-  <p class="mt-4 text-slate-400">Página no encontrada</p>
-  <a href="<?= url('/dashboard') ?>" class="mt-6 inline-block text-pulse-400">Volver al inicio</a>
+<div class="py-20 text-center">
+  <p class="text-6xl font-bold text-slate-200">404</p>
+  <p class="mt-4 text-slate-500">Página no encontrada</p>
+  <a href="<?= url('/dashboard') ?>" class="link-accent mt-6 inline-block">Volver al inicio</a>
 </div>

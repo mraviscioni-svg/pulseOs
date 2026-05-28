@@ -1,5 +1,8 @@
-<form method="post" action="<?= url('/admin/login') ?>" class="rounded-2xl border border-violet-900/40 bg-slate-900/50 p-6">
+<form method="post" action="<?= url('/admin/login') ?>" class="form-card">
   <?= csrf_field() ?>
+  <p class="page-eyebrow">Platform</p>
+  <h2 class="mt-1 text-xl font-bold text-navy-900">Ingresar a plataforma</h2>
+  <p class="mb-6 mt-1 text-sm text-slate-500">Administración de comercios PulseOS.</p>
   <div class="space-y-4">
     <div>
       <label class="label">Usuario</label>
@@ -9,6 +12,6 @@
       <label class="label">Contraseña</label>
       <input type="password" name="password" required class="input-field" autocomplete="current-password">
     </div>
-    <button type="submit" class="w-full rounded-lg bg-violet-600 py-2.5 font-medium hover:bg-violet-500">Ingresar a plataforma</button>
+    <button type="submit" class="btn-primary w-full">Ingresar a plataforma</button>
   </div>
 </form>

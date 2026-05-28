@@ -1,6 +1,9 @@
 <div class="page-header">
-  <h2>Comercios</h2>
-  <p>Tenants registrados en la plataforma PulseOS.</p>
+  <div class="page-header-main">
+    <p class="page-eyebrow">Platform</p>
+    <h2>Comercios</h2>
+    <p>Tenants registrados en la plataforma PulseOS.</p>
+  </div>
 </div>
 
 <?php
@@ -30,7 +33,7 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
     <?php foreach ($tenants as $t): ?>
     <tr class="<?= !$t['is_active'] ? 'opacity-60' : '' ?>">
       <td>
-        <p class="font-medium text-white"><?= e($t['name']) ?></p>
+        <p class="font-medium text-navy-900"><?= e($t['name']) ?></p>
         <p class="text-xs text-slate-500"><?= e($t['slug']) ?> · <?= e($t['email'] ?? '—') ?></p>
       </td>
       <td class="capitalize text-slate-300"><?= e(str_replace('_', ' ', (string) $t['business_type'])) ?></td>
