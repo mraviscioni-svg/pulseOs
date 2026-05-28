@@ -5,14 +5,15 @@
 </head>
 <body class="flex min-h-full items-center justify-center bg-slate-950 px-4 text-slate-100">
   <div class="w-full max-w-md">
-    <div class="mb-8 flex flex-col items-center text-center">
+    <div class="mb-8 w-full">
       <?php
       $logoHref = null;
       $logoSize = 'lg';
+      $logoAlign = 'center';
       $logoTagline = 'Administración de tenants';
       require __DIR__ . '/../partials/logo.php';
       ?>
-      <p class="mt-2 text-sm font-medium text-violet-300">Platform</p>
+      <p class="mt-3 text-center text-sm font-medium text-violet-300">Platform</p>
     </div>
     <?php require __DIR__ . '/../partials/flash.php'; ?>
     <?= $content ?>
