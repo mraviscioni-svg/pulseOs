@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Controllers\Concerns\ExportableList;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
@@ -18,14 +19,48 @@ use App\Services\UploadService;
 
 final class ProductController extends Controller
 {
+    use ExportableList;
+
     public function index(): void
     {
-        $model = new ProductModel();
         $q = trim((string) ($_GET['q'] ?? ''));
+        $status = (string) ($_GET['status'] ?? 'all');
+        if (!in_array($status, ['all', 'active', 'inactive'], true)) {
+            $status = 'all';
+        }
+
+        $products = (new ProductModel())->search(
+            $this->tenantId(),
+            $q !== '' ? $q : null,
+            500,
+            $status === 'all' ? null : $status
+        );
+
+        $rows = [];
+        foreach ($products as $p) {
+            $rows[] = [
+                $p['name'],
+                $p['sku'] ?? '',
+                $p['barcode'] ?? '',
+                $p['category_name'] ?? '',
+                $p['stock'],
+                $p['price'],
+                $p['is_active'] ? 'Activo' : 'Inactivo',
+            ];
+        }
+
+        $this->maybeExportList(
+            'Productos',
+            ['Nombre', 'SKU', 'Código', 'Categoría', 'Stock', 'Precio', 'Estado'],
+            $rows,
+            'productos'
+        );
+
         $this->view('products/index', [
             'title' => 'Productos',
-            'products' => $model->search($this->tenantId(), $q ?: null),
+            'products' => $products,
             'q' => $q,
+            'status' => $status,
         ]);
     }
 
@@ -45,6 +80,7 @@ final class ProductController extends Controller
             if (!empty($_FILES['image'])) {
                 $data['image_path'] = (new UploadService())->storeImage($_FILES['image']);
             }
+            $data['is_active'] = 1;
             $id = (new ProductModel())->create($this->tenantId(), $data);
             (new AuditService())->log($this->tenantId(), $this->userId(), 'product.created', 'product', $id);
             Session::flash('success', 'Producto creado.');
@@ -84,6 +120,25 @@ final class ProductController extends Controller
             Session::flash('error', $e->getMessage());
         }
         $this->redirect('/products/' . $id . '/edit');
+    }
+
+    public function toggle(array $params): void
+    {
+        $active = !empty($this->input()['is_active']);
+        (new ProductModel())->setActive($this->tenantId(), (int) $params['id'], $active ? 1 : 0);
+        Session::flash('success', $active ? 'Producto activado.' : 'Producto desactivado.');
+        $this->redirect('/products');
+    }
+
+    public function delete(array $params): void
+    {
+        try {
+            (new ProductModel())->deleteForTenant($this->tenantId(), (int) $params['id']);
+            Session::flash('success', 'Producto eliminado.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'No se pudo eliminar: ' . $e->getMessage());
+        }
+        $this->redirect('/products');
     }
 
     public function storeVariant(array $params): void
@@ -144,7 +199,7 @@ final class ProductController extends Controller
             'variants' => $variants,
             'categories' => (new CategoryModel())->allForTenant($tenantId, 'name ASC'),
             'brands' => (new BrandModel())->allForTenant($tenantId, 'name ASC'),
-            'suppliers' => (new SupplierModel())->allForTenant($tenantId, 'name ASC'),
+            'suppliers' => (new SupplierModel())->search($tenantId, null, 'active'),
         ]);
     }
 

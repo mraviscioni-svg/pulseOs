@@ -12,14 +12,26 @@ final class PurchaseModel extends Model
     protected string $table = 'purchases';
 
     /** @return list<array<string, mixed>> */
-    public function listWithSupplier(int $tenantId): array
+    public function listWithSupplier(int $tenantId, ?string $q = null, ?string $status = null): array
     {
-        $stmt = $this->db->prepare(
-            'SELECT p.*, s.name AS supplier_name FROM purchases p
+        $sql = 'SELECT p.*, s.name AS supplier_name FROM purchases p
              LEFT JOIN suppliers s ON s.id = p.supplier_id
-             WHERE p.tenant_id = :tenant_id ORDER BY p.created_at DESC'
-        );
-        $stmt->execute(['tenant_id' => $tenantId]);
+             WHERE p.tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($status && $status !== 'all') {
+            $sql .= ' AND p.status = :status';
+            $params['status'] = $status;
+        }
+
+        if ($q) {
+            $sql .= ' AND (s.name LIKE :q OR CAST(p.id AS CHAR) LIKE :q OR p.notes LIKE :q)';
+            $params['q'] = '%' . $q . '%';
+        }
+
+        $sql .= ' ORDER BY p.created_at DESC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
         return $stmt->fetchAll();
     }

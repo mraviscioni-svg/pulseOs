@@ -56,6 +56,8 @@ return function ($router, array $mw) {
     $router->post('/products', [ProductController::class, 'store'], $auth);
     $router->get('/products/{id}/edit', [ProductController::class, 'edit'], $auth);
     $router->post('/products/{id}', [ProductController::class, 'update'], $auth);
+    $router->post('/products/{id}/toggle', [ProductController::class, 'toggle'], $auth);
+    $router->post('/products/{id}/delete', [ProductController::class, 'delete'], $auth);
     $router->post('/products/{id}/stock', [ProductController::class, 'adjustStock'], $auth);
     $router->post('/products/{id}/variants', [ProductController::class, 'storeVariant'], $auth);
     $router->post('/products/{id}/variants/{variant_id}/delete', [ProductController::class, 'deleteVariant'], $auth);
@@ -77,6 +79,8 @@ return function ($router, array $mw) {
     $router->post('/suppliers', [SupplierController::class, 'store'], $auth);
     $router->get('/suppliers/{id}/edit', [SupplierController::class, 'edit'], $auth);
     $router->post('/suppliers/{id}', [SupplierController::class, 'update'], $auth);
+    $router->post('/suppliers/{id}/toggle', [SupplierController::class, 'toggle'], $auth);
+    $router->post('/suppliers/{id}/delete', [SupplierController::class, 'delete'], $auth);
 
     $router->get('/purchases', [PurchaseController::class, 'index'], $auth);
     $router->get('/purchases/create', [PurchaseController::class, 'create'], $auth);

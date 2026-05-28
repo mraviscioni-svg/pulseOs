@@ -1,42 +1,82 @@
-<div class="grid gap-6 lg:grid-cols-2">
-  <div class="card overflow-x-auto">
-    <h3 class="mb-4 font-semibold">Equipo</h3>
-    <table class="w-full text-sm">
-      <thead class="text-slate-500"><tr><th>Usuario</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+<div class="page-header">
+  <h2>Usuarios</h2>
+  <p>Equipo con acceso al panel de tu comercio.</p>
+</div>
+
+<?php
+$basePath = '/users';
+$searchPlaceholder = 'Nombre, usuario o email…';
+$showStatusFilter = true;
+$totalCount = count($users);
+require __DIR__ . '/../partials/crud_toolbar.php';
+?>
+
+<div class="grid gap-6 xl:grid-cols-3">
+  <div class="data-table-wrap xl:col-span-2">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
       <tbody>
       <?php foreach ($users as $u): ?>
-      <tr class="border-t border-slate-800">
-        <td class="py-2 font-mono text-pulse-400"><?= e($u['username'] ?? '') ?></td>
-        <td class="py-2"><?= e($u['name']) ?></td>
-        <td><?= e($u['email']) ?></td>
+      <tr class="<?= !$u['is_active'] ? 'opacity-60' : '' ?>">
+        <td class="font-mono text-sm text-indigo-300"><?= e($u['username'] ?? '') ?></td>
+        <td class="font-medium"><?= e($u['name']) ?></td>
+        <td class="text-slate-400 text-xs"><?= e($u['email']) ?></td>
         <td><?= e($u['role_name']) ?></td>
-        <td><?= $u['is_active'] ? 'Activo' : 'Inactivo' ?></td>
-        <td class="text-right space-x-2">
-          <a href="<?= url('/users/' . $u['id'] . '/edit') ?>" class="text-pulse-400 text-xs">Editar</a>
-          <?php if ((int)$u['id'] !== (int)\App\Core\Session::get('user_id')): ?>
-          <form method="post" action="<?= url('/users/' . $u['id'] . '/toggle') ?>" class="inline"><?= csrf_field() ?>
-            <input type="hidden" name="is_active" value="<?= $u['is_active'] ? '0' : '1' ?>">
-            <button class="text-xs text-slate-400"><?= $u['is_active'] ? 'Desactivar' : 'Activar' ?></button>
-          </form>
-          <?php endif; ?>
+        <td><?php $active = (bool) $u['is_active']; require __DIR__ . '/../partials/status_badge.php'; ?></td>
+        <td>
+          <?php
+          $editUrl = url('/users/' . $u['id'] . '/edit');
+          $isActive = (bool) $u['is_active'];
+          if ((int) $u['id'] !== (int) \App\Core\Session::get('user_id')) {
+              $toggleUrl = url('/users/' . $u['id'] . '/toggle');
+          } else {
+              $toggleUrl = null;
+          }
+          $deleteUrl = null;
+          require __DIR__ . '/../partials/row_actions.php';
+          ?>
         </td>
       </tr>
       <?php endforeach; ?>
+      <?php if (!$users): ?>
+      <tr><td colspan="6"><?php $message = 'No hay usuarios'; require __DIR__ . '/../partials/empty_state.php'; ?></td></tr>
+      <?php endif; ?>
       </tbody>
     </table>
   </div>
-  <form method="post" action="<?= url('/users') ?>" class="card space-y-4">
+
+  <form method="post" action="<?= url('/users') ?>" class="form-card h-fit space-y-4">
     <?= csrf_field() ?>
-    <h3 class="font-semibold">Invitar usuario</h3>
-    <input name="name" required placeholder="Nombre" class="input-field">
-    <input name="username" required minlength="3" pattern="[a-zA-Z0-9._-]+" placeholder="Usuario único" class="input-field">
-    <input type="email" name="email" required placeholder="Email contacto" class="input-field">
-    <input type="password" name="password" required minlength="8" placeholder="Contraseña temporal" class="input-field">
-    <select name="role_id" required class="input-field">
-      <?php foreach ($roles as $r): ?>
-      <option value="<?= (int)$r['id'] ?>"><?= e($r['name']) ?></option>
-      <?php endforeach; ?>
-    </select>
-    <button class="btn-primary">Crear usuario</button>
+    <h3 class="text-lg font-semibold">Invitar usuario</h3>
+    <p class="text-sm text-slate-400">Creá un acceso con contraseña temporal.</p>
+    <?php
+    $name = 'name'; $label = 'Nombre completo'; $type = 'input'; $value = ''; $required = true;
+    require __DIR__ . '/../partials/form_group.php';
+    $name = 'username'; $label = 'Usuario'; $type = 'input'; $placeholder = 'unico.en.pulseos';
+    $hint = 'Solo letras, números, punto y guión.';
+    require __DIR__ . '/../partials/form_group.php';
+    $name = 'email'; $label = 'Email'; $type = 'email'; $hint = null;
+    require __DIR__ . '/../partials/form_group.php';
+    $name = 'password'; $label = 'Contraseña temporal'; $type = 'password'; $required = true;
+    require __DIR__ . '/../partials/form_group.php';
+    ?>
+    <div class="form-group">
+      <label class="label">Rol</label>
+      <select name="role_id" required class="input-field">
+        <?php foreach ($roles as $r): ?>
+        <option value="<?= (int) $r['id'] ?>"><?= e($r['name']) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <button type="submit" class="btn-primary w-full">Crear usuario</button>
   </form>
 </div>

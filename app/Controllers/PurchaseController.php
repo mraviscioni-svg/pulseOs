@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Controllers\Concerns\ExportableList;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Models\ProductModel;
@@ -13,11 +14,42 @@ use App\Services\PurchaseService;
 
 final class PurchaseController extends Controller
 {
+    use ExportableList;
+
     public function index(): void
     {
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $status = (string) ($_GET['status'] ?? 'all');
+
+        $purchases = (new PurchaseModel())->listWithSupplier(
+            $this->tenantId(),
+            $q !== '' ? $q : null,
+            $status !== 'all' ? $status : null
+        );
+
+        $rows = [];
+        foreach ($purchases as $p) {
+            $rows[] = [
+                '#' . $p['id'],
+                $p['supplier_name'] ?? '',
+                $p['total'],
+                $p['status'],
+                $p['created_at'],
+            ];
+        }
+
+        $this->maybeExportList(
+            'Compras',
+            ['Ref', 'Proveedor', 'Total', 'Estado', 'Fecha'],
+            $rows,
+            'compras'
+        );
+
         $this->view('purchases/index', [
             'title' => 'Compras',
-            'purchases' => (new PurchaseModel())->listWithSupplier($this->tenantId()),
+            'purchases' => $purchases,
+            'q' => $q,
+            'status' => $status,
         ]);
     }
 
@@ -25,8 +57,8 @@ final class PurchaseController extends Controller
     {
         $this->view('purchases/form', [
             'title' => 'Nueva compra',
-            'suppliers' => (new SupplierModel())->allForTenant($this->tenantId()),
-            'products' => (new ProductModel())->search($this->tenantId(), null, 200),
+            'suppliers' => (new SupplierModel())->search($this->tenantId(), null, 'active'),
+            'products' => (new ProductModel())->search($this->tenantId(), null, 200, 'active'),
         ]);
     }
 
@@ -52,12 +84,8 @@ final class PurchaseController extends Controller
 
     public function receive(array $params): void
     {
-        try {
-            (new PurchaseService())->receive((int) $params['id'], $this->userId());
-            Session::flash('success', 'Compra recibida y stock actualizado.');
-        } catch (\Throwable $e) {
-            Session::flash('error', $e->getMessage());
-        }
+        (new PurchaseService())->receive($this->tenantId(), (int) $params['id'], $this->userId());
+        Session::flash('success', 'Compra recibida y stock actualizado.');
         $this->redirect('/purchases');
     }
 }

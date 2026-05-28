@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Controllers\Concerns\ExportableList;
 use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Session;
@@ -12,13 +13,47 @@ use App\Models\UserModel;
 
 final class UserController extends Controller
 {
+    use ExportableList;
+
     public function index(): void
     {
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $status = (string) ($_GET['status'] ?? 'all');
+        if (!in_array($status, ['all', 'active', 'inactive'], true)) {
+            $status = 'all';
+        }
+
+        $users = (new UserModel())->listForTenant(
+            $this->tenantId(),
+            $q !== '' ? $q : null,
+            $status === 'all' ? null : $status
+        );
+
+        $rows = [];
+        foreach ($users as $u) {
+            $rows[] = [
+                $u['username'] ?? '',
+                $u['name'],
+                $u['email'],
+                $u['role_name'],
+                $u['is_active'] ? 'Activo' : 'Inactivo',
+            ];
+        }
+
+        $this->maybeExportList(
+            'Usuarios',
+            ['Usuario', 'Nombre', 'Email', 'Rol', 'Estado'],
+            $rows,
+            'usuarios'
+        );
+
         $roles = Database::connection()->query('SELECT id, name, slug FROM roles ORDER BY id')->fetchAll();
         $this->view('users/index', [
             'title' => 'Usuarios',
-            'users' => (new UserModel())->listForTenant($this->tenantId()),
+            'users' => $users,
             'roles' => $roles,
+            'q' => $q,
+            'status' => $status,
         ]);
     }
 

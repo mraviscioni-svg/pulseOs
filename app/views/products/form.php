@@ -1,5 +1,9 @@
 <?php $isEdit = !empty($product); ?>
-<form method="post" enctype="multipart/form-data" action="<?= $isEdit ? url('/products/' . $product['id']) : url('/products') ?>" class="card max-w-3xl space-y-4">
+<div class="page-header">
+  <h2><?= e($title ?? ($isEdit ? 'Editar producto' : 'Nuevo producto')) ?></h2>
+  <p><a href="<?= url('/products') ?>" class="text-indigo-400 hover:underline">← Volver al listado</a></p>
+</div>
+<form method="post" enctype="multipart/form-data" action="<?= $isEdit ? url('/products/' . $product['id']) : url('/products') ?>" class="form-card max-w-3xl space-y-4">
   <?= csrf_field() ?>
   <div class="grid gap-4 sm:grid-cols-2">
     <div class="sm:col-span-2 flex gap-4 items-start">

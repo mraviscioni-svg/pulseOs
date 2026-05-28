@@ -1,52 +1,66 @@
-<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <form method="get" class="flex gap-2">
-    <input name="q" value="<?= e($q) ?>" placeholder="Buscar por nombre, email o slug…" class="input-field w-72">
-    <button class="rounded-lg border border-slate-700 px-4 py-2 hover:bg-slate-900">Buscar</button>
-  </form>
-  <div class="flex items-center gap-3">
-    <p class="text-sm text-slate-400"><?= count($tenants) ?> comercios</p>
-    <a href="<?= url('/admin/tenants/create') ?>" class="btn-primary">+ Nuevo comercio</a>
-  </div>
+<div class="page-header">
+  <h2>Comercios</h2>
+  <p>Tenants registrados en la plataforma PulseOS.</p>
 </div>
 
-<div class="card overflow-x-auto">
-  <table class="w-full text-sm">
-    <thead class="text-left text-slate-500">
+<?php
+$basePath = '/admin/tenants';
+$searchPlaceholder = 'Nombre, email o slug…';
+$createUrl = url('/admin/tenants/create');
+$createLabel = '+ Nuevo comercio';
+$totalCount = count($tenants);
+require __DIR__ . '/../../partials/crud_toolbar.php';
+?>
+
+<div class="data-table-wrap">
+  <table class="data-table">
+    <thead>
       <tr>
-        <th class="pb-3">Negocio</th>
+        <th>Negocio</th>
         <th>Rubro</th>
         <th>Usuarios</th>
         <th>Productos</th>
-        <th>Ventas tot.</th>
+        <th>Ventas</th>
         <th>Estado</th>
         <th>Alta</th>
-        <th></th>
+        <th class="text-right">Acciones</th>
       </tr>
     </thead>
     <tbody>
     <?php foreach ($tenants as $t): ?>
-    <tr class="border-t border-slate-800">
-      <td class="py-3">
-        <p class="font-medium"><?= e($t['name']) ?></p>
+    <tr class="<?= !$t['is_active'] ? 'opacity-60' : '' ?>">
+      <td>
+        <p class="font-medium text-white"><?= e($t['name']) ?></p>
         <p class="text-xs text-slate-500"><?= e($t['slug']) ?> · <?= e($t['email'] ?? '—') ?></p>
       </td>
-      <td class="capitalize"><?= e(str_replace('_', ' ', $t['business_type'])) ?></td>
+      <td class="capitalize text-slate-300"><?= e(str_replace('_', ' ', (string) $t['business_type'])) ?></td>
       <td><?= (int) $t['users_count'] ?></td>
       <td><?= (int) $t['products_count'] ?></td>
       <td><?= money($t['sales_total']) ?></td>
       <td>
         <?php if ($t['is_active']): ?>
-        <span class="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-300">Activo</span>
+        <span class="badge badge-success">Activo</span>
         <?php else: ?>
-        <span class="rounded-full bg-rose-500/20 px-2 py-0.5 text-xs text-rose-300">Suspendido</span>
+        <span class="badge badge-muted">Suspendido</span>
         <?php endif; ?>
       </td>
-      <td class="text-slate-500 text-xs"><?= e($t['created_at']) ?></td>
-      <td><a href="<?= url('/admin/tenants/' . $t['id']) ?>" class="text-violet-400 hover:underline">Ver</a></td>
+      <td class="text-xs text-slate-500"><?= e($t['created_at']) ?></td>
+      <td>
+        <div class="row-actions">
+          <a href="<?= url('/admin/tenants/' . $t['id']) ?>" class="btn-action btn-action-edit">Gestionar</a>
+          <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>" class="inline">
+            <?= csrf_field() ?>
+            <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
+            <button type="submit" class="btn-action <?= $t['is_active'] ? 'btn-action-warn' : 'btn-action-ok' ?>">
+              <?= $t['is_active'] ? 'Suspender' : 'Activar' ?>
+            </button>
+          </form>
+        </div>
+      </td>
     </tr>
     <?php endforeach; ?>
     <?php if (!$tenants): ?>
-    <tr><td colspan="8" class="py-8 text-center text-slate-500">No hay tenants<?= $q ? ' para esa búsqueda' : '' ?>.</td></tr>
+    <tr><td colspan="8"><?php $message = 'No hay comercios' . ($q ? ' para esa búsqueda' : ''); $actionUrl = url('/admin/tenants/create'); require __DIR__ . '/../../partials/empty_state.php'; ?></td></tr>
     <?php endif; ?>
     </tbody>
   </table>

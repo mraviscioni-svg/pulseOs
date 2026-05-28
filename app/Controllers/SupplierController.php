@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Controllers\Concerns\ExportableList;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
@@ -11,11 +12,46 @@ use App\Models\SupplierModel;
 
 final class SupplierController extends Controller
 {
+    use ExportableList;
+
     public function index(): void
     {
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $status = (string) ($_GET['status'] ?? 'all');
+        if (!in_array($status, ['all', 'active', 'inactive'], true)) {
+            $status = 'all';
+        }
+
+        $suppliers = (new SupplierModel())->search(
+            $this->tenantId(),
+            $q !== '' ? $q : null,
+            $status === 'all' ? null : $status
+        );
+
+        $rows = [];
+        foreach ($suppliers as $s) {
+            $rows[] = [
+                $s['name'],
+                $s['company'] ?? '',
+                $s['tax_id'] ?? '',
+                $s['phone'] ?? '',
+                $s['email'] ?? '',
+                $s['is_active'] ? 'Activo' : 'Inactivo',
+            ];
+        }
+
+        $this->maybeExportList(
+            'Proveedores',
+            ['Nombre', 'Empresa', 'CUIT', 'Teléfono', 'Email', 'Estado'],
+            $rows,
+            'proveedores'
+        );
+
         $this->view('suppliers/index', [
             'title' => 'Proveedores',
-            'suppliers' => (new SupplierModel())->allForTenant($this->tenantId()),
+            'suppliers' => $suppliers,
+            'q' => $q,
+            'status' => $status,
         ]);
     }
 
@@ -27,6 +63,7 @@ final class SupplierController extends Controller
     public function store(): void
     {
         $data = $this->input();
+        $data['is_active'] = 1;
         if (!$this->validate($data)) {
             $this->redirect('/suppliers/create');
         }
@@ -52,6 +89,25 @@ final class SupplierController extends Controller
         }
         (new SupplierModel())->update($this->tenantId(), (int) $params['id'], $data);
         Session::flash('success', 'Proveedor actualizado.');
+        $this->redirect('/suppliers');
+    }
+
+    public function toggle(array $params): void
+    {
+        $active = !empty($this->input()['is_active']);
+        (new SupplierModel())->setActive($this->tenantId(), (int) $params['id'], $active ? 1 : 0);
+        Session::flash('success', $active ? 'Proveedor activado.' : 'Proveedor desactivado.');
+        $this->redirect('/suppliers');
+    }
+
+    public function delete(array $params): void
+    {
+        try {
+            (new SupplierModel())->deleteForTenant($this->tenantId(), (int) $params['id']);
+            Session::flash('success', 'Proveedor eliminado.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'No se pudo eliminar: ' . $e->getMessage());
+        }
         $this->redirect('/suppliers');
     }
 

@@ -11,7 +11,7 @@ final class ProductModel extends Model
     protected string $table = 'products';
 
     /** @return list<array<string, mixed>> */
-    public function search(int $tenantId, ?string $q = null, int $limit = 50): array
+    public function search(int $tenantId, ?string $q = null, int $limit = 200, ?string $status = null): array
     {
         $sql = 'SELECT p.*, c.name AS category_name, b.name AS brand_name
                 FROM products p
@@ -19,6 +19,12 @@ final class ProductModel extends Model
                 LEFT JOIN brands b ON b.id = p.brand_id
                 WHERE p.tenant_id = :tenant_id';
         $params = ['tenant_id' => $tenantId];
+
+        if ($status === 'active') {
+            $sql .= ' AND p.is_active = 1';
+        } elseif ($status === 'inactive') {
+            $sql .= ' AND p.is_active = 0';
+        }
 
         if ($q) {
             $sql .= ' AND (p.name LIKE :q OR p.sku LIKE :q OR p.barcode LIKE :q OR p.internal_code LIKE :q)';
@@ -117,5 +123,19 @@ final class ProductModel extends Model
         }
 
         return $bind;
+    }
+
+    public function setActive(int $tenantId, int $id, int $active): void
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE products SET is_active = :active WHERE id = :id AND tenant_id = :tenant_id'
+        );
+        $stmt->execute(['active' => $active ? 1 : 0, 'id' => $id, 'tenant_id' => $tenantId]);
+    }
+
+    public function deleteForTenant(int $tenantId, int $id): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM products WHERE id = :id AND tenant_id = :tenant_id');
+        $stmt->execute(['id' => $id, 'tenant_id' => $tenantId]);
     }
 }

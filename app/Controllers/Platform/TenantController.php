@@ -7,21 +7,46 @@ namespace App\Controllers\Platform;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Controllers\Concerns\ExportableList;
 use App\Models\UserModel;
 use App\Services\AuditService;
 use App\Services\AuthService;
 use App\Services\PlatformTenantService;
 use App\Services\TenantRegistrationService;
-use App\Models\UserModel;
 
 final class TenantController extends Controller
 {
+    use ExportableList;
+
     public function index(): void
     {
         $q = trim((string) ($_GET['q'] ?? ''));
+        $tenants = (new PlatformTenantService())->list($q ?: null);
+
+        $rows = [];
+        foreach ($tenants as $t) {
+            $rows[] = [
+                $t['name'],
+                $t['slug'],
+                $t['business_type'],
+                $t['users_count'],
+                $t['products_count'],
+                $t['sales_total'],
+                $t['is_active'] ? 'Activo' : 'Suspendido',
+                $t['created_at'],
+            ];
+        }
+
+        $this->maybeExportList(
+            'Comercios PulseOS',
+            ['Nombre', 'Slug', 'Rubro', 'Usuarios', 'Productos', 'Ventas', 'Estado', 'Alta'],
+            $rows,
+            'comercios'
+        );
+
         $this->view('admin/tenants/index', [
             'title' => 'Gestión de tenants',
-            'tenants' => (new PlatformTenantService())->list($q ?: null),
+            'tenants' => $tenants,
             'q' => $q,
         ], 'layouts/admin');
     }

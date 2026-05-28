@@ -15,8 +15,8 @@
     </form>
   </div>
   <?php endif; ?>
-  <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 backdrop-blur">
-    <h1 class="text-lg font-semibold"><?= e($title ?? '') ?></h1>
+  <header class="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-800/80 bg-slate-950/90 px-6 backdrop-blur-md">
+    <h1 class="truncate text-base font-semibold text-slate-200"><?= e($title ?? '') ?></h1>
     <div class="flex items-center gap-4 text-sm">
       <span class="text-slate-400"><?= e(\App\Core\Session::get('user_name', '')) ?></span>
       <form method="post" action="<?= url('/logout') ?>">

@@ -119,14 +119,27 @@ final class UserModel extends Model
     }
 
     /** @return list<array<string, mixed>> */
-    public function listForTenant(int $tenantId): array
+    public function listForTenant(int $tenantId, ?string $q = null, ?string $status = null): array
     {
-        $stmt = $this->db->prepare(
-            'SELECT u.id, u.username, u.name, u.email, u.is_active, u.created_at, r.name AS role_name, r.slug AS role_slug
+        $sql = 'SELECT u.id, u.username, u.name, u.email, u.is_active, u.created_at, r.name AS role_name, r.slug AS role_slug
              FROM users u JOIN roles r ON r.id = u.role_id
-             WHERE u.tenant_id = :tenant_id ORDER BY u.name'
-        );
-        $stmt->execute(['tenant_id' => $tenantId]);
+             WHERE u.tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+
+        if ($status === 'active') {
+            $sql .= ' AND u.is_active = 1';
+        } elseif ($status === 'inactive') {
+            $sql .= ' AND u.is_active = 0';
+        }
+
+        if ($q) {
+            $sql .= ' AND (u.name LIKE :q OR u.username LIKE :q OR u.email LIKE :q)';
+            $params['q'] = '%' . $q . '%';
+        }
+
+        $sql .= ' ORDER BY u.name';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
         return $stmt->fetchAll();
     }
