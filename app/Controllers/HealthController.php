@@ -63,12 +63,29 @@ final class HealthController extends Controller
             $checks['database_error'] = $e->getMessage();
             $checks['host_probe'] = Database::probeHosts();
 
-            $working = array_filter($checks['host_probe'], fn (array $r) => $r['ok']);
-            if ($working !== []) {
-                $good = reset($working);
-                $checks['fix'] = "En GitHub Secret PROD_DB_HOST (o .env DB_HOST) usá: \"{$good['host']}\". En cPanel casi siempre es localhost.";
+            if (str_contains($dbCfg['host'], ':2083') || str_contains($dbCfg['host'], 'cpanel')) {
+                $checks['fix'] = 'PROD_DB_HOST está mal: "' . $dbCfg['host'] . '" es la URL de cPanel, no MySQL. Usá PROD_DB_HOST=localhost';
             } else {
-                $checks['fix'] = 'Revisá en cPanel → MySQL: host (localhost), nombre de base, usuario y clave. Actualizá secrets PROD_DB_* y redeploy, o editá .env en PulseOS-prep/.';
+                $localhostProbe = null;
+                foreach ($checks['host_probe'] as $row) {
+                    if (in_array($row['host'], ['localhost', '127.0.0.1'], true)) {
+                        $localhostProbe = $row;
+                        break;
+                    }
+                }
+                if ($localhostProbe && !$localhostProbe['ok'] && str_contains((string) ($localhostProbe['error'] ?? ''), '1045')) {
+                    $checks['fix'] = 'El host localhost es correcto, pero usuario/clave no coinciden o el usuario no está asignado a la base en cPanel → MySQL® Databases → Add User To Database (ALL PRIVILEGES).';
+                } elseif ($localhostProbe && $localhostProbe['ok']) {
+                    $checks['fix'] = 'Usá PROD_DB_HOST=localhost en secrets y redeploy.';
+                } else {
+                    $working = array_filter($checks['host_probe'], fn (array $r) => $r['ok']);
+                    if ($working !== []) {
+                        $good = reset($working);
+                        $checks['fix'] = 'En PROD_DB_HOST usá: "' . $good['host'] . '"';
+                    } else {
+                        $checks['fix'] = 'Revisá en cPanel → MySQL: host localhost, base, usuario con permisos, clave. Actualizá PROD_DB_* y redeploy.';
+                    }
+                }
             }
         }
 

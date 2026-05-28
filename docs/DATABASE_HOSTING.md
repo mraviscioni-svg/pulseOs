@@ -8,7 +8,29 @@ En **hosting compartido**, PHP y MySQL están en el **mismo servidor**. El host 
 localhost
 ```
 
-**No uses** el dominio del sitio (`tallerboedo.com.ar`) ni IPs externas en `DB_HOST`.
+**No uses** el dominio del sitio (`tallerboedo.com.ar`), la URL de cPanel (`mauca.com.ar:2083`) ni IPs externas en `DB_HOST`.
+
+Ejemplo incorrecto (lo que muestra tu health ahora):
+
+```text
+PROD_DB_HOST=mauca.com.ar:2083   ← esto es el panel web, NO MySQL
+```
+
+Correcto:
+
+```text
+PROD_DB_HOST=localhost
+```
+
+### Si `host_probe` dice Access denied (1045) en localhost
+
+MySQL **sí responde**; el problema es usuario/clave o permisos:
+
+1. cPanel → **MySQL® Databases**
+2. Creá la base y el usuario (o usá los existentes)
+3. **Add User To Database** → usuario `mauritoc_tallerboedo` + base `mauritoc_tallerboedo` → **ALL PRIVILEGES**
+4. Copiá la clave exacta al secret `PROD_DB_PASSWORD`
+5. Redeploy o editá `.env` en `PulseOS-prep/`
 
 ---
 
