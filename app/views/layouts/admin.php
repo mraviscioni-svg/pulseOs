@@ -6,8 +6,8 @@
 <body class="min-h-full bg-slate-950 text-slate-100">
 <aside class="fixed inset-y-0 left-0 z-40 w-56 border-r border-violet-900/40 bg-slate-950">
   <div class="border-b border-slate-800 px-4 py-3">
-    <a href="<?= url('/admin/tenants') ?>" class="block hover:opacity-90">
-      <img src="<?= asset('images/pulseos-logo.png') ?>" alt="PulseOS" class="h-8 w-auto max-w-full object-contain object-left">
+    <a href="<?= url('/admin/tenants') ?>" class="block hover:opacity-90" title="PulseOS Platform">
+      <img src="<?= asset('images/logo.svg') ?>" alt="PulseOS" class="h-8 w-auto max-w-full object-contain object-left" width="200" height="46">
     </a>
     <p class="mt-2 text-xs text-violet-300">Platform</p>
   </div>

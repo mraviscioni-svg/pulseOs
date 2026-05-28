@@ -1,7 +1,7 @@
 <aside class="fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-800 bg-slate-950/95 backdrop-blur">
   <div class="border-b border-slate-800 px-4 py-3">
-    <a href="<?= url('/dashboard') ?>" class="block hover:opacity-90">
-      <img src="<?= asset('images/pulseos-logo.png') ?>" alt="PulseOS" class="h-9 w-auto max-w-full object-contain object-left">
+    <a href="<?= url('/dashboard') ?>" class="block hover:opacity-90" title="PulseOS">
+      <img src="<?= asset('images/logo.svg') ?>" alt="PulseOS" class="h-9 w-auto max-w-full object-contain object-left" width="200" height="46">
     </a>
     <p class="mt-2 truncate text-xs text-slate-400"><?= e(\App\Core\Session::get('tenant_name', '')) ?></p>
   </div>

@@ -12,10 +12,12 @@ $tagline = $logoTagline ?? null;
 
 $heights = ['sm' => 'h-8', 'md' => 'h-10', 'lg' => 'h-14'];
 $height = $heights[$size] ?? $heights['md'];
-$maxW = $iconOnly ? 'max-w-[52px]' : 'max-w-[240px]';
+
+$src = $iconOnly ? asset('images/logo-icon.svg') : asset('images/logo.svg');
+$maxW = $iconOnly ? 'max-w-[3.5rem]' : 'max-w-[280px]';
 $imgClass = trim("$height w-auto $maxW object-contain object-left");
 
-$inner = '<img src="' . e(asset('images/pulseos-logo.png')) . '" alt="PulseOS" class="' . e($imgClass) . '">';
+$inner = '<img src="' . e($src) . '" alt="PulseOS" class="' . e($imgClass) . '" width="' . ($iconOnly ? '56' : '280') . '" height="' . ($iconOnly ? '56' : '64') . '">';
 
 $wrapClass = 'inline-flex flex-col items-center ' . ($logoClass ?? '');
 ?>
