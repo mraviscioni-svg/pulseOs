@@ -41,6 +41,12 @@ jobs:
       - name: Instalar dependencias (Composer)
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
+      - name: Build CSS (Tailwind CLI)
+        run: |
+          curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-linux-x64
+          chmod +x tailwindcss-linux-x64
+          ./tailwindcss-linux-x64 -i ./resources/css/input.css -o ./public/assets/css/tailwind.css --minify
+
       - name: Definir carpeta remota según entorno
         run: |
           if [ "$DEPLOY_BRANCH" = "prod" ]; then
@@ -114,3 +120,7 @@ jobs:
             .env.example
             .env.local
             node_modules/**
+            package.json
+            package-lock.json
+            tailwind.config.js
+            resources/**
