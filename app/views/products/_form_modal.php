@@ -19,59 +19,98 @@ $field = static function (string $key, mixed $default = '') use ($product): stri
 $isActive = old('is_active') !== '' && old('is_active') !== null
     ? !empty(old('is_active'))
     : (bool) ($product['is_active'] ?? true);
+$costVal = (float) $field('cost', '0');
+$priceVal = (float) $field('price', '0');
+$marginPct = $costVal > 0 && $priceVal > 0 ? round((($priceVal - $costVal) / $costVal) * 100, 1) : null;
 ?>
 <form method="post" enctype="multipart/form-data" action="<?= $isEdit ? url('/products/' . $product['id']) : url('/products') ?>">
   <?= csrf_field() ?>
-  <div class="modal-form-grid">
-    <div class="sm:col-span-2">
-      <label class="label">Nombre</label>
-      <input name="name" value="<?= e($field('name')) ?>" required class="input-field" placeholder="Ej: Agua 500ml">
+
+  <?php if (!$isEdit): ?>
+  <p class="mb-4 text-sm text-slate-500">Completá lo esencial en tres pasos. Podés agregar más datos después de guardar.</p>
+  <?php endif; ?>
+
+  <div class="space-y-4">
+    <div class="form-step">
+      <p class="form-step-title"><span class="form-step-num">1</span> Identificación</p>
+      <div class="modal-form-grid">
+        <div class="sm:col-span-2">
+          <label class="label">Nombre del producto</label>
+          <input name="name" value="<?= e($field('name')) ?>" required class="input-field" placeholder="Ej: Agua 500ml" autofocus>
+          <p class="form-hint">Nombre visible en POS, listados y tickets.</p>
+        </div>
+        <div>
+          <label class="label">Código de barras</label>
+          <input name="barcode" value="<?= e($field('barcode')) ?>" class="input-field" placeholder="7790310981234" inputmode="numeric">
+          <p class="form-hint">Único por comercio. Escanealo o escribilo a mano.</p>
+        </div>
+        <div>
+          <label class="label">Categoría</label>
+          <select name="category_id" class="input-field">
+            <option value="">— Sin categoría —</option>
+            <?php foreach ($categories as $c): ?>
+            <option value="<?= (int) $c['id'] ?>" <?= (int) $field('category_id', '0') === (int) $c['id'] ? 'selected' : '' ?>><?= e($c['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+          <?php if (!$categories): ?>
+          <p class="form-hint"><a href="<?= url('/categories') ?>" class="link-accent">Creá categorías</a> para organizar mejor el catálogo.</p>
+          <?php endif; ?>
+        </div>
+      </div>
     </div>
-    <div>
-      <label class="label">Código de barras</label>
-      <input name="barcode" value="<?= e($field('barcode')) ?>" class="input-field" placeholder="7790…">
+
+    <div class="form-step">
+      <p class="form-step-title"><span class="form-step-num">2</span> Precios</p>
+      <div class="modal-form-grid">
+        <div>
+          <label class="label">Precio compra</label>
+          <input type="number" step="0.01" min="0" name="cost" value="<?= e($field('cost', '0')) ?>" class="input-field" placeholder="0">
+          <p class="form-hint">Costo de reposición (opcional).</p>
+        </div>
+        <div>
+          <label class="label">Precio venta</label>
+          <input type="number" step="0.01" min="0" name="price" value="<?= e($field('price')) ?>" required class="input-field" placeholder="0">
+          <?php if ($marginPct !== null): ?>
+          <p class="margin-hint margin-hint-positive">Margen estimado: <?= e((string) $marginPct) ?>%</p>
+          <?php else: ?>
+          <p class="form-hint">Precio al público en POS.</p>
+          <?php endif; ?>
+        </div>
+      </div>
     </div>
-    <div>
-      <label class="label">Categoría</label>
-      <select name="category_id" class="input-field">
-        <option value="">— Sin categoría —</option>
-        <?php foreach ($categories as $c): ?>
-        <option value="<?= (int) $c['id'] ?>" <?= (int) $field('category_id', '0') === (int) $c['id'] ? 'selected' : '' ?>><?= e($c['name']) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div>
-      <label class="label">Precio compra</label>
-      <input type="number" step="0.01" min="0" name="cost" value="<?= e($field('cost', '0')) ?>" class="input-field">
-    </div>
-    <div>
-      <label class="label">Precio venta</label>
-      <input type="number" step="0.01" min="0" name="price" value="<?= e($field('price')) ?>" required class="input-field">
-    </div>
-    <?php if (!$isEdit): ?>
-    <div>
-      <label class="label">Stock actual</label>
-      <input type="number" step="0.001" min="0" name="stock" value="<?= e($field('stock', '0')) ?>" class="input-field">
-    </div>
-    <?php else: ?>
-    <div>
-      <label class="label">Stock actual</label>
-      <input type="text" value="<?= e($product['stock'] ?? '0') ?>" class="input-field bg-slate-50 text-slate-500" readonly tabindex="-1">
-    </div>
-    <?php endif; ?>
-    <div>
-      <label class="label">Stock mínimo</label>
-      <input type="number" step="0.001" min="0" name="min_stock" value="<?= e($field('min_stock', '0')) ?>" class="input-field">
-    </div>
-    <div class="sm:col-span-2">
-      <label class="form-check">
-        <input type="checkbox" name="is_active" value="1" <?= $isActive ? 'checked' : '' ?>>
-        Producto activo
-      </label>
+
+    <div class="form-step">
+      <p class="form-step-title"><span class="form-step-num">3</span> Stock</p>
+      <div class="modal-form-grid">
+        <?php if (!$isEdit): ?>
+        <div>
+          <label class="label">Stock actual</label>
+          <input type="number" step="0.001" min="0" name="stock" value="<?= e($field('stock', '0')) ?>" class="input-field">
+          <p class="form-hint">Cantidad inicial en depósito.</p>
+        </div>
+        <?php else: ?>
+        <div>
+          <label class="label">Stock actual</label>
+          <input type="text" value="<?= e($product['stock'] ?? '0') ?>" class="input-field bg-slate-50 text-slate-500" readonly tabindex="-1">
+          <p class="form-hint">Usá el ajuste más abajo para modificarlo.</p>
+        </div>
+        <?php endif; ?>
+        <div>
+          <label class="label">Stock mínimo</label>
+          <input type="number" step="0.001" min="0" name="min_stock" value="<?= e($field('min_stock', '0')) ?>" class="input-field">
+          <p class="form-hint">Alerta cuando el stock baje de este valor.</p>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="form-check">
+            <input type="checkbox" name="is_active" value="1" <?= $isActive ? 'checked' : '' ?>>
+            Producto activo (visible en POS y ventas)
+          </label>
+        </div>
+      </div>
     </div>
   </div>
 
-  <details class="modal-advanced">
+  <details class="modal-advanced mt-4">
     <summary class="mb-3">Más opciones</summary>
     <div class="modal-form-grid">
       <div class="sm:col-span-2 flex gap-4 items-start">
@@ -121,18 +160,20 @@ $isActive = old('is_active') !== '' && old('is_active') !== null
         <label class="label">Descripción</label>
         <textarea name="description" rows="2" class="input-field"><?= e($field('description')) ?></textarea>
       </div>
+      <?php if ($isEdit): ?>
       <div class="sm:col-span-2">
         <label class="form-check">
           <input type="checkbox" name="has_variants" value="1" <?= !empty($product['has_variants']) ? 'checked' : '' ?>>
           Usa variantes (talle, color, etc.)
         </label>
       </div>
+      <?php endif; ?>
     </div>
   </details>
 
   <div class="modal-form-footer">
     <a href="<?= url('/products') ?>" class="btn-secondary">Cancelar</a>
-    <button type="submit" class="btn-primary">Guardar</button>
+    <button type="submit" class="btn-primary"><?= $isEdit ? 'Guardar cambios' : 'Crear producto' ?></button>
   </div>
 </form>
 

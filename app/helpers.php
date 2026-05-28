@@ -57,6 +57,17 @@ function asset(string $path): string
     return url('/assets/' . ltrim($path, '/'));
 }
 
+/** URL de login del comercio con slug y usuario opcional para prellenar el acceso. */
+function tenant_login_url(?string $slug = null, ?string $username = null): string
+{
+    $query = array_filter([
+        'tenant' => $slug !== null && $slug !== '' ? $slug : null,
+        'username' => $username !== null && $username !== '' ? $username : null,
+    ], static fn ($v) => $v !== null && $v !== '');
+
+    return url('/login' . ($query !== [] ? '?' . http_build_query($query) : ''));
+}
+
 function e(?string $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');

@@ -245,6 +245,45 @@
   .form-check input {
     @apply h-4 w-4 rounded border-slate-300 text-navy-900 focus:ring-accent-500;
   }
+  .settings-nav-card {
+    @apply flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-card transition hover:border-accent-200 hover:shadow-md;
+  }
+  .settings-nav-card-icon {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600;
+  }
+  .settings-nav-card-icon svg {
+    @apply h-5 w-5;
+  }
+  .settings-nav-card-body {
+    @apply min-w-0 flex-1;
+  }
+  .settings-nav-card-title {
+    @apply block text-sm font-semibold text-navy-900;
+  }
+  .settings-nav-card-desc {
+    @apply mt-0.5 block text-xs leading-relaxed text-slate-500;
+  }
+  .settings-nav-card-chevron {
+    @apply h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-accent-500;
+  }
+  .form-step {
+    @apply rounded-xl border border-slate-200 bg-slate-50/60 p-4;
+  }
+  .form-step-title {
+    @apply mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500;
+  }
+  .form-step-num {
+    @apply flex h-5 w-5 items-center justify-center rounded-full bg-navy-900 text-[10px] font-bold text-white;
+  }
+  .login-tenant-badge {
+    @apply mb-4 rounded-xl border border-accent-200 bg-accent-50 px-4 py-3 text-sm text-accent-800;
+  }
+  .margin-hint {
+    @apply mt-1 text-xs text-slate-500;
+  }
+  .margin-hint-positive {
+    @apply text-emerald-600;
+  }
   .badge-muted {
     @apply bg-slate-100 text-slate-600 ring-1 ring-slate-200/60;
   }

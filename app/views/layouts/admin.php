@@ -6,9 +6,12 @@
 <body class="min-h-full">
 <aside class="sidebar !w-56">
   <div class="sidebar-brand">
-    <a href="<?= url('/admin/tenants') ?>" class="block hover:opacity-90" title="PulseOS Platform">
-      <img src="<?= asset('images/logo.svg') ?>" alt="PulseOS" class="h-9 w-auto max-w-full object-contain object-left" width="212" height="52">
-    </a>
+    <?php
+    $logoSize = 'sm';
+    $logoAlign = 'left';
+    $logoHref = '/admin/tenants';
+    require __DIR__ . '/../partials/logo.php';
+    ?>
     <p class="mt-2 text-xs text-slate-500">Platform</p>
   </div>
   <nav class="sidebar-nav">

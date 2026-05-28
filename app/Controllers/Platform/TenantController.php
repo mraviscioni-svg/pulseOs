@@ -120,6 +120,18 @@ final class TenantController extends Controller
             $activeModules = config('business_types')[$detail['tenant']['business_type']]['modules'] ?? [];
         }
 
+        $ownerUser = null;
+        foreach ($detail['users'] as $u) {
+            $role = strtolower((string) ($u['role_name'] ?? ''));
+            if (str_contains($role, 'owner') || str_contains($role, 'dueño') || str_contains($role, 'propietario')) {
+                $ownerUser = $u;
+                break;
+            }
+        }
+        if (!$ownerUser && !empty($detail['users'][0])) {
+            $ownerUser = $detail['users'][0];
+        }
+
         $ownerUserId = (new UserModel())->findOwnerUserIdForTenant((int) $detail['tenant']['id']);
 
         $this->view('admin/tenants/show', [
@@ -129,7 +141,11 @@ final class TenantController extends Controller
             'moduleLabels' => config('platform_modules'),
             'activeModules' => $activeModules,
             'ownerUserId' => $ownerUserId,
-            'tenantLoginUrl' => url('/login'),
+            'ownerUser' => $ownerUser,
+            'tenantLoginUrl' => tenant_login_url(
+                (string) $detail['tenant']['slug'],
+                $ownerUser['username'] ?? null
+            ),
         ], 'layouts/admin');
     }
 

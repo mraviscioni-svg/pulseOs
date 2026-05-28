@@ -19,7 +19,7 @@ final class SettingsModel
     }
 
     /** @param array<string, mixed> $data */
-    public function update(int $tenantId, array $data): void
+    public function updateSettings(int $tenantId, array $data): void
     {
         $db = Database::connection();
         $stmt = $db->prepare(
@@ -35,7 +35,12 @@ final class SettingsModel
             'dark' => !empty($data['dark_mode']) ? 1 : 0,
             'tenant_id' => $tenantId,
         ]);
+    }
 
+    /** @param array<string, mixed> $data */
+    public function updateTenant(int $tenantId, array $data): void
+    {
+        $db = Database::connection();
         $tenant = $db->prepare('UPDATE tenants SET name = :name, phone = :phone, address = :address, tax_id = :tax_id WHERE id = :id');
         $tenant->execute([
             'name' => $data['tenant_name'],
@@ -44,5 +49,12 @@ final class SettingsModel
             'tax_id' => $data['tax_id'] ?? null,
             'id' => $tenantId,
         ]);
+    }
+
+    /** @param array<string, mixed> $data */
+    public function update(int $tenantId, array $data): void
+    {
+        $this->updateSettings($tenantId, $data);
+        $this->updateTenant($tenantId, $data);
     }
 }

@@ -54,7 +54,7 @@ final class UserModel extends Model
     public function findByUsernameGlobal(string $username): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT u.*, r.slug AS role_slug, t.name AS tenant_name
+            'SELECT u.*, r.slug AS role_slug, t.name AS tenant_name, t.slug AS tenant_slug
              FROM users u
              JOIN roles r ON r.id = u.role_id
              JOIN tenants t ON t.id = u.tenant_id

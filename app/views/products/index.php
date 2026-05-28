@@ -78,6 +78,7 @@ $modalContent = ob_get_clean();
 $modalTitle = $modal['title'];
 $modalSubtitle = $modal['subtitle'] ?? null;
 $closeUrl = $modal['closeUrl'] ?? url('/products');
+$modalWide = true;
 require __DIR__ . '/../partials/form_modal.php';
 ?>
 <?php endif; ?>

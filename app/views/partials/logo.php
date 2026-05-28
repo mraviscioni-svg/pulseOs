@@ -5,18 +5,25 @@
 /** @var string $logoClass */
 /** @var string $logoTagline */
 /** @var string $logoAlign center|left */
+/** @var string $logoVariant light|dark */
 
 $size = $logoSize ?? 'md';
 $iconOnly = $logoIconOnly ?? false;
 $href = $logoHref ?? null;
 $tagline = $logoTagline ?? null;
 $align = $logoAlign ?? 'center';
+$variant = $logoVariant ?? 'light';
 
-$heights = ['sm' => 'h-8', 'md' => 'h-10', 'lg' => 'h-14'];
+$heights = ['sm' => 'h-9', 'md' => 'h-10', 'lg' => 'h-14'];
 $height = $heights[$size] ?? $heights['md'];
 
-$src = $iconOnly ? asset('images/logo-icon.svg') : asset('images/logo.svg');
-$maxW = $iconOnly ? 'max-w-[3.5rem]' : 'max-w-[220px]';
+if ($iconOnly) {
+    $src = asset('images/logo-icon.svg');
+    $maxW = 'max-w-[3.5rem]';
+} else {
+    $src = asset($variant === 'dark' ? 'images/logo-dark.svg' : 'images/logo.svg');
+    $maxW = 'max-w-[220px]';
+}
 
 if ($align === 'left') {
     $imgClass = trim("$height w-auto $maxW object-contain object-left");

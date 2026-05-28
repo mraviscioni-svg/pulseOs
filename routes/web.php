@@ -105,6 +105,10 @@ return function ($router, array $mw) {
     $router->post('/users/{id}/toggle', [UserController::class, 'toggle'], array_merge($auth, [$perm('users.manage')]));
 
     $router->get('/settings', [SettingsController::class, 'index'], array_merge($auth, [$perm('settings.manage')]));
+    $router->get('/settings/comercio', [SettingsController::class, 'comercio'], array_merge($auth, [$perm('settings.manage')]));
+    $router->get('/settings/operacion', [SettingsController::class, 'operacion'], array_merge($auth, [$perm('settings.manage')]));
+    $router->post('/settings/comercio', [SettingsController::class, 'updateComercio'], array_merge($auth, [$perm('settings.manage')]));
+    $router->post('/settings/operacion', [SettingsController::class, 'updateOperacion'], array_merge($auth, [$perm('settings.manage')]));
     $router->post('/settings', [SettingsController::class, 'update'], array_merge($auth, [$perm('settings.manage')]));
 
     $placeholder = [ModulePlaceholderController::class, 'show'];

@@ -1,54 +1,34 @@
-<div class="page-header">
-  <div class="page-header-main">
-    <p class="page-eyebrow">Comercio</p>
-    <h2>Configuración</h2>
-    <p>Datos de tu negocio y preferencias de operación.</p>
-  </div>
+<?php
+$pageEyebrow = 'Configuración';
+$pageTitle = 'Comercio';
+$pageDescription = 'Nombre público del comercio y usuarios con acceso al panel. Los cambios aplican a todo el equipo.';
+require __DIR__ . '/../partials/crud_page_header.php';
+?>
+
+<div class="grid gap-4 sm:grid-cols-2 xl:max-w-3xl">
+  <?php
+  $href = url('/settings/comercio');
+  $title = 'Datos del comercio';
+  $description = 'Nombre visible, CUIT, teléfono y dirección de tu negocio.';
+  $iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>';
+  require __DIR__ . '/../partials/settings_nav_card.php';
+
+  if (can('users.manage')):
+  $href = url('/users');
+  $title = 'Equipo';
+  $description = 'Alta de usuarios, roles y activación del personal.';
+  $iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>';
+  require __DIR__ . '/../partials/settings_nav_card.php';
+  endif;
+
+  $href = url('/settings/operacion');
+  $title = 'Operación';
+  $description = 'Moneda, IVA, tickets POS y alertas de stock bajo.';
+  $iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>';
+  require __DIR__ . '/../partials/settings_nav_card.php';
+  ?>
 </div>
 
-<form method="post" action="<?= url('/settings') ?>" class="form-card max-w-2xl">
-  <?= csrf_field() ?>
-  <div class="form-section mb-6 space-y-4">
-    <p class="form-section-title">Empresa</p>
-    <?php
-    $name = 'tenant_name'; $label = 'Nombre del negocio'; $type = 'input'; $value = $tenant['name'] ?? ''; $required = true;
-    require __DIR__ . '/../partials/form_group.php';
-    $name = 'tax_id'; $label = 'CUIT'; $type = 'input'; $value = $tenant['tax_id'] ?? ''; $placeholder = '20-12345678-9';
-    require __DIR__ . '/../partials/form_group.php';
-    $name = 'phone'; $label = 'Teléfono'; $type = 'input'; $value = $tenant['phone'] ?? '';
-    require __DIR__ . '/../partials/form_group.php';
-    $name = 'address'; $label = 'Dirección'; $type = 'textarea'; $value = $tenant['address'] ?? '';
-    require __DIR__ . '/../partials/form_group.php';
-    ?>
-  </div>
-
-  <div class="form-section mb-6 space-y-4">
-    <p class="form-section-title">Operación</p>
-    <div class="grid gap-4 sm:grid-cols-2">
-      <?php
-      $name = 'currency'; $label = 'Moneda'; $type = 'input'; $value = $settings['currency'] ?? 'ARS';
-      require __DIR__ . '/../partials/form_group.php';
-      $name = 'tax_rate'; $label = 'IVA %'; $type = 'number'; $value = $settings['tax_rate'] ?? '0';
-      require __DIR__ . '/../partials/form_group.php';
-      ?>
-    </div>
-    <?php
-    $name = 'pos_receipt_footer'; $label = 'Pie de ticket POS'; $type = 'textarea'; $value = $settings['pos_receipt_footer'] ?? '';
-    $placeholder = 'Gracias por su compra';
-    require __DIR__ . '/../partials/form_group.php';
-    ?>
-    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 hover:bg-slate-50">
-      <input type="checkbox" name="low_stock_alert" value="1" class="h-4 w-4 rounded border-slate-600" <?= ($settings['low_stock_alert'] ?? 1) ? 'checked' : '' ?>>
-      <span class="text-sm">Alertas de stock bajo</span>
-    </label>
-    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 hover:bg-slate-50">
-      <input type="checkbox" name="dark_mode" value="1" class="h-4 w-4 rounded border-slate-600" <?= ($settings['dark_mode'] ?? 1) ? 'checked' : '' ?>>
-      <span class="text-sm">Modo oscuro</span>
-    </label>
-  </div>
-
-  <p class="mb-4 text-sm text-slate-500">Los módulos del sistema (POS, compras, reportes, etc.) los habilita el administrador de PulseOS.</p>
-  <div class="form-actions">
-    <button type="submit" class="btn-primary">Guardar configuración</button>
-  </div>
-</form>
+<div class="mt-6 max-w-3xl rounded-2xl border border-slate-200/80 bg-white p-5 text-sm text-slate-500 shadow-card">
+  Los módulos del sistema (POS, compras, reportes, etc.) los habilita el administrador de <strong class="text-navy-900">PulseOS</strong>.
+</div>

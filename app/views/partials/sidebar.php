@@ -26,11 +26,14 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
 ?>
 <aside class="sidebar">
   <div class="sidebar-brand">
-    <a href="<?= url('/dashboard') ?>" class="block hover:opacity-90" title="PulseOS">
-      <img src="<?= asset('images/logo.svg') ?>" alt="PulseOS" class="h-9 w-auto max-w-full object-contain object-left" width="212" height="52">
-    </a>
+    <?php
+    $logoSize = 'sm';
+    $logoAlign = 'left';
+    $logoHref = '/dashboard';
+    require __DIR__ . '/logo.php';
+    ?>
     <?php if ($tenantName !== ''): ?>
-    <p class="mt-2 truncate text-xs text-slate-500"><?= e($tenantName) ?></p>
+    <p class="mt-2 truncate text-xs font-medium text-slate-500"><?= e($tenantName) ?></p>
     <?php endif; ?>
   </div>
   <nav class="sidebar-nav">
@@ -80,7 +83,7 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
         $active = str_contains($current, '/settings');
     ?>
     <a href="<?= url('/settings') ?>" class="nav-link <?= $active ? 'nav-active' : '' ?>">
-      <?= $renderNavIcon('settings') ?> Configuración
+      <?= $renderNavIcon('settings') ?> Comercio
     </a>
     <?php endif;
 

@@ -6,7 +6,7 @@
  */
 ?>
 <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal-panel">
+  <div class="modal-panel <?= !empty($modalWide) ? '!max-w-xl' : '' ?>">
     <div class="modal-header">
       <div class="modal-header-text">
         <h3 id="modal-title"><?= e($modalTitle) ?></h3>

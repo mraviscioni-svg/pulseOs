@@ -16,12 +16,30 @@ final class AuthController extends Controller
 {
     public function showLogin(): void
     {
-        $this->view('auth/login', ['title' => 'Iniciar sesión'], 'layouts/guest');
+        $tenantSlug = trim((string) ($_GET['tenant'] ?? ''));
+        $prefillUsername = trim((string) ($_GET['username'] ?? old('username', '')));
+        $loginTenant = null;
+
+        if ($tenantSlug !== '') {
+            $stmt = \App\Core\Database::connection()->prepare(
+                'SELECT name, slug, is_active FROM tenants WHERE slug = :slug LIMIT 1'
+            );
+            $stmt->execute(['slug' => $tenantSlug]);
+            $loginTenant = $stmt->fetch() ?: null;
+        }
+
+        $this->view('auth/login', [
+            'title' => 'Iniciar sesión',
+            'loginTenant' => $loginTenant,
+            'tenantSlug' => $tenantSlug,
+            'prefillUsername' => $prefillUsername,
+        ], 'layouts/guest');
     }
 
     public function login(): void
     {
         $data = $this->input();
+        $tenantSlug = trim((string) ($data['tenant'] ?? $_GET['tenant'] ?? ''));
         $validator = new Validator();
         if (!$validator->validate($data, [
             'username' => 'required|min:3',
@@ -29,14 +47,17 @@ final class AuthController extends Controller
         ])) {
             Session::flash('error', 'Credenciales inválidas.');
             Session::set('_old', $data);
-            $this->redirect('/login');
+            $this->redirect($tenantSlug !== '' ? tenant_login_url($tenantSlug, $data['username'] ?? null) : '/login');
         }
 
         try {
             $auth = new AuthService();
-            if (!$auth->attempt($data['username'], $data['password'])) {
-                Session::flash('error', 'Usuario o contraseña incorrectos. Contactá al administrador de la plataforma.');
-                $this->redirect('/login');
+            if (!$auth->attempt($data['username'], $data['password'], $tenantSlug !== '' ? $tenantSlug : null)) {
+                $msg = $tenantSlug !== ''
+                    ? 'Usuario o contraseña incorrectos para este comercio.'
+                    : 'Usuario o contraseña incorrectos. Contactá al administrador de la plataforma.';
+                Session::flash('error', $msg);
+                $this->redirect($tenantSlug !== '' ? tenant_login_url($tenantSlug, $data['username'] ?? null) : '/login');
             }
             \App\Core\Session::regenerate();
         } catch (\PDOException $e) {
@@ -44,10 +65,10 @@ final class AuthController extends Controller
             if (config('app')['debug']) {
                 Session::flash('error', 'DB: ' . $e->getMessage());
             }
-            $this->redirect('/login');
+            $this->redirect($tenantSlug !== '' ? tenant_login_url($tenantSlug) : '/login');
         } catch (\Throwable $e) {
             Session::flash('error', config('app')['debug'] ? $e->getMessage() : 'Error al iniciar sesión.');
-            $this->redirect('/login');
+            $this->redirect($tenantSlug !== '' ? tenant_login_url($tenantSlug) : '/login');
         }
 
         $this->redirect('/dashboard');
