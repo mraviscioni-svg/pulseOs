@@ -8,8 +8,13 @@ $root = dirname(__DIR__);
 
 require $root . '/vendor/autoload.php';
 
-if (file_exists($root . '/.env')) {
-    Dotenv\Dotenv::createImmutable($root)->safeLoad();
+foreach (['.env', 'pulseos.env'] as $envFile) {
+    $envPath = $root . DIRECTORY_SEPARATOR . $envFile;
+    if (!is_file($envPath)) {
+        continue;
+    }
+    Dotenv\Dotenv::createImmutable($root, $envFile)->safeLoad();
+    break;
 }
 
 date_default_timezone_set(

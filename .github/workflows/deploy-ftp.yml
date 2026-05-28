@@ -61,40 +61,15 @@ jobs:
           fi
           echo "Desplegando a: $ENV_LABEL"
 
-      - name: Generar .env (mismos PROD_DB_* para prod y pre-prod)
+      - name: Generar .env (PHP — claves especiales y pulseos.env)
         env:
           PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
           PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
           PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
           PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
           PROD_APP_URL: ${{ secrets.PROD_APP_URL }}
-        run: |
-          if [ -z "$PROD_DB_HOST" ] || [ -z "$PROD_DB_NAME" ]; then
-            echo "PROD_DB_* incompletos: no se genera .env"
-            exit 0
-          fi
-          if [ "$REMOTE_SUBDIR" = "pulseOS" ]; then
-            APP_DEBUG=false
-            APP_URL="${PROD_APP_URL:-https://tallerboedo.com.ar/pulseOS/public}"
-          else
-            APP_DEBUG=true
-            APP_URL="https://tallerboedo.com.ar/PulseOS-prep/public"
-          fi
-          {
-            echo "APP_NAME=PulseOS"
-            echo "APP_ENV=production"
-            echo "APP_DEBUG=${APP_DEBUG}"
-            echo "APP_URL=${APP_URL}"
-            echo "APP_KEY="
-            echo "DB_HOST=${PROD_DB_HOST}"
-            echo "DB_PORT=3306"
-            echo "DB_DATABASE=${PROD_DB_NAME}"
-            echo "DB_USERNAME=${PROD_DB_USER}"
-            echo "DB_PASSWORD=${PROD_DB_PASSWORD}"
-            echo "DB_CHARSET=utf8mb4"
-            echo "SESSION_LIFETIME=7200"
-          } > .env
-          echo ".env generado para ${ENV_LABEL}"
+          REMOTE_SUBDIR: ${{ env.REMOTE_SUBDIR }}
+        run: php scripts/generate-env.php
 
       - name: Preparar artefactos (sin .git ni CI)
         run: |

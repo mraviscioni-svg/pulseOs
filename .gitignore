@@ -10,6 +10,7 @@ build/
 .env
 .env.*
 !.env.example
+pulseos.env
 
 # IDE / OS
 .idea/

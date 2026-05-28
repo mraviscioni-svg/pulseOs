@@ -21,7 +21,7 @@ final class HealthController extends Controller
             'base_path' => base_path(),
             'session_path' => session_cookie_path(),
             'php' => PHP_VERSION,
-            'env_file' => is_file($root . '/.env') ? 'ok (.env en servidor)' : 'falta — el deploy debe generar .env o crealo manual',
+            'env_file' => is_file($root . '/.env') ? 'ok (.env)' : (is_file($root . '/pulseos.env') ? 'ok (pulseos.env)' : 'falta — redeploy o creá pulseos.env'),
             'db_host' => $dbCfg['host'],
             'db_name' => $dbCfg['database'],
             'db_user' => $dbCfg['username'],
