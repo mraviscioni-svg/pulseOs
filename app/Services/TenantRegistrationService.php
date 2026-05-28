@@ -67,7 +67,11 @@ final class TenantRegistrationService
             $userId = (int) $db->lastInsertId();
 
             $businessType = (string) ($data['business_type'] ?? 'otro');
-            $imported = (new BusinessCatalogService())->seedTenant($tenantId, $businessType);
+            try {
+                $imported = (new BusinessCatalogService())->seedTenant($tenantId, $businessType);
+            } catch (\Throwable) {
+                $imported = ['categories' => 0, 'brands' => 0];
+            }
 
             $db->commit();
             $this->audit->log($tenantId, $userId, 'tenant.registered');

@@ -50,6 +50,7 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
           <a href="<?= url('/admin/tenants/' . $t['id']) ?>" class="btn-action btn-action-edit">Gestionar</a>
           <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>" class="inline">
             <?= csrf_field() ?>
+            <input type="hidden" name="return" value="list">
             <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
             <button type="submit" class="btn-action <?= $t['is_active'] ? 'btn-action-warn' : 'btn-action-ok' ?>">
               <?= $t['is_active'] ? 'Suspender' : 'Activar' ?>

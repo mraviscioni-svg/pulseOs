@@ -59,8 +59,10 @@
     <div class="form-section space-y-4">
       <p class="form-section-title">Datos del negocio</p>
       <?php
+      unset($hint, $placeholder, $options);
       $name = 'name'; $label = 'Nombre'; $type = 'input'; $value = $t['name']; $required = true;
       require __DIR__ . '/../../partials/form_group.php';
+      unset($hint, $placeholder, $options);
       $name = 'business_type'; $label = 'Rubro'; $type = 'select'; $value = $t['business_type']; $required = true;
       $options = [];
       foreach ($businessTypes as $key => $typeRow) {
@@ -70,13 +72,16 @@
       ?>
       <div class="grid gap-4 sm:grid-cols-2">
         <?php
+        unset($hint, $placeholder, $options);
         $name = 'email'; $label = 'Email'; $type = 'email'; $value = $t['email'] ?? ''; $required = true;
         require __DIR__ . '/../../partials/form_group.php';
+        unset($hint, $placeholder, $options);
         $name = 'phone'; $label = 'Teléfono'; $type = 'input'; $value = $t['phone'] ?? '';
         require __DIR__ . '/../../partials/form_group.php';
         ?>
       </div>
       <?php
+      unset($hint, $placeholder, $options);
       $name = 'address'; $label = 'Dirección'; $type = 'input'; $value = $t['address'] ?? '';
       require __DIR__ . '/../../partials/form_group.php';
       ?>

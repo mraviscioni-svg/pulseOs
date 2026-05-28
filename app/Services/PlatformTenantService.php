@@ -57,10 +57,12 @@ final class PlatformTenantService
         $settings = $this->db->prepare('SELECT * FROM business_settings WHERE tenant_id = :id LIMIT 1');
         $settings->execute(['id' => $tenantId]);
 
+        $settingsRow = $settings->fetch();
+
         return [
             'tenant' => $tenant,
             'users' => $users->fetchAll(),
-            'settings' => $settings->fetch(),
+            'settings' => is_array($settingsRow) ? $settingsRow : [],
             'stats' => $this->stats($tenantId),
         ];
     }
@@ -102,13 +104,29 @@ final class PlatformTenantService
             'id' => $tenantId,
         ]);
 
-        $settings = $this->db->prepare(
-            'UPDATE business_settings SET modules_json = :modules WHERE tenant_id = :id'
+        $this->ensureSettingsRow($tenantId, $modules);
+    }
+
+    /** @param list<string> $modules */
+    private function ensureSettingsRow(int $tenantId, array $modules): void
+    {
+        $check = $this->db->prepare('SELECT id FROM business_settings WHERE tenant_id = :id LIMIT 1');
+        $check->execute(['id' => $tenantId]);
+        $encoded = json_encode($modules, JSON_UNESCAPED_UNICODE);
+
+        if ($check->fetch()) {
+            $stmt = $this->db->prepare(
+                'UPDATE business_settings SET modules_json = :modules WHERE tenant_id = :id'
+            );
+            $stmt->execute(['modules' => $encoded, 'id' => $tenantId]);
+
+            return;
+        }
+
+        $stmt = $this->db->prepare(
+            'INSERT INTO business_settings (tenant_id, modules_json) VALUES (:id, :modules)'
         );
-        $settings->execute([
-            'modules' => json_encode($modules, JSON_UNESCAPED_UNICODE),
-            'id' => $tenantId,
-        ]);
+        $stmt->execute(['id' => $tenantId, 'modules' => $encoded]);
     }
 
     /** @param array{modules?: list<string>|mixed, business_type?: string} $data

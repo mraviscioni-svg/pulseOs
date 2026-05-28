@@ -112,6 +112,9 @@ final class TenantController extends Controller
         }
 
         $settings = $detail['settings'] ?? [];
+        if (!is_array($settings)) {
+            $settings = [];
+        }
         $activeModules = json_decode((string) ($settings['modules_json'] ?? '[]'), true) ?: [];
         if ($activeModules === []) {
             $activeModules = config('business_types')[$detail['tenant']['business_type']]['modules'] ?? [];
@@ -193,6 +196,11 @@ final class TenantController extends Controller
         (new AuditService())->log(null, null, $active ? 'platform.tenant.activated' : 'platform.tenant.deactivated', 'tenant', $tenantId);
 
         Session::flash('success', $active ? 'Tenant activado.' : 'Tenant desactivado.');
+
+        if (($this->input()['return'] ?? '') === 'list') {
+            $this->redirect('/admin/tenants');
+        }
+
         $this->redirect('/admin/tenants/' . $tenantId);
     }
 }
