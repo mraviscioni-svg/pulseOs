@@ -30,6 +30,7 @@ Base dedicada a prep. Importar **en este orden**:
 | 1 | `database/migrations/001_initial_schema.sql` |
 | 2 | `database/migrations/002_seed_roles_permissions.sql` |
 | 3 | `database/migrations/003_platform_admins.sql` |
+| 5 | `database/migrations/005_business_type_catalog.sql` |
 | 4 | `database/migrations/004_username_login.sql` |
 
 ### 3. Archivo `.env` en el FTP

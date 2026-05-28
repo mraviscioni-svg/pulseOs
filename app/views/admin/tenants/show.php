@@ -12,12 +12,13 @@
         <?php
         $ownerUser = null;
         foreach ($detail['users'] as $u) {
-            if (($u['role_name'] ?? '') === 'Owner' || str_contains(strtolower($u['role_name'] ?? ''), 'owner')) {
+            $role = strtolower((string) ($u['role_name'] ?? ''));
+            if (str_contains($role, 'owner') || str_contains($role, 'dueño') || str_contains($role, 'propietario')) {
                 $ownerUser = $u;
                 break;
             }
         }
-        if (!$ownerUser && !empty($detail['users'])) {
+        if (!$ownerUser && !empty($detail['users'][0])) {
             $ownerUser = $detail['users'][0];
         }
         if ($ownerUser): ?>
