@@ -9,7 +9,7 @@
 
 ---
 
-## Secrets (8 + 1 opcional)
+## Secrets (9 + 1 opcional)
 
 ### FTP
 
@@ -31,6 +31,14 @@
 
 El nombre `PROD_DB_*` es histórico; aplica a **ambos** entornos.
 
+### Migraciones automáticas
+
+| Secret | Descripción |
+|--------|-------------|
+| `MIGRATION_SECRET` | Cadena larga aleatoria (ej. `openssl rand -hex 32`). Protege `public/migrate-runner.php` en el servidor. **Recomendado.** |
+
+Sin este secret, el deploy no ejecuta migraciones; podés correrlas a mano o con `.env` local.
+
 ### Opcional
 
 | Secret | Descripción |
@@ -44,8 +52,9 @@ El nombre `PROD_DB_*` es histórico; aplica a **ambos** entornos.
 Cada push a `pre-prod` o `prod`:
 
 1. `composer install`
-2. Genera `.env` con `PROD_DB_*` (prep: `APP_DEBUG=true`, prod: `false`)
+2. Genera `.env` con `PROD_DB_*` y `MIGRATION_SECRET` (prep: `APP_DEBUG=true`, prod: `false`)
 3. Sube por FTP a la carpeta correspondiente
+4. POST a `public/migrate-runner.php` para aplicar migraciones SQL pendientes
 
 ---
 
@@ -63,10 +72,14 @@ PROD_DB_HOST=...
 PROD_DB_NAME=...
 PROD_DB_USER=...
 PROD_DB_PASSWORD=...
+MIGRATION_SECRET=...   # mismo que en GitHub (solo si corrés migraciones en local)
 ```
 
 ```powershell
+.\scripts\setup-local-env.ps1   # crea .env desde .env.example
 .\scripts\verify-connections.ps1
+php scripts/migrate.php --status
+php scripts/migrate.php
 ```
 
 ---
@@ -76,4 +89,5 @@ PROD_DB_PASSWORD=...
 | Action | Qué usa |
 |--------|---------|
 | **Verify connections** | `FTP_*` + `PROD_DB_*` |
-| **Deploy to FTP** | Igual + carpeta según rama |
+| **Deploy to FTP** | Igual + carpeta según rama + migraciones remotas |
+| **Run database migrations** | Solo `MIGRATION_SECRET` → ejecuta en prep y prod |

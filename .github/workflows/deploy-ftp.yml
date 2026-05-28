@@ -68,6 +68,7 @@ jobs:
           PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
           PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
           PROD_APP_URL: ${{ secrets.PROD_APP_URL }}
+          MIGRATION_SECRET: ${{ secrets.MIGRATION_SECRET }}
           REMOTE_SUBDIR: ${{ env.REMOTE_SUBDIR }}
         run: php scripts/generate-env.php
 
@@ -99,3 +100,29 @@ jobs:
             package-lock.json
             tailwind.config.js
             resources/**
+
+      - name: Ejecutar migraciones en el servidor
+        continue-on-error: true
+        env:
+          MIGRATION_SECRET: ${{ secrets.MIGRATION_SECRET }}
+        run: |
+          if [ -z "$MIGRATION_SECRET" ]; then
+            echo "::warning::MIGRATION_SECRET no definido — saltando migraciones automáticas."
+            exit 0
+          fi
+          if [ "$DEPLOY_BRANCH" = "prod" ]; then
+            BASE="https://tallerboedo.com.ar/pulseOS/public"
+          else
+            BASE="https://tallerboedo.com.ar/PulseOS-prep/public"
+          fi
+          echo "POST $BASE/migrate-runner.php"
+          RESP=$(curl -sS -w "\n%{http_code}" -X POST "$BASE/migrate-runner.php" \
+            -H "X-Migration-Token: $MIGRATION_SECRET" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data "token=$MIGRATION_SECRET" || true)
+          BODY=$(echo "$RESP" | head -n -1)
+          CODE=$(echo "$RESP" | tail -n 1)
+          echo "$BODY"
+          if [ "$CODE" != "200" ]; then
+            echo "::warning::Migraciones HTTP $CODE — revisá logs o ejecutá php scripts/migrate.php con .env local"
+          fi

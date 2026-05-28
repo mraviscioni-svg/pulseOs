@@ -1,0 +1,41 @@
+# Ejecutar migraciones pendientes en el servidor (usa MIGRATION_SECRET + migrate-runner.php)
+
+name: Run database migrations
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Elegir URL según entorno
+        run: |
+          echo "Elegí pre-prod o prod en el input del workflow si se agrega; por defecto prep."
+          echo "MIGRATE_URL=https://tallerboedo.com.ar/PulseOS-prep/public/migrate-runner.php" >> $GITHUB_ENV
+
+      - name: Ejecutar migraciones (prep)
+        env:
+          MIGRATION_SECRET: ${{ secrets.MIGRATION_SECRET }}
+          MIGRATE_URL: https://tallerboedo.com.ar/PulseOS-prep/public/migrate-runner.php
+        run: |
+          if [ -z "$MIGRATION_SECRET" ]; then
+            echo "::error::Definí el secret MIGRATION_SECRET en GitHub (cadena larga aleatoria)."
+            exit 1
+          fi
+          curl -sf -X POST "$MIGRATE_URL" \
+            -H "X-Migration-Token: $MIGRATION_SECRET" \
+            --data "token=$MIGRATION_SECRET"
+          echo ""
+          echo "Migraciones ejecutadas en PREP."
+
+      - name: Ejecutar migraciones (prod)
+        continue-on-error: true
+        env:
+          MIGRATION_SECRET: ${{ secrets.MIGRATION_SECRET }}
+        run: |
+          curl -sf -X POST "https://tallerboedo.com.ar/pulseOS/public/migrate-runner.php" \
+            -H "X-Migration-Token: $MIGRATION_SECRET" \
+            --data "token=$MIGRATION_SECRET"
+          echo ""
+          echo "Migraciones ejecutadas en PROD."

@@ -46,12 +46,15 @@ $appUrl = getenv('PROD_APP_URL') ?: (
         : 'https://tallerboedo.com.ar/PulseOS-prep/public'
 );
 
+$migrationSecret = trim((string) (getenv('MIGRATION_SECRET') ?: ''));
+
 $lines = [
     env_line('APP_NAME', 'PulseOS'),
     env_line('APP_ENV', 'production'),
     env_line('APP_DEBUG', $appDebug),
     env_line('APP_URL', $appUrl),
     env_line('APP_KEY', ''),
+    env_line('MIGRATION_SECRET', $migrationSecret),
     env_line('DB_HOST', $host),
     env_line('DB_PORT', getenv('PROD_DB_PORT') ?: '3306'),
     env_line('DB_DATABASE', $db),

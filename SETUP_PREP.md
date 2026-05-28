@@ -21,17 +21,26 @@ En GitHub: Actions → **Verify connections** → Run workflow (prueba FTP/MySQL
 - Push a rama `pre-prod` → Action **Deploy to FTP** → carpeta `PulseOS-prep/`
 - Verificar: https://github.com/mraviscioni-svg/pulseOs/actions (run en verde)
 
-### 2. Base de datos (vos en phpMyAdmin)
+### 2. Base de datos
 
-Base dedicada a prep. Importar **en este orden**:
+**Opción A — automático (recomendado):** en GitHub → Settings → Secrets → agregá `MIGRATION_SECRET` (cadena aleatoria larga). Tras cada deploy, el workflow aplica migraciones pendientes. También podés correr la Action **Run database migrations**.
+
+**Opción B — manual en phpMyAdmin** (solo la primera vez o sin secret):
 
 | # | Archivo |
 |---|---------|
 | 1 | `database/migrations/001_initial_schema.sql` |
 | 2 | `database/migrations/002_seed_roles_permissions.sql` |
 | 3 | `database/migrations/003_platform_admins.sql` |
-| 5 | `database/migrations/005_business_type_catalog.sql` |
 | 4 | `database/migrations/004_username_login.sql` |
+| 5 | `database/migrations/005_business_type_catalog.sql` |
+
+**Opción C — desde tu PC** (con `.env` local = mismos `PROD_DB_*`):
+
+```powershell
+.\scripts\setup-local-env.ps1
+php scripts/migrate.php
+```
 
 ### 3. Archivo `.env` en el FTP
 
