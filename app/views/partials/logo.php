@@ -1,32 +1,32 @@
 <?php
 /** @var string $logoSize sm|md|lg */
 /** @var bool $logoIconOnly */
-/** @var string|null $logoHref ruta interna o null sin enlace */
-/** @var string $logoClass clases extra del contenedor */
-/** @var string $logoTagline subtítulo opcional debajo del logo */
+/** @var string|null $logoHref */
+/** @var string $logoClass */
+/** @var string $logoTagline */
 
 $size = $logoSize ?? 'md';
 $iconOnly = $logoIconOnly ?? false;
 $href = $logoHref ?? null;
 $tagline = $logoTagline ?? null;
 
-$heights = ['sm' => 'h-8', 'md' => 'h-10', 'lg' => 'h-12'];
-$imgClass = ($heights[$size] ?? $heights['md']) . ' w-auto';
+$heights = ['sm' => 'h-8', 'md' => 'h-10', 'lg' => 'h-14'];
+$height = $heights[$size] ?? $heights['md'];
+$maxW = $iconOnly ? 'max-w-[52px]' : 'max-w-[240px]';
+$imgClass = trim("$height w-auto $maxW object-contain object-left");
 
-$inner = $iconOnly
-    ? '<img src="' . e(asset('images/logo-icon.svg')) . '" alt="PulseOS" class="' . e($imgClass) . '">'
-    : '<img src="' . e(asset('images/logo.svg')) . '" alt="PulseOS" class="' . e($imgClass) . ' max-w-[200px]">';
+$inner = '<img src="' . e(asset('images/pulseos-logo.png')) . '" alt="PulseOS" class="' . e($imgClass) . '">';
 
 $wrapClass = 'inline-flex flex-col items-center ' . ($logoClass ?? '');
 ?>
 <?php if ($href !== null): ?>
 <a href="<?= url($href) ?>" class="<?= e(trim($wrapClass . ' hover:opacity-90 transition-opacity')) ?>">
   <?= $inner ?>
-  <?php if ($tagline): ?><span class="mt-1 text-sm text-slate-400"><?= e($tagline) ?></span><?php endif; ?>
+  <?php if ($tagline): ?><span class="mt-2 text-sm text-slate-400"><?= e($tagline) ?></span><?php endif; ?>
 </a>
 <?php else: ?>
 <div class="<?= e(trim($wrapClass)) ?>">
   <?= $inner ?>
-  <?php if ($tagline): ?><p class="mt-1 text-sm text-slate-400"><?= e($tagline) ?></p><?php endif; ?>
+  <?php if ($tagline): ?><p class="mt-2 text-sm text-slate-400"><?= e($tagline) ?></p><?php endif; ?>
 </div>
 <?php endif; ?>

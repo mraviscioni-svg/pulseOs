@@ -6,7 +6,8 @@ module.exports = {
     extend: {
       colors: {
         pulse: {
-          500: '#6366f1',
+          400: '#f0c96a',
+          500: '#e8b44a',
           600: '#4f46e5',
           700: '#4338ca',
         },
