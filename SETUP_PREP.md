@@ -61,9 +61,9 @@ El hosting debe servir la carpeta **`public/`**
 
 | Acceso | URL | Usuario | Clave |
 |--------|-----|---------|-------|
-| Comercio | https://tallerboedo.com.ar/PulseOS-prep/public/login | usuario de `/register` (ej. `demo`) | tu clave |
+| Comercio | https://tallerboedo.com.ar/PulseOS-prep/public/login | usuario creado por admin (ej. `demo`) | clave definida en alta |
 | Plataforma | https://tallerboedo.com.ar/PulseOS-prep/public/admin/login | `admin` | `password` |
-| Registro | https://tallerboedo.com.ar/PulseOS-prep/public/register | — | — |
+| Nuevo comercio | https://tallerboedo.com.ar/PulseOS-prep/public/admin/tenants/create | — | solo admin plataforma |
 
 ---
 
