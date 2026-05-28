@@ -17,8 +17,8 @@
   <p class="mt-4 text-center text-sm text-slate-500">
     <a href="<?= url('/forgot-password') ?>" class="text-pulse-400 hover:underline">¿Olvidaste tu contraseña?</a>
   </p>
-  <p class="mt-2 text-center text-sm text-slate-500">
-    <a href="<?= url('/register') ?>" class="text-pulse-400 hover:underline">Registrar mi negocio</a>
+  <p class="mt-4 text-center text-xs text-slate-500">
+    El alta de comercios la gestiona el administrador de la plataforma.
   </p>
   <p class="mt-2 text-center text-xs text-slate-600">
     <a href="<?= url('/admin/login') ?>" class="hover:text-slate-400">Administración plataforma</a>

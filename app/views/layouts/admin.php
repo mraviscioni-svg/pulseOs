@@ -11,8 +11,9 @@
     </a>
     <p class="mt-2 text-xs text-violet-300">Platform</p>
   </div>
-  <nav class="p-3 text-sm">
-    <a href="<?= url('/admin/tenants') ?>" class="nav-link nav-active">Tenants</a>
+  <nav class="space-y-1 p-3 text-sm">
+    <a href="<?= url('/admin/tenants') ?>" class="nav-link <?= str_contains($_SERVER['REQUEST_URI'] ?? '', '/admin/tenants') && !str_contains($_SERVER['REQUEST_URI'] ?? '', '/create') ? 'nav-active' : '' ?>">Comercios</a>
+    <a href="<?= url('/admin/tenants/create') ?>" class="nav-link <?= str_contains($_SERVER['REQUEST_URI'] ?? '', '/create') ? 'nav-active' : '' ?>">+ Nuevo comercio</a>
   </nav>
 </aside>
 <div class="pl-56">

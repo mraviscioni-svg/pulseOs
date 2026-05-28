@@ -3,7 +3,10 @@
     <input name="q" value="<?= e($q) ?>" placeholder="Buscar por nombre, email o slug…" class="input-field w-72">
     <button class="rounded-lg border border-slate-700 px-4 py-2 hover:bg-slate-900">Buscar</button>
   </form>
-  <p class="text-sm text-slate-400"><?= count($tenants) ?> negocios registrados</p>
+  <div class="flex items-center gap-3">
+    <p class="text-sm text-slate-400"><?= count($tenants) ?> comercios</p>
+    <a href="<?= url('/admin/tenants/create') ?>" class="btn-primary">+ Nuevo comercio</a>
+  </div>
 </div>
 
 <div class="card overflow-x-auto">

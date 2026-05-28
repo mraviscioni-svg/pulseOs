@@ -99,7 +99,6 @@ final class HealthController extends Controller
             'login_urls' => [
                 'comercio' => url('/login'),
                 'plataforma' => url('/admin/login'),
-                'registro' => url('/register'),
             ],
         ], $ok ? 200 : 503);
     }

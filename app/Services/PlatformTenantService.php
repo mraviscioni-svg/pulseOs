@@ -84,4 +84,30 @@ final class PlatformTenantService
         $stmt = $this->db->prepare('UPDATE tenants SET is_active = :active WHERE id = :id');
         $stmt->execute(['active' => $active ? 1 : 0, 'id' => $tenantId]);
     }
+
+    /** @param array{name: string, email: string, phone?: ?string, address?: ?string, business_type: string} $data */
+    public function update(int $tenantId, array $data): void
+    {
+        $modules = config('business_types')[$data['business_type']]['modules'] ?? [];
+
+        $stmt = $this->db->prepare(
+            'UPDATE tenants SET name = :name, email = :email, phone = :phone, address = :address, business_type = :business_type WHERE id = :id'
+        );
+        $stmt->execute([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'] ?: null,
+            'address' => $data['address'] ?: null,
+            'business_type' => $data['business_type'],
+            'id' => $tenantId,
+        ]);
+
+        $settings = $this->db->prepare(
+            'UPDATE business_settings SET modules_json = :modules WHERE tenant_id = :id'
+        );
+        $settings->execute([
+            'modules' => json_encode($modules, JSON_UNESCAPED_UNICODE),
+            'id' => $tenantId,
+        ]);
+    }
 }

@@ -19,6 +19,9 @@ return function ($router, array $mw) {
     }, $adminAuth);
 
     $router->get('/admin/tenants', [TenantController::class, 'index'], $adminAuth);
+    $router->get('/admin/tenants/create', [TenantController::class, 'create'], $adminAuth);
+    $router->post('/admin/tenants', [TenantController::class, 'store'], $adminAuth);
     $router->get('/admin/tenants/{id}', [TenantController::class, 'show'], $adminAuth);
+    $router->post('/admin/tenants/{id}', [TenantController::class, 'update'], $adminAuth);
     $router->post('/admin/tenants/{id}/toggle', [TenantController::class, 'toggle'], $adminAuth);
 };

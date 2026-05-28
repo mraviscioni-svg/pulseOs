@@ -33,8 +33,16 @@ return function ($router, array $mw) {
 
     $router->get('/login', [AuthController::class, 'showLogin'], $guest);
     $router->post('/login', [AuthController::class, 'login'], $guest);
-    $router->get('/register', [AuthController::class, 'showRegister'], $guest);
-    $router->post('/register', [AuthController::class, 'register'], $guest);
+    // Registro público deshabilitado — alta de comercios solo desde /admin/tenants
+    $router->get('/register', function () {
+        \App\Core\Session::flash('error', 'El alta de comercios la realiza el administrador de la plataforma.');
+        header('Location: ' . url('/login'));
+        exit;
+    }, $guest);
+    $router->post('/register', function () {
+        header('Location: ' . url('/login'));
+        exit;
+    }, $guest);
     $router->get('/forgot-password', [AuthController::class, 'showForgotPassword'], $guest);
     $router->post('/forgot-password', [AuthController::class, 'forgotPassword'], $guest);
     $router->get('/reset-password/{token}', [AuthController::class, 'showResetPassword'], $guest);

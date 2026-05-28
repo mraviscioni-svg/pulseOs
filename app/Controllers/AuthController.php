@@ -35,7 +35,7 @@ final class AuthController extends Controller
         try {
             $auth = new AuthService();
             if (!$auth->attempt($data['username'], $data['password'])) {
-                Session::flash('error', 'Usuario o contraseña incorrectos. Si no tenés cuenta, registrate primero.');
+                Session::flash('error', 'Usuario o contraseña incorrectos. Contactá al administrador de la plataforma.');
                 $this->redirect('/login');
             }
             \App\Core\Session::regenerate();
