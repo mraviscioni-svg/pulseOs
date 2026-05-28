@@ -15,5 +15,13 @@
 </table>
 <hr>
 <p><strong>Total: <?= money($sale['total']) ?></strong></p>
-<p>Pago: <?= e($sale['payment_method']) ?></p>
+<p>Pago: <?= e(str_replace('_', ' ', $sale['payment_method'])) ?></p>
+<?php if ($sale['payment_method'] === 'mixto' && !empty($sale['payment_details'])): ?>
+<?php $mix = json_decode((string)$sale['payment_details'], true) ?: []; ?>
+<ul style="font-size:12px;margin-top:8px">
+<?php foreach ($mix as $k => $v): if ((float)$v > 0): ?>
+<li><?= e(ucfirst(str_replace('_', ' ', $k))) ?>: <?= money($v) ?></li>
+<?php endif; endforeach; ?>
+</ul>
+<?php endif; ?>
 <p style="text-align:center;margin-top:16px">¡Gracias!</p>

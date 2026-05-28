@@ -77,4 +77,43 @@ final class UserModel extends Model
 
         return (int) $this->db->lastInsertId();
     }
+
+    /** @return array<string, mixed>|null */
+    public function findForTenant(int $tenantId, int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT u.*, r.name AS role_name FROM users u
+             JOIN roles r ON r.id = u.role_id
+             WHERE u.id = :id AND u.tenant_id = :tenant_id LIMIT 1'
+        );
+        $stmt->execute(['id' => $id, 'tenant_id' => $tenantId]);
+
+        return $stmt->fetch() ?: null;
+    }
+
+    /** @param array<string, mixed> $data */
+    public function update(int $tenantId, int $id, array $data): void
+    {
+        $fields = 'name = :name, email = :email, role_id = :role_id, phone = :phone';
+        $params = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'role_id' => (int) $data['role_id'],
+            'phone' => $data['phone'] ?? null,
+            'id' => $id,
+            'tenant_id' => $tenantId,
+        ];
+        if (!empty($data['password'])) {
+            $fields .= ', password = :password';
+            $params['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+        $stmt = $this->db->prepare("UPDATE users SET {$fields} WHERE id = :id AND tenant_id = :tenant_id");
+        $stmt->execute($params);
+    }
+
+    public function setActive(int $tenantId, int $id, int $active): void
+    {
+        $stmt = $this->db->prepare('UPDATE users SET is_active = :active WHERE id = :id AND tenant_id = :tenant_id');
+        $stmt->execute(['active' => $active, 'id' => $id, 'tenant_id' => $tenantId]);
+    }
 }

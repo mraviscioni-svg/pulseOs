@@ -39,9 +39,34 @@ final class UserController extends Controller
         try {
             (new UserModel())->create($this->tenantId(), $data);
             Session::flash('success', 'Usuario creado.');
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             Session::flash('error', 'No se pudo crear el usuario.');
         }
+        $this->redirect('/users');
+    }
+
+    public function edit(array $params): void
+    {
+        $user = (new UserModel())->findForTenant($this->tenantId(), (int) $params['id']);
+        if (!$user) {
+            $this->redirect('/users');
+        }
+        $roles = Database::connection()->query('SELECT id, name FROM roles ORDER BY id')->fetchAll();
+        $this->view('users/edit', ['title' => 'Editar usuario', 'user' => $user, 'roles' => $roles]);
+    }
+
+    public function update(array $params): void
+    {
+        $data = $this->input();
+        (new UserModel())->update($this->tenantId(), (int) $params['id'], $data);
+        Session::flash('success', 'Usuario actualizado.');
+        $this->redirect('/users');
+    }
+
+    public function toggle(array $params): void
+    {
+        (new UserModel())->setActive($this->tenantId(), (int) $params['id'], (int) ($this->input()['is_active'] ?? 0));
+        Session::flash('success', 'Estado actualizado.');
         $this->redirect('/users');
     }
 }

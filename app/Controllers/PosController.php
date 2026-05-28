@@ -30,12 +30,18 @@ final class PosController extends Controller
             $this->json(['error' => 'Carrito inválido'], 422);
         }
 
+        $paymentDetails = null;
+        if (($data['payment_method'] ?? '') === 'mixto') {
+            $raw = $data['payment_details'] ?? '{}';
+            $paymentDetails = is_string($raw) ? json_decode($raw, true) : $raw;
+        }
+
         try {
             $saleId = (new SaleService())->complete(
                 $items,
                 (float) ($data['discount'] ?? 0),
                 $data['payment_method'] ?? 'efectivo',
-                null,
+                is_array($paymentDetails) ? $paymentDetails : null,
                 $this->userId()
             );
             $this->json(['success' => true, 'sale_id' => $saleId, 'redirect' => url('/pos/ticket/' . $saleId)]);

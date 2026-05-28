@@ -49,3 +49,18 @@
 .btn-primary:hover {
   background: rgb(99 102 241);
 }
+.nav-link {
+  display: flex;
+  align-items: center;
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  color: rgb(148 163 184);
+}
+.nav-link:hover {
+  background: rgb(15 23 42);
+  color: white;
+}
+.nav-active {
+  background: rgba(79, 70, 229, 0.2);
+  color: rgb(129 140 248);
+}

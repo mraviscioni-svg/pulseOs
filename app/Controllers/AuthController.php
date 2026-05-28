@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
 use App\Services\AuthService;
+use App\Services\PasswordResetService;
 use App\Services\TenantRegistrationService;
 
 final class AuthController extends Controller
@@ -86,7 +87,40 @@ final class AuthController extends Controller
 
     public function forgotPassword(): void
     {
-        Session::flash('success', 'Si el email existe, recibirás instrucciones (MVP: contactá soporte).');
+        $email = trim((string) ($this->input()['email'] ?? ''));
+        $resetUrl = (new PasswordResetService())->request($email);
+        if ($resetUrl && config('app')['debug']) {
+            Session::flash('success', 'Link de recuperación (modo debug): ' . $resetUrl);
+        } else {
+            Session::flash('success', 'Si el email existe, recibirás un enlace de recuperación.');
+        }
+        $this->redirect('/login');
+    }
+
+    public function showResetPassword(array $params): void
+    {
+        $this->view('auth/reset', [
+            'title' => 'Nueva contraseña',
+            'token' => $params['token'] ?? '',
+        ], 'layouts/guest');
+    }
+
+    public function resetPassword(array $params): void
+    {
+        $data = $this->input();
+        $validator = new Validator();
+        if (!$validator->validate($data, ['password' => 'required|min:8'])) {
+            Session::flash('error', 'Contraseña inválida (mínimo 8 caracteres).');
+            $this->redirect('/reset-password/' . $params['token']);
+        }
+
+        $ok = (new PasswordResetService())->reset($params['token'], $data['password']);
+        if (!$ok) {
+            Session::flash('error', 'El enlace expiró o no es válido.');
+            $this->redirect('/forgot-password');
+        }
+
+        Session::flash('success', 'Contraseña actualizada. Iniciá sesión.');
         $this->redirect('/login');
     }
 }

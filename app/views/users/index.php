@@ -2,13 +2,23 @@
   <div class="card overflow-x-auto">
     <h3 class="mb-4 font-semibold">Equipo</h3>
     <table class="w-full text-sm">
-      <thead class="text-slate-500"><tr><th>Nombre</th><th>Email</th><th>Rol</th></tr></thead>
+      <thead class="text-slate-500"><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($users as $u): ?>
       <tr class="border-t border-slate-800">
         <td class="py-2"><?= e($u['name']) ?></td>
         <td><?= e($u['email']) ?></td>
         <td><?= e($u['role_name']) ?></td>
+        <td><?= $u['is_active'] ? 'Activo' : 'Inactivo' ?></td>
+        <td class="text-right space-x-2">
+          <a href="<?= url('/users/' . $u['id'] . '/edit') ?>" class="text-pulse-400 text-xs">Editar</a>
+          <?php if ((int)$u['id'] !== (int)\App\Core\Session::get('user_id')): ?>
+          <form method="post" action="<?= url('/users/' . $u['id'] . '/toggle') ?>" class="inline"><?= csrf_field() ?>
+            <input type="hidden" name="is_active" value="<?= $u['is_active'] ? '0' : '1' ?>">
+            <button class="text-xs text-slate-400"><?= $u['is_active'] ? 'Desactivar' : 'Activar' ?></button>
+          </form>
+          <?php endif; ?>
+        </td>
       </tr>
       <?php endforeach; ?>
       </tbody>

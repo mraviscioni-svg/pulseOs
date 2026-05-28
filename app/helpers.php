@@ -65,3 +65,13 @@ function can(string $permission): bool
 
     return in_array($permission, $permissions, true) || in_array('*', $permissions, true);
 }
+
+function module_enabled(string $module): bool
+{
+    return \App\Services\ModuleService::enabled($module);
+}
+
+function upload_url(?string $path): string
+{
+    return $path ? url('/' . ltrim($path, '/')) : '';
+}

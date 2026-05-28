@@ -42,19 +42,22 @@ public/        Document root (index.php, assets)
 routes/        Rutas web y API interna
 ```
 
-## MVP incluido
+## Funcionalidades
 
-| Módulo | Estado |
-|--------|--------|
-| Registro de empresa (tenant) | ✓ |
-| Login / logout / roles | ✓ |
-| Dashboard | ✓ |
-| Productos + stock | ✓ |
-| POS + código de barras | ✓ |
-| Caja | ✓ |
-| Proveedores y compras | ✓ |
-| Usuarios | ✓ |
-| API interna (`/api/products/*`) | ✓ |
+| Módulo | Descripción |
+|--------|-------------|
+| Multitenant | Registro de empresa, aislamiento por `tenant_id` |
+| Auth | Login, logout, recuperación de contraseña por token/email |
+| Roles | Owner, Encargado, Vendedor, Depósito, Contador + permisos |
+| Dashboard | KPIs + gráfico ventas 7 días |
+| Productos | CRUD, imagen, categoría, marca, proveedor, variantes |
+| Stock | Movimientos, inventario rápido, escáner cámara |
+| POS | Carrito, descuentos, métodos de pago, pago mixto, ticket |
+| Caja | Apertura, cierre, movimientos, diferencias |
+| Compras / Proveedores | Órdenes, recepción, actualización de costos |
+| Reportes | 8 tipos con filtros y gráficos |
+| Configuración | Módulos por rubro, datos del negocio |
+| API interna | `/api/products/search`, `/api/products/barcode` |
 
 ## Multitenancy
 

@@ -6,6 +6,8 @@
 
 <div x-data="posApp()" x-init="init()" class="grid gap-4 lg:grid-cols-3">
   <div class="card lg:col-span-2">
+    <div id="pos-qr" class="mb-3 hidden overflow-hidden rounded-lg border border-slate-700"></div>
+    <button type="button" @click="toggleCamera" class="mb-2 text-xs text-pulse-400" x-text="cameraOn ? 'Detener cámara' : '📷 Escanear con cámara'"></button>
     <input x-ref="barcode" x-model="barcode" @keydown.enter.prevent="scanBarcode"
       placeholder="Escanear código de barras o buscar…"
       class="input-field mb-4 text-lg" autofocus>
@@ -54,17 +56,26 @@
         <option value="cuenta_corriente">Cuenta corriente</option>
         <option value="mixto">Pago mixto</option>
       </select>
+      <div x-show="paymentMethod === 'mixto'" class="space-y-2 rounded-lg border border-slate-800 p-3 text-sm">
+        <p class="text-slate-400">Desglose (debe sumar el total)</p>
+        <div class="flex justify-between gap-2"><span>Efectivo</span><input type="number" step="0.01" x-model.number="mix.efectivo" class="w-24 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right"></div>
+        <div class="flex justify-between gap-2"><span>Transferencia</span><input type="number" step="0.01" x-model.number="mix.transferencia" class="w-24 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right"></div>
+        <div class="flex justify-between gap-2"><span>Tarjeta</span><input type="number" step="0.01" x-model.number="mix.tarjeta" class="w-24 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right"></div>
+        <div class="flex justify-between gap-2"><span>Mercado Pago</span><input type="number" step="0.01" x-model.number="mix.mercado_pago" class="w-24 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right"></div>
+      </div>
       <button type="button" @click="checkout" :disabled="cart.length === 0 || !canSell"
         class="btn-primary w-full py-3 text-lg">Cobrar</button>
     </div>
   </div>
 </div>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 const csrfToken = <?= json_encode(\App\Core\Csrf::token()) ?>;
 const canSell = <?= $openCash ? 'true' : 'false' ?>;
 function posApp() {
   return {
     barcode: '', search: '', cart: [], results: [], discount: 0, paymentMethod: 'efectivo', canSell,
+    cameraOn: false, scanner: null, mix: { efectivo: 0, transferencia: 0, tarjeta: 0, mercado_pago: 0 },
     get subtotal() { return this.cart.reduce((s,i) => s + i.unit_price * i.quantity, 0); },
     get total() { return Math.max(0, this.subtotal - this.discount); },
     init() { this.results = <?= json_encode(array_slice($products, 0, 20), JSON_UNESCAPED_UNICODE) ?>; },
@@ -86,11 +97,30 @@ function posApp() {
       if (j.data) this.addToCart(j.data); else alert('Producto no encontrado');
       this.barcode = '';
     },
+    toggleCamera() {
+      const el = document.getElementById('pos-qr');
+      if (this.cameraOn) {
+        this.scanner?.stop().then(() => { el.classList.add('hidden'); this.cameraOn = false; });
+        return;
+      }
+      el.classList.remove('hidden');
+      this.scanner = new Html5Qrcode('pos-qr');
+      this.scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 180 },
+        (t) => { this.barcode = t; this.scanBarcode(); },
+        () => {}
+      ).then(() => { this.cameraOn = true; });
+    },
     async checkout() {
+      let payment_details = null;
+      if (this.paymentMethod === 'mixto') {
+        payment_details = JSON.stringify(this.mix);
+        const sum = Object.values(this.mix).reduce((a, b) => a + (parseFloat(b) || 0), 0);
+        if (Math.abs(sum - this.total) > 0.02) { alert('El pago mixto debe sumar el total'); return; }
+      }
       const r = await fetch('<?= url('/pos/complete') ?>', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-        body: JSON.stringify({ items_json: JSON.stringify(this.cart), discount: this.discount, payment_method: this.paymentMethod })
+        body: JSON.stringify({ items_json: JSON.stringify(this.cart), discount: this.discount, payment_method: this.paymentMethod, payment_details })
       });
       const j = await r.json();
       if (j.success) window.location = j.redirect;

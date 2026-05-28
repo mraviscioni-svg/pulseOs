@@ -55,6 +55,15 @@ final class DashboardService
         $cash->execute(['tenant_id' => $tenantId]);
         $openCash = $cash->fetch();
 
+        $chart = $db->prepare(
+            "SELECT DATE(created_at) AS day, COALESCE(SUM(total), 0) AS total
+             FROM sales WHERE tenant_id = :tenant_id AND status = 'completada'
+             AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+             GROUP BY DATE(created_at) ORDER BY day"
+        );
+        $chart->execute(['tenant_id' => $tenantId]);
+        $salesWeek = $chart->fetchAll();
+
         return [
             'sales_today_total' => (float) $sales['total'],
             'sales_today_count' => (int) $sales['count'],
@@ -63,6 +72,9 @@ final class DashboardService
             'recent_sales' => $recentSales->fetchAll(),
             'pending_purchases' => (int) ($pendingPurchases->fetch()['c'] ?? 0),
             'open_cash' => $openCash,
+            'sales_week' => $salesWeek,
+            'chart_labels' => array_column($salesWeek, 'day'),
+            'chart_values' => array_map(fn ($r) => (float) $r['total'], $salesWeek),
         ];
     }
 }
