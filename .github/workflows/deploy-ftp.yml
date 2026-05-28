@@ -1,0 +1,71 @@
+# Deploy PulseOS a FTP Taller Boedo
+# prod      → carpeta remota pulseOS/
+# pre-prod  → carpeta remota PulseOS-prep/
+#
+# Secretos requeridos: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_SERVER_DIR
+
+name: Deploy to FTP
+
+on:
+  push:
+    branches:
+      - prod
+      - pre-prod
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno a desplegar
+        required: true
+        default: pre-prod
+        type: choice
+        options:
+          - pre-prod
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Definir carpeta remota según entorno
+        run: |
+          if [ "$DEPLOY_BRANCH" = "prod" ]; then
+            echo "REMOTE_SUBDIR=pulseOS" >> $GITHUB_ENV
+            echo "ENV_LABEL=Producción (pulseOS)" >> $GITHUB_ENV
+          elif [ "$DEPLOY_BRANCH" = "pre-prod" ]; then
+            echo "REMOTE_SUBDIR=PulseOS-prep" >> $GITHUB_ENV
+            echo "ENV_LABEL=Pre-producción (PulseOS-prep)" >> $GITHUB_ENV
+          else
+            echo "Rama no configurada para deploy: $DEPLOY_BRANCH"
+            exit 1
+          fi
+          echo "Desplegando a: $ENV_LABEL"
+
+      - name: Preparar artefactos (sin .git ni CI)
+        run: |
+          rm -rf .git
+          rm -rf .github
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}${{ env.REMOTE_SUBDIR }}/
+          state-name: .ftp-deploy-sync-state-${{ env.REMOTE_SUBDIR }}.json
+          protocol: ftp
+          log-level: verbose
+          exclude: |
+            .git
+            .github/**
+            .gitignore
+            DEPLOY.md
+            README.md
+            .env
+            .env.*
+            node_modules/**

@@ -1,0 +1,31 @@
+# Dependencias y build
+node_modules/
+vendor/
+dist/
+build/
+.next/
+.nuxt/
+
+# Entorno local
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs y caché
+*.log
+.cache/
+.npm/
+
+# Secretos locales (nunca subir)
+credentials.json
+*.pem
+
+# FTP sync state (solo local si se usa deploy manual)
+.ftp-deploy-sync-state.json
