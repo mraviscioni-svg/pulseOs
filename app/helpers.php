@@ -10,7 +10,7 @@ function app(): Application
 {
     static $app;
     if (!$app) {
-        $app = require dirname(__DIR__) . '/bootstrap.php';
+        $app = require __DIR__ . '/bootstrap.php';
     }
 
     return $app;
