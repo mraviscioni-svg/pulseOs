@@ -17,9 +17,10 @@ final class AuthService
     ) {
     }
 
-    public function attempt(string $email, string $password): bool
+    public function attempt(string $username, string $password): bool
     {
-        $user = $this->users->findByEmailGlobal($email);
+        $username = normalize_username($username);
+        $user = $this->users->findByUsernameGlobal($username);
         if (!$user || !(int) $user['is_active'] || !password_verify($password, $user['password'])) {
             return false;
         }

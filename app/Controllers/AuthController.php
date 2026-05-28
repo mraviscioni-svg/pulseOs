@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Models\UserModel;
 use App\Services\AuthService;
 use App\Services\PasswordResetService;
 use App\Services\TenantRegistrationService;
@@ -23,7 +24,7 @@ final class AuthController extends Controller
         $data = $this->input();
         $validator = new Validator();
         if (!$validator->validate($data, [
-            'email' => 'required|email',
+            'username' => 'required|min:3',
             'password' => 'required|min:6',
         ])) {
             Session::flash('error', 'Credenciales inválidas.');
@@ -32,8 +33,8 @@ final class AuthController extends Controller
         }
 
         $auth = new AuthService();
-        if (!$auth->attempt($data['email'], $data['password'])) {
-            Session::flash('error', 'Email o contraseña incorrectos.');
+        if (!$auth->attempt($data['username'], $data['password'])) {
+            Session::flash('error', 'Usuario o contraseña incorrectos.');
             $this->redirect('/login');
         }
 
@@ -51,10 +52,13 @@ final class AuthController extends Controller
     public function register(): void
     {
         $data = $this->input();
+        $data['username'] = normalize_username((string) ($data['username'] ?? ''));
+
         $validator = new Validator();
         if (!$validator->validate($data, [
             'company_name' => 'required|min:2',
             'owner_name' => 'required|min:2',
+            'username' => 'required|min:3',
             'email' => 'required|email',
             'password' => 'required|min:8',
             'business_type' => 'required',
@@ -64,9 +68,15 @@ final class AuthController extends Controller
             $this->redirect('/register');
         }
 
+        if ((new UserModel())->usernameExists($data['username'])) {
+            Session::flash('error', 'Ese usuario ya está en uso.');
+            Session::set('_old', $data);
+            $this->redirect('/register');
+        }
+
         try {
             (new TenantRegistrationService())->register($data);
-            Session::flash('success', 'Empresa creada. Iniciá sesión.');
+            Session::flash('success', 'Empresa creada. Iniciá sesión con tu usuario.');
             $this->redirect('/login');
         } catch (\Throwable $e) {
             Session::flash('error', 'No se pudo registrar: ' . $e->getMessage());
@@ -87,12 +97,12 @@ final class AuthController extends Controller
 
     public function forgotPassword(): void
     {
-        $email = trim((string) ($this->input()['email'] ?? ''));
-        $resetUrl = (new PasswordResetService())->request($email);
+        $username = normalize_username((string) ($this->input()['username'] ?? ''));
+        $resetUrl = (new PasswordResetService())->request($username);
         if ($resetUrl && config('app')['debug']) {
             Session::flash('success', 'Link de recuperación (modo debug): ' . $resetUrl);
         } else {
-            Session::flash('success', 'Si el email existe, recibirás un enlace de recuperación.');
+            Session::flash('success', 'Si el usuario existe y tiene email, recibirás un enlace.');
         }
         $this->redirect('/login');
     }

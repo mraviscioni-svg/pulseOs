@@ -14,9 +14,10 @@ final class PlatformAuthService
     ) {
     }
 
-    public function attempt(string $email, string $password): bool
+    public function attempt(string $username, string $password): bool
     {
-        $admin = $this->admins->findByEmail($email);
+        $username = normalize_username($username);
+        $admin = $this->admins->findByUsername($username);
         if (!$admin || !password_verify($password, $admin['password'])) {
             return false;
         }

@@ -1,6 +1,7 @@
 <form method="post" action="<?= url('/users/' . $user['id']) ?>" class="card max-w-md space-y-4">
   <?= csrf_field() ?>
   <input name="name" value="<?= e($user['name']) ?>" required class="input-field">
+  <input name="username" value="<?= e($user['username'] ?? '') ?>" required minlength="3" pattern="[a-zA-Z0-9._-]+" class="input-field">
   <input type="email" name="email" value="<?= e($user['email']) ?>" required class="input-field">
   <input name="phone" value="<?= e($user['phone'] ?? '') ?>" class="input-field" placeholder="Teléfono">
   <select name="role_id" class="input-field">

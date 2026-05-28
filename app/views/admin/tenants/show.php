@@ -33,10 +33,11 @@
 <div class="card mt-6 overflow-x-auto">
   <h3 class="mb-4 font-semibold">Usuarios del negocio</h3>
   <table class="w-full text-sm">
-    <thead class="text-slate-500"><tr><th class="pb-2">Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Último login</th></tr></thead>
+    <thead class="text-slate-500"><tr><th class="pb-2">Usuario</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Último login</th></tr></thead>
     <tbody>
     <?php foreach ($detail['users'] as $u): ?>
     <tr class="border-t border-slate-800">
+      <td class="py-2 font-mono text-violet-300"><?= e($u['username'] ?? '') ?></td>
       <td class="py-2"><?= e($u['name']) ?></td>
       <td><?= e($u['email']) ?></td>
       <td><?= e($u['role_name']) ?></td>

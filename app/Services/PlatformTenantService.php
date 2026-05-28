@@ -49,7 +49,7 @@ final class PlatformTenantService
         }
 
         $users = $this->db->prepare(
-            'SELECT u.id, u.name, u.email, u.is_active, u.last_login_at, r.name AS role_name
+            'SELECT u.id, u.username, u.name, u.email, u.is_active, u.last_login_at, r.name AS role_name
              FROM users u JOIN roles r ON r.id = u.role_id WHERE u.tenant_id = :id ORDER BY u.name'
         );
         $users->execute(['id' => $tenantId]);

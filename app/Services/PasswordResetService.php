@@ -9,13 +9,15 @@ use App\Models\UserModel;
 
 final class PasswordResetService
 {
-    public function request(string $email): ?string
+    public function request(string $username): ?string
     {
-        $user = (new UserModel())->findByEmailGlobal($email);
-        if (!$user) {
+        $username = normalize_username($username);
+        $user = (new UserModel())->findByUsernameGlobal($username);
+        if (!$user || empty($user['email'])) {
             return null;
         }
 
+        $email = (string) $user['email'];
         $token = bin2hex(random_bytes(32));
         $db = Database::connection();
         $db->prepare('DELETE FROM password_resets WHERE email = :email')->execute(['email' => $email]);

@@ -2,10 +2,11 @@
   <div class="card overflow-x-auto">
     <h3 class="mb-4 font-semibold">Equipo</h3>
     <table class="w-full text-sm">
-      <thead class="text-slate-500"><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+      <thead class="text-slate-500"><tr><th>Usuario</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($users as $u): ?>
       <tr class="border-t border-slate-800">
+        <td class="py-2 font-mono text-pulse-400"><?= e($u['username'] ?? '') ?></td>
         <td class="py-2"><?= e($u['name']) ?></td>
         <td><?= e($u['email']) ?></td>
         <td><?= e($u['role_name']) ?></td>
@@ -28,7 +29,8 @@
     <?= csrf_field() ?>
     <h3 class="font-semibold">Invitar usuario</h3>
     <input name="name" required placeholder="Nombre" class="input-field">
-    <input type="email" name="email" required placeholder="Email" class="input-field">
+    <input name="username" required minlength="3" pattern="[a-zA-Z0-9._-]+" placeholder="Usuario único" class="input-field">
+    <input type="email" name="email" required placeholder="Email contacto" class="input-field">
     <input type="password" name="password" required minlength="8" placeholder="Contraseña temporal" class="input-field">
     <select name="role_id" required class="input-field">
       <?php foreach ($roles as $r): ?>

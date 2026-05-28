@@ -49,12 +49,13 @@ final class TenantRegistrationService
             $password = password_hash($data['password'], PASSWORD_DEFAULT);
 
             $user = $db->prepare(
-                'INSERT INTO users (tenant_id, role_id, name, email, password)
-                 VALUES (:tenant_id, :role_id, :name, :email, :password)'
+                'INSERT INTO users (tenant_id, role_id, username, name, email, password)
+                 VALUES (:tenant_id, :role_id, :username, :name, :email, :password)'
             );
             $user->execute([
                 'tenant_id' => $tenantId,
                 'role_id' => $roleId,
+                'username' => $data['username'],
                 'name' => $data['owner_name'],
                 'email' => $data['email'],
                 'password' => $password,

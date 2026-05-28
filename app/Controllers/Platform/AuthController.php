@@ -21,15 +21,15 @@ final class AuthController extends Controller
         $data = $this->input();
         $validator = new Validator();
         if (!$validator->validate($data, [
-            'email' => 'required|email',
+            'username' => 'required|min:3',
             'password' => 'required|min:6',
         ])) {
             Session::flash('error', 'Credenciales inválidas.');
             $this->redirect('/admin/login');
         }
 
-        if (!(new PlatformAuthService())->attempt($data['email'], $data['password'])) {
-            Session::flash('error', 'Email o contraseña incorrectos.');
+        if (!(new PlatformAuthService())->attempt($data['username'], $data['password'])) {
+            Session::flash('error', 'Usuario o contraseña incorrectos.');
             $this->redirect('/admin/login');
         }
 

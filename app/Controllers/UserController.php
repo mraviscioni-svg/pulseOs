@@ -25,14 +25,22 @@ final class UserController extends Controller
     public function store(): void
     {
         $data = $this->input();
+        $data['username'] = normalize_username((string) ($data['username'] ?? ''));
+
         $v = new Validator();
         if (!$v->validate($data, [
             'name' => 'required|min:2',
+            'username' => 'required|min:3',
             'email' => 'required|email',
             'password' => 'required|min:8',
             'role_id' => 'required|numeric',
         ])) {
             Session::flash('error', implode(' ', $v->errors()));
+            $this->redirect('/users');
+        }
+
+        if ((new UserModel())->usernameExists($data['username'])) {
+            Session::flash('error', 'Ese usuario ya está en uso.');
             $this->redirect('/users');
         }
 
@@ -58,7 +66,15 @@ final class UserController extends Controller
     public function update(array $params): void
     {
         $data = $this->input();
-        (new UserModel())->update($this->tenantId(), (int) $params['id'], $data);
+        $data['username'] = normalize_username((string) ($data['username'] ?? ''));
+        $id = (int) $params['id'];
+
+        if ((new UserModel())->usernameExists($data['username'], $id)) {
+            Session::flash('error', 'Ese usuario ya está en uso.');
+            $this->redirect('/users/' . $id . '/edit');
+        }
+
+        (new UserModel())->update($this->tenantId(), $id, $data);
         Session::flash('success', 'Usuario actualizado.');
         $this->redirect('/users');
     }

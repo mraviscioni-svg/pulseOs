@@ -17,12 +17,12 @@ final class PlatformAdminModel
     }
 
     /** @return array<string, mixed>|null */
-    public function findByEmail(string $email): ?array
+    public function findByUsername(string $username): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT * FROM platform_admins WHERE email = :email AND is_active = 1 LIMIT 1'
+            'SELECT * FROM platform_admins WHERE username = :username AND is_active = 1 LIMIT 1'
         );
-        $stmt->execute(['email' => $email]);
+        $stmt->execute(['username' => $username]);
 
         return $stmt->fetch() ?: null;
     }

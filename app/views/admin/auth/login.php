@@ -2,8 +2,8 @@
   <?= csrf_field() ?>
   <div class="space-y-4">
     <div>
-      <label class="label">Email administrador</label>
-      <input type="email" name="email" required class="input-field" autocomplete="username">
+      <label class="label">Usuario</label>
+      <input type="text" name="username" required class="input-field" autocomplete="username">
     </div>
     <div>
       <label class="label">Contraseña</label>

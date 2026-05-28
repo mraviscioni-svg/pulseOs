@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS platform_admins (
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Usuario inicial: admin@pulseos.com / password (cambiar en producción)
+-- Usuario inicial (username se asigna en 004): admin / password
 INSERT INTO platform_admins (name, email, password) VALUES
 ('Super Admin', 'admin@pulseos.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
 ON DUPLICATE KEY UPDATE name = VALUES(name);

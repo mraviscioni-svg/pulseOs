@@ -76,6 +76,14 @@ function is_platform_admin(): bool
     return \App\Services\PlatformAuthService::check();
 }
 
+function normalize_username(string $value): string
+{
+    $value = strtolower(trim($value));
+    $value = preg_replace('/[^a-z0-9._-]/', '', $value) ?? '';
+
+    return $value;
+}
+
 function upload_url(?string $path): string
 {
     return $path ? url('/' . ltrim($path, '/')) : '';
