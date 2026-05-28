@@ -5,10 +5,13 @@
 </head>
 <body class="flex min-h-full items-center justify-center bg-slate-950 px-4 text-slate-100">
   <div class="w-full max-w-md">
-    <div class="mb-8 text-center">
-      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-pulse-600 text-xl font-bold">P</div>
-      <h1 class="text-2xl font-bold">pulseOS</h1>
-      <p class="text-sm text-slate-400">Gestión comercial multitenant</p>
+    <div class="mb-8 flex flex-col items-center text-center">
+      <?php
+      $logoHref = null;
+      $logoSize = 'lg';
+      $logoTagline = 'Gestión comercial multitenant';
+      require __DIR__ . '/../partials/logo.php';
+      ?>
     </div>
     <?php require __DIR__ . '/../partials/flash.php'; ?>
     <?= $content ?>

@@ -1,8 +1,10 @@
 <aside class="fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-800 bg-slate-950/95 backdrop-blur">
-  <div class="flex h-16 items-center gap-2 border-b border-slate-800 px-5">
-    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-pulse-600 font-bold text-white">P</span>
-    <div>
-      <p class="font-semibold text-white">pulseOS</p>
+  <div class="flex h-16 items-center gap-2 border-b border-slate-800 px-4">
+    <a href="<?= url('/dashboard') ?>" class="shrink-0 hover:opacity-90">
+      <img src="<?= asset('images/logo-icon.svg') ?>" alt="PulseOS" class="h-9 w-9">
+    </a>
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-xs font-semibold text-white">PulseOS</p>
       <p class="truncate text-xs text-slate-400"><?= e(\App\Core\Session::get('tenant_name', '')) ?></p>
     </div>
   </div>

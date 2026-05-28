@@ -6,10 +6,12 @@
 <body class="min-h-full bg-slate-950 text-slate-100">
 <aside class="fixed inset-y-0 left-0 z-40 w-56 border-r border-violet-900/40 bg-slate-950">
   <div class="flex h-16 items-center gap-2 border-b border-slate-800 px-4">
-    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-600 font-bold">⚙</span>
-    <div>
-      <p class="font-semibold text-white">Platform</p>
-      <p class="text-xs text-slate-400">pulseOS</p>
+    <a href="<?= url('/admin/tenants') ?>" class="shrink-0 hover:opacity-90">
+      <img src="<?= asset('images/logo-icon.svg') ?>" alt="PulseOS" class="h-9 w-9">
+    </a>
+    <div class="min-w-0">
+      <p class="text-xs font-semibold text-white">Platform</p>
+      <p class="text-xs text-violet-300">PulseOS</p>
     </div>
   </div>
   <nav class="p-3 text-sm">

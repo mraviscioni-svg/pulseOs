@@ -5,10 +5,14 @@
 </head>
 <body class="flex min-h-full items-center justify-center bg-slate-950 px-4 text-slate-100">
   <div class="w-full max-w-md">
-    <div class="mb-8 text-center">
-      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-600 text-xl font-bold">⚙</div>
-      <h1 class="text-2xl font-bold">PulseOS Platform</h1>
-      <p class="text-sm text-slate-400">Administración de tenants</p>
+    <div class="mb-8 flex flex-col items-center text-center">
+      <?php
+      $logoHref = null;
+      $logoSize = 'lg';
+      $logoTagline = 'Administración de tenants';
+      require __DIR__ . '/../partials/logo.php';
+      ?>
+      <p class="mt-2 text-sm font-medium text-violet-300">Platform</p>
     </div>
     <?php require __DIR__ . '/../partials/flash.php'; ?>
     <?= $content ?>
