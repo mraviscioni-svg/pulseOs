@@ -12,18 +12,19 @@ El workflow ejecuta `composer install` antes de subir archivos (incluye `vendor/
 
 ## Secretos en GitHub
 
-| Secreto | Valor |
-|---------|--------|
-| `FTP_SERVER` | Host FTP |
-| `FTP_USERNAME` | Usuario FTP |
-| `FTP_PASSWORD` | Contraseña FTP |
-| `FTP_SERVER_DIR` | Carpeta base al conectar, con `/` final |
+| Secreto | Uso |
+|---------|-----|
+| `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR` | Deploy FTP |
+| `PROD_DB_HOST`, `PROD_DB_NAME`, `PROD_DB_USER`, `PROD_DB_PASSWORD` | MySQL prod → `.env` en deploy `prod` |
+| `PREP_DB_*` (opcional) | MySQL prep → `.env` en deploy `pre-prod` |
+
+Detalle: `docs/GITHUB_SECRETS.md`
 
 ## Base de datos en el servidor
 
-**No va en GitHub Actions** (MySQL del hosting suele ser solo `localhost`).
+En **prod**, el workflow puede generar `.env` desde `PROD_DB_*`. En **pre-prod**, creá `.env` manual o agregá secrets `PREP_DB_*`.
 
-Por entorno (prep y prod), en el panel del hosting:
+Por entorno, en el panel del hosting:
 
 1. Crear base MySQL y usuario.
 2. Importar:
@@ -62,7 +63,7 @@ Si el hosting no permite cambiar el root, el `.htaccess` en la raíz del repo re
 
 ## Qué no se sube
 
-- `.env`
+- `.env.example` (sí se genera y sube `.env` en deploy si hay secrets DB)
 - `.git`, `.github`
 - `README.md`, `DEPLOY.md` (documentación)
 

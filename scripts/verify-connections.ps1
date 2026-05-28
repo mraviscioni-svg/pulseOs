@@ -19,6 +19,14 @@ function Get-EnvValue([string]$key) {
     return ""
 }
 
+function Get-DbEnv([string]$dbKey, [string]$prodKey, [string]$prepKey) {
+    $v = Get-EnvValue $dbKey
+    if ($v) { return $v }
+    $v = Get-EnvValue $prodKey
+    if ($v) { return $v }
+    return Get-EnvValue $prepKey
+}
+
 $ok = $true
 Write-Host "=== PulseOS — verificación (.env local) ===`n"
 
@@ -58,15 +66,15 @@ if (-not $ftpServer -or -not $ftpUser) {
 
 # MySQL — solo si mysql.exe está disponible
 Write-Host "`nMySQL..."
-$dbHost = Get-EnvValue "DB_HOST"
-$dbName = Get-EnvValue "DB_DATABASE"
-$dbUser = Get-EnvValue "DB_USERNAME"
-$dbPass = Get-EnvValue "DB_PASSWORD"
+$dbHost = Get-DbEnv "DB_HOST" "PROD_DB_HOST" "PREP_DB_HOST"
+$dbName = Get-DbEnv "DB_DATABASE" "PROD_DB_NAME" "PREP_DB_NAME"
+$dbUser = Get-DbEnv "DB_USERNAME" "PROD_DB_USER" "PREP_DB_USER"
+$dbPass = Get-DbEnv "DB_PASSWORD" "PROD_DB_PASSWORD" "PREP_DB_PASSWORD"
 $dbPort = Get-EnvValue "DB_PORT"
 if (-not $dbPort) { $dbPort = "3306" }
 
 if (-not $dbHost -or -not $dbName -or -not $dbUser) {
-    Write-Host "  [SKIP] Faltan DB_HOST, DB_DATABASE o DB_USERNAME" -ForegroundColor Yellow
+    Write-Host "  [SKIP] Faltan PROD_DB_* o DB_* en .env" -ForegroundColor Yellow
     $ok = $false
 } else {
     $mysql = Get-Command mysql -ErrorAction SilentlyContinue

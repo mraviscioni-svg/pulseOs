@@ -18,16 +18,16 @@ $ok = true;
 
 echo "=== PulseOS — verificación de conexiones ===\n\n";
 
-// MySQL
+// MySQL (GitHub: PROD_DB_* — app: DB_* o PROD_DB_*)
 echo "MySQL...\n";
-$host = $_ENV['DB_HOST'] ?? '';
-$db = $_ENV['DB_DATABASE'] ?? '';
-$user = $_ENV['DB_USERNAME'] ?? '';
-$pass = $_ENV['DB_PASSWORD'] ?? '';
+$host = $_ENV['DB_HOST'] ?? $_ENV['PROD_DB_HOST'] ?? $_ENV['PREP_DB_HOST'] ?? '';
+$db = $_ENV['DB_DATABASE'] ?? $_ENV['PROD_DB_NAME'] ?? $_ENV['PREP_DB_NAME'] ?? '';
+$user = $_ENV['DB_USERNAME'] ?? $_ENV['PROD_DB_USER'] ?? $_ENV['PREP_DB_USER'] ?? '';
+$pass = $_ENV['DB_PASSWORD'] ?? $_ENV['PROD_DB_PASSWORD'] ?? $_ENV['PREP_DB_PASSWORD'] ?? '';
 $port = (int) ($_ENV['DB_PORT'] ?? 3306);
 
 if ($host === '' || $db === '' || $user === '') {
-    echo "  [SKIP] Faltan DB_HOST, DB_DATABASE o DB_USERNAME en .env\n";
+    echo "  [SKIP] Faltan PROD_DB_* o DB_* en .env\n";
     $ok = false;
 } else {
     try {

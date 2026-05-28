@@ -10,36 +10,41 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Comprobar que existen los secrets FTP
+      - name: Comprobar secrets FTP
         run: |
           echo "FTP_SERVER: ${{ secrets.FTP_SERVER != '' && 'definido' || 'FALTA' }}"
           echo "FTP_USERNAME: ${{ secrets.FTP_USERNAME != '' && 'definido' || 'FALTA' }}"
           echo "FTP_PASSWORD: ${{ secrets.FTP_PASSWORD != '' && 'definido' || 'FALTA' }}"
           echo "FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR != '' && 'definido' || 'FALTA' }}"
           if [ -z "${{ secrets.FTP_SERVER }}" ] || [ -z "${{ secrets.FTP_USERNAME }}" ] || [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
-            echo "::error::Faltan secrets FTP obligatorios. Ver docs/GITHUB_SECRETS.md"
+            echo "::error::Faltan secrets FTP. Ver docs/GITHUB_SECRETS.md"
             exit 1
           fi
+
+      - name: Comprobar secrets MySQL (PROD_DB_*)
+        run: |
+          echo "PROD_DB_HOST: ${{ secrets.PROD_DB_HOST != '' && 'definido' || 'FALTA' }}"
+          echo "PROD_DB_NAME: ${{ secrets.PROD_DB_NAME != '' && 'definido' || 'FALTA' }}"
+          echo "PROD_DB_USER: ${{ secrets.PROD_DB_USER != '' && 'definido' || 'FALTA' }}"
+          echo "PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD != '' && 'definido' || 'FALTA' }}"
 
       - name: Probar MySQL (opcional)
         continue-on-error: true
         env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          DB_DATABASE: ${{ secrets.PROD_DB_NAME }}
+          DB_USERNAME: ${{ secrets.PROD_DB_USER }}
+          DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |
           if [ -z "$DB_HOST" ] || [ -z "$DB_DATABASE" ]; then
-            echo "MySQL: secrets DB_* no configurados (opcional). Migraciones vía phpMyAdmin."
+            echo "MySQL: faltan PROD_DB_HOST o PROD_DB_NAME (opcional en verify)."
             exit 0
           fi
           sudo apt-get update -qq && sudo apt-get install -y -qq default-mysql-client > /dev/null
-          PORT="${DB_PORT:-3306}"
-          if mysql -h "$DB_HOST" -P "$PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" "$DB_DATABASE" -e "SELECT 1" 2>/dev/null; then
+          if mysql -h "$DB_HOST" -P 3306 -u "$DB_USERNAME" -p"$DB_PASSWORD" "$DB_DATABASE" -e "SELECT 1" 2>/dev/null; then
             echo "MySQL: conexión OK desde GitHub"
           else
-            echo "::warning::MySQL: no accesible desde internet (normal en hosting compartido)"
+            echo "::warning::MySQL: no accesible desde internet (normal en hosting compartido; la app usa localhost en el servidor)"
           fi
 
       - name: Probar FTP

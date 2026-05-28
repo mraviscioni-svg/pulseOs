@@ -1,93 +1,96 @@
 # Secretos GitHub — PulseOS
 
-## Importante: Secrets vs Variables
+Configuración alineada con los secrets que tenés en el repo.
 
-| Tipo en GitHub | ¿Lo usa el deploy? | ¿Lo ve Cursor/agente local? |
-|----------------|-------------------|----------------------------|
-| **Secrets** (Actions) | Sí | **No** |
-| **Variables** (repo) | Solo si el workflow las referencia | No |
-| Archivo **`.env` en tu PC** | No (no se sube) | **Sí** |
+## Secrets actuales (los tuyos)
 
-Para trabajar dinámico con el agente: copiá los valores a **`.env` local** (gitignored).
+### FTP — obligatorios para deploy
+
+| Secret | Uso |
+|--------|-----|
+| `FTP_SERVER` | Host FTP (sin `ftp://`) |
+| `FTP_USERNAME` | Usuario FTP |
+| `FTP_PASSWORD` | Contraseña FTP |
+| `FTP_SERVER_DIR` | Carpeta base con `/` final, ej. `./` |
+
+Deploy sube a: `{FTP_SERVER_DIR}PulseOS-prep/` (pre-prod) o `{FTP_SERVER_DIR}pulseOS/` (prod).
+
+### MySQL producción — `PROD_DB_*`
+
+| Secret | Se escribe en `.env` del servidor como |
+|--------|----------------------------------------|
+| `PROD_DB_HOST` | `DB_HOST` |
+| `PROD_DB_NAME` | `DB_DATABASE` |
+| `PROD_DB_USER` | `DB_USERNAME` |
+| `PROD_DB_PASSWORD` | `DB_PASSWORD` |
+
+En deploy a rama **prod**, el workflow genera `.env` automáticamente desde estos secrets.
+
+### MySQL pre-prod — opcional `PREP_DB_*`
+
+Si más adelante agregás base distinta para prep:
+
+| Secret | Igual que prod pero para `PulseOS-prep/` |
+|--------|------------------------------------------|
+| `PREP_DB_HOST` | → `DB_HOST` |
+| `PREP_DB_NAME` | → `DB_DATABASE` |
+| `PREP_DB_USER` | → `DB_USERNAME` |
+| `PREP_DB_PASSWORD` | → `DB_PASSWORD` |
+
+Sin `PREP_DB_*`, el `.env` de **pre-prod** se crea manual en el FTP.
+
+### Opcionales
+
+| Secret | Descripción |
+|--------|-------------|
+| `PROD_APP_URL` | URL pública prod (default placeholder en workflow) |
+| `PREP_APP_URL` | URL pública prep |
 
 ---
 
-## Nombres exactos para el deploy FTP
+## Local (Cursor / agente)
 
-Creá en **Settings → Secrets and variables → Actions → Secrets** (no Variables):
+Copiá `.env.example` → `.env` y usá **los mismos nombres que en GitHub** (`PROD_DB_*` y `FTP_*`). La app acepta `PROD_DB_*` o `DB_*`:
 
-| Secret | Ejemplo | Notas |
-|--------|---------|--------|
-| `FTP_SERVER` | `ftp.midominio.com` | Sin `ftp://` |
-| `FTP_USERNAME` | usuario del panel | |
-| `FTP_PASSWORD` | •••••• | |
-| `FTP_SERVER_DIR` | `./` o `public_html/` | **Debe terminar en `/`** |
+```env
+FTP_SERVER=...
+FTP_USERNAME=...
+FTP_PASSWORD=...
+FTP_SERVER_DIR=./
 
-El workflow concatena: `{FTP_SERVER_DIR}PulseOS-prep/` (pre-prod) o `pulseOS/` (prod).
-
-### Errores frecuentes
-
-- `FTP_HOST` → incorrecto, debe ser **`FTP_SERVER`**
-- `FTP_SERVER_DIR` sin barra final → puede fallar el path
-- Poner credenciales en **Variables** en lugar de **Secrets** → el workflow no las lee como `secrets.*`
-
----
-
-## Secretos opcionales para MySQL (workflow Verify connections)
-
-Solo para el action manual **Verify connections**. El deploy FTP **no** ejecuta migraciones.
-
-| Secret | Ejemplo |
-|--------|---------|
-| `DB_HOST` | `localhost` (desde GitHub casi siempre **falla** si el hosting solo permite localhost) |
-| `DB_PORT` | `3306` |
-| `DB_DATABASE` | base prep |
-| `DB_USERNAME` | user mysql |
-| `DB_PASSWORD` | •••• |
-
-En hosting compartido, MySQL suele ser **solo desde el servidor**. Las migraciones hacelas en **phpMyAdmin** o con `.env` si tenés túnel SSH.
-
----
-
-## Cómo verificar
-
-### 1. GitHub (sin exponer claves)
-
-1. Actions → **Verify connections** → Run workflow
-2. Revisá si falla FTP o MySQL
-3. Deploy: Actions → **Deploy to FTP** (último run verde)
-
-### 2. En tu PC (para el agente Cursor)
-
-**Sin `.env` local el agente no puede conectarse** aunque los secrets en GitHub estén bien.
-
-```powershell
-cd "C:\Users\marcelo.raviscioni\Desktop\pulseOs"
-copy .env.example .env
-# Editá .env con FTP + MySQL del hosting (mismos valores que en GitHub, sin subir el archivo)
-.\scripts\verify-connections.ps1
-# o, si tenés PHP: composer install && php scripts/verify-connections.php
+PROD_DB_HOST=localhost
+PROD_DB_NAME=tu_base
+PROD_DB_USER=tu_user
+PROD_DB_PASSWORD=***
 ```
 
-Checklist de nombres en `.env` (deben coincidir **exactamente**):
+Verificar:
 
-| En `.env` | En GitHub Secrets (Actions) |
-|-----------|----------------------------|
-| `FTP_SERVER` | `FTP_SERVER` |
-| `FTP_USERNAME` | `FTP_USERNAME` |
-| `FTP_PASSWORD` | `FTP_PASSWORD` |
-| `FTP_SERVER_DIR` | `FTP_SERVER_DIR` |
-| `DB_HOST` | `DB_HOST` (opcional) |
-| `DB_DATABASE` | `DB_DATABASE` — **no** `DB_NAME` |
-| `DB_USERNAME` | `DB_USERNAME` — **no** `DB_USER` |
-| `DB_PASSWORD` | `DB_PASSWORD` |
+```powershell
+.\scripts\verify-connections.ps1
+```
 
-Si el script da OK, el agente puede usar `.env` para deploy manual, SQL, etc.
+---
+
+## Workflows
+
+| Action | Qué valida |
+|--------|------------|
+| **Verify connections** | FTP_* + PROD_DB_* |
+| **Deploy to FTP** | FTP_*; genera `.env` en prod con PROD_DB_* |
+
+---
+
+## Errores frecuentes
+
+- Poner credenciales en **Variables** en vez de **Secrets** → el workflow no las ve.
+- `FTP_HOST` → debe ser **`FTP_SERVER`**.
+- `DB_DATABASE` en GitHub → en tu repo usás **`PROD_DB_NAME`** (correcto).
+- `FTP_SERVER_DIR` sin `/` al final.
 
 ---
 
 ## Qué NO hacer
 
 - No commitear `.env`
-- No pegar contraseñas en issues o chat
-- No usar el mismo secret name con typos
+- No pegar contraseñas en el chat
