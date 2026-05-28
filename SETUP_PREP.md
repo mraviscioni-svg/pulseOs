@@ -71,8 +71,7 @@ El hosting debe servir la carpeta **`public/`**
 | Servicio | Dónde configurarlo | Qué secretos |
 |----------|-------------------|--------------|
 | FTP deploy | GitHub → Secrets | `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR` |
-| MySQL prod | GitHub → Secrets | `PROD_DB_HOST`, `PROD_DB_NAME`, `PROD_DB_USER`, `PROD_DB_PASSWORD` |
-| MySQL prep | GitHub → Secrets (opcional) o manual | `PREP_DB_*` o `.env` en `PulseOS-prep/` |
+| MySQL (prod y prep) | GitHub → Secrets | `PROD_DB_HOST`, `PROD_DB_NAME`, `PROD_DB_USER`, `PROD_DB_PASSWORD` |
 
 **No envíes contraseñas por chat.** Usá GitHub Secrets o el panel del hosting.
 

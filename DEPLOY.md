@@ -15,16 +15,15 @@ El workflow ejecuta `composer install` antes de subir archivos (incluye `vendor/
 | Secreto | Uso |
 |---------|-----|
 | `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR` | Deploy FTP |
-| `PROD_DB_HOST`, `PROD_DB_NAME`, `PROD_DB_USER`, `PROD_DB_PASSWORD` | MySQL prod → `.env` en deploy `prod` |
-| `PREP_DB_*` (opcional) | MySQL prep → `.env` en deploy `pre-prod` |
+| `PROD_DB_HOST`, `PROD_DB_NAME`, `PROD_DB_USER`, `PROD_DB_PASSWORD` | MySQL (misma base en prod y prep) → `.env` en cada deploy |
 
 Detalle: `docs/GITHUB_SECRETS.md`
 
 ## Base de datos en el servidor
 
-En **prod**, el workflow puede generar `.env` desde `PROD_DB_*`. En **pre-prod**, creá `.env` manual o agregá secrets `PREP_DB_*`.
+Prod y pre-prod comparten los mismos secrets; el workflow genera `.env` en ambos (misma base MySQL).
 
-Por entorno, en el panel del hosting:
+En el panel del hosting (una sola base si querés datos compartidos entre prep y prod):
 
 1. Crear base MySQL y usuario.
 2. Importar:
@@ -46,7 +45,7 @@ DB_PASSWORD=***
 DB_CHARSET=utf8mb4
 ```
 
-Usá **bases distintas** para pre-prod y producción.
+Opcional: bases distintas en el panel; el deploy igual usa los mismos `PROD_DB_*` hasta que agregues otros secrets.
 
 ## Document root
 

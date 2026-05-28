@@ -2,9 +2,8 @@
 # prod      → carpeta remota pulseOS/
 # pre-prod  → carpeta remota PulseOS-prep/
 #
-# Secretos FTP: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_SERVER_DIR
-# Secretos MySQL prod (generan .env en deploy prod): PROD_DB_HOST, PROD_DB_NAME, PROD_DB_USER, PROD_DB_PASSWORD
-# Pre-prod: .env manual en servidor o secrets PREP_DB_* (opcional)
+# Mismos secrets para prod y pre-prod; solo cambia la carpeta FTP remota.
+# FTP_* + PROD_DB_* (+ opcional PROD_APP_URL)
 
 name: Deploy to FTP
 
@@ -56,8 +55,7 @@ jobs:
           fi
           echo "Desplegando a: $ENV_LABEL"
 
-      - name: Generar .env (producción desde PROD_DB_*)
-        if: env.REMOTE_SUBDIR == 'pulseOS'
+      - name: Generar .env (mismos PROD_DB_* para prod y pre-prod)
         env:
           PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
           PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
@@ -66,14 +64,21 @@ jobs:
           PROD_APP_URL: ${{ secrets.PROD_APP_URL }}
         run: |
           if [ -z "$PROD_DB_HOST" ] || [ -z "$PROD_DB_NAME" ]; then
-            echo "PROD_DB_* incompletos: no se genera .env (crealo manual en pulseOS/)"
+            echo "PROD_DB_* incompletos: no se genera .env"
             exit 0
           fi
-          APP_URL="${PROD_APP_URL:-https://tudominio.com/pulseOS}"
+          if [ "$REMOTE_SUBDIR" = "pulseOS" ]; then
+            APP_DEBUG=false
+            APP_URL="${PROD_APP_URL:-https://tudominio.com/pulseOS}"
+          else
+            APP_DEBUG=true
+            # Pre-prod: URL por carpeta (no usa PROD_APP_URL para no mezclar paths)
+            APP_URL="https://tudominio.com/PulseOS-prep"
+          fi
           {
             echo "APP_NAME=PulseOS"
             echo "APP_ENV=production"
-            echo "APP_DEBUG=false"
+            echo "APP_DEBUG=${APP_DEBUG}"
             echo "APP_URL=${APP_URL}"
             echo "APP_KEY="
             echo "DB_HOST=${PROD_DB_HOST}"
@@ -84,37 +89,7 @@ jobs:
             echo "DB_CHARSET=utf8mb4"
             echo "SESSION_LIFETIME=7200"
           } > .env
-          echo ".env generado para producción (no se muestra en logs)"
-
-      - name: Generar .env (pre-prod desde PREP_DB_*)
-        if: env.REMOTE_SUBDIR == 'PulseOS-prep'
-        env:
-          PREP_DB_HOST: ${{ secrets.PREP_DB_HOST }}
-          PREP_DB_NAME: ${{ secrets.PREP_DB_NAME }}
-          PREP_DB_USER: ${{ secrets.PREP_DB_USER }}
-          PREP_DB_PASSWORD: ${{ secrets.PREP_DB_PASSWORD }}
-          PREP_APP_URL: ${{ secrets.PREP_APP_URL }}
-        run: |
-          if [ -z "$PREP_DB_HOST" ] || [ -z "$PREP_DB_NAME" ]; then
-            echo "PREP_DB_* no configurados: .env de prep debe crearse manual en PulseOS-prep/"
-            exit 0
-          fi
-          APP_URL="${PREP_APP_URL:-https://tudominio.com/PulseOS-prep}"
-          {
-            echo "APP_NAME=PulseOS"
-            echo "APP_ENV=production"
-            echo "APP_DEBUG=true"
-            echo "APP_URL=${APP_URL}"
-            echo "APP_KEY="
-            echo "DB_HOST=${PREP_DB_HOST}"
-            echo "DB_PORT=3306"
-            echo "DB_DATABASE=${PREP_DB_NAME}"
-            echo "DB_USERNAME=${PREP_DB_USER}"
-            echo "DB_PASSWORD=${PREP_DB_PASSWORD}"
-            echo "DB_CHARSET=utf8mb4"
-            echo "SESSION_LIFETIME=7200"
-          } > .env
-          echo ".env generado para pre-producción"
+          echo ".env generado para ${ENV_LABEL}"
 
       - name: Preparar artefactos (sin .git ni CI)
         run: |

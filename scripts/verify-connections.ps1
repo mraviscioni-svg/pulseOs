@@ -19,12 +19,10 @@ function Get-EnvValue([string]$key) {
     return ""
 }
 
-function Get-DbEnv([string]$dbKey, [string]$prodKey, [string]$prepKey) {
+function Get-DbEnv([string]$dbKey, [string]$prodKey) {
     $v = Get-EnvValue $dbKey
     if ($v) { return $v }
-    $v = Get-EnvValue $prodKey
-    if ($v) { return $v }
-    return Get-EnvValue $prepKey
+    return Get-EnvValue $prodKey
 }
 
 $ok = $true
@@ -66,10 +64,10 @@ if (-not $ftpServer -or -not $ftpUser) {
 
 # MySQL — solo si mysql.exe está disponible
 Write-Host "`nMySQL..."
-$dbHost = Get-DbEnv "DB_HOST" "PROD_DB_HOST" "PREP_DB_HOST"
-$dbName = Get-DbEnv "DB_DATABASE" "PROD_DB_NAME" "PREP_DB_NAME"
-$dbUser = Get-DbEnv "DB_USERNAME" "PROD_DB_USER" "PREP_DB_USER"
-$dbPass = Get-DbEnv "DB_PASSWORD" "PROD_DB_PASSWORD" "PREP_DB_PASSWORD"
+$dbHost = Get-DbEnv "DB_HOST" "PROD_DB_HOST"
+$dbName = Get-DbEnv "DB_DATABASE" "PROD_DB_NAME"
+$dbUser = Get-DbEnv "DB_USERNAME" "PROD_DB_USER"
+$dbPass = Get-DbEnv "DB_PASSWORD" "PROD_DB_PASSWORD"
 $dbPort = Get-EnvValue "DB_PORT"
 if (-not $dbPort) { $dbPort = "3306" }
 
