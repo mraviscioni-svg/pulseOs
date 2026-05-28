@@ -71,6 +71,11 @@ function module_enabled(string $module): bool
     return \App\Services\ModuleService::enabled($module);
 }
 
+function is_platform_admin(): bool
+{
+    return \App\Services\PlatformAuthService::check();
+}
+
 function upload_url(?string $path): string
 {
     return $path ? url('/' . ltrim($path, '/')) : '';

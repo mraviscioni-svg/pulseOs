@@ -8,6 +8,8 @@ use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\PermissionMiddleware;
+use App\Middleware\PlatformAuthMiddleware;
+use App\Middleware\PlatformGuestMiddleware;
 use App\Middleware\TenantMiddleware;
 
 final class Application
@@ -55,13 +57,20 @@ final class Application
 
     private function registerRoutes(): void
     {
-        $register = require $this->root . '/routes/web.php';
-        $register($this->router, [
+        $middleware = [
             'auth' => AuthMiddleware::class,
             'guest' => GuestMiddleware::class,
             'tenant' => TenantMiddleware::class,
             'csrf' => CsrfMiddleware::class,
             'permission' => PermissionMiddleware::class,
-        ]);
+            'platform_auth' => PlatformAuthMiddleware::class,
+            'platform_guest' => PlatformGuestMiddleware::class,
+        ];
+
+        $registerWeb = require $this->root . '/routes/web.php';
+        $registerWeb($this->router, $middleware);
+
+        $registerAdmin = require $this->root . '/routes/admin.php';
+        $registerAdmin($this->router, $middleware);
     }
 }

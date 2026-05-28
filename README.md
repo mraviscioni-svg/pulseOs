@@ -24,13 +24,17 @@ copy .env.example .env
 3. Importar migraciones en orden:
    - `database/migrations/001_initial_schema.sql`
    - `database/migrations/002_seed_roles_permissions.sql`
+   - `database/migrations/003_platform_admins.sql`
 4. Servir la carpeta `public/`:
 
 ```powershell
 php -S localhost:8080 -t public
 ```
 
-5. Abrir http://localhost:8080/register y crear tu empresa.
+5. **Comercios:** http://localhost:8080/register — crear empresa.  
+6. **Plataforma (super-admin):** http://localhost:8080/admin/login  
+   - Email: `admin@pulseos.com`  
+   - Contraseña: `password` (cambiar en producción)
 
 ## Estructura
 
