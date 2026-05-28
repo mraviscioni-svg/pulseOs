@@ -1,10 +1,16 @@
 # PulseOS — Dejar PREP funcionando
 
-## Lo que el agente NO puede hacer solo
+## Cómo trabaja el agente (Cursor) con FTP/MySQL
 
-No tengo acceso a tu FTP ni a MySQL del hosting. El deploy a **PulseOS-prep** lo hace **GitHub Actions** cuando hacés push a `pre-prod` (ya configurado).
+Los **GitHub Secrets no son visibles** para el agente en tu PC. Para que pueda probar conexiones y ayudarte en caliente:
 
-Para que yo opere directo haría falta que pegues credenciales en el chat (no recomendado) o uses **GitHub Secrets** + ejecutás vos el SQL.
+1. Copiá `.env.example` → **`.env`** (solo en tu máquina, nunca en Git)
+2. Pegá ahí los mismos datos que en GitHub / el hosting
+3. Ejecutá: `php scripts/verify-connections.php`
+
+Lista de secretos y nombres correctos: **[docs/GITHUB_SECRETS.md](docs/GITHUB_SECRETS.md)**
+
+En GitHub: Actions → **Verify connections** → Run workflow (prueba FTP/MySQL sin mostrar claves).
 
 ---
 
