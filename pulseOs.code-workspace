@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "PulseOS"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true
+    },
+    "editor.formatOnSave": false,
+    "files.associations": {
+      "*.php": "php"
+    }
+  }
+}
