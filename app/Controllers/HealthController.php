@@ -13,11 +13,19 @@ final class HealthController extends Controller
 {
     public function index(): void
     {
+        $root = dirname(__DIR__, 2);
+        $dbCfg = Database::config();
+
         $checks = [
             'app' => 'ok',
             'base_path' => base_path(),
             'session_path' => session_cookie_path(),
             'php' => PHP_VERSION,
+            'env_file' => is_file($root . '/.env') ? 'ok (.env en servidor)' : 'falta — el deploy debe generar .env o crealo manual',
+            'db_host' => $dbCfg['host'],
+            'db_name' => $dbCfg['database'],
+            'db_user' => $dbCfg['username'],
+            'db_password_set' => $dbCfg['password'] !== '' ? 'sí' : 'no (vacío)',
         ];
 
         try {
@@ -53,11 +61,20 @@ final class HealthController extends Controller
         } catch (PDOException $e) {
             $checks['database'] = 'fail';
             $checks['database_error'] = $e->getMessage();
+            $checks['host_probe'] = Database::probeHosts();
+
+            $working = array_filter($checks['host_probe'], fn (array $r) => $r['ok']);
+            if ($working !== []) {
+                $good = reset($working);
+                $checks['fix'] = "En GitHub Secret PROD_DB_HOST (o .env DB_HOST) usá: \"{$good['host']}\". En cPanel casi siempre es localhost.";
+            } else {
+                $checks['fix'] = 'Revisá en cPanel → MySQL: host (localhost), nombre de base, usuario y clave. Actualizá secrets PROD_DB_* y redeploy, o editá .env en PulseOS-prep/.';
+            }
         }
 
         $ok = ($checks['session'] ?? '') === 'ok'
             && ($checks['database'] ?? '') === 'ok'
-            && str_starts_with((string) ($checks['migration_004'] ?? ''), 'ok');
+            && ($checks['tables'] ?? '') === 'ok';
 
         $this->json([
             'status' => $ok ? 'ok' : 'error',

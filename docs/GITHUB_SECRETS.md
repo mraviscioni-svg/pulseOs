@@ -24,7 +24,7 @@
 
 | Secret | Se escribe en `.env` como |
 |--------|---------------------------|
-| `PROD_DB_HOST` | `DB_HOST` |
+| `PROD_DB_HOST` | `DB_HOST` — en cPanel usar **`localhost`** (no el dominio) |
 | `PROD_DB_NAME` | `DB_DATABASE` |
 | `PROD_DB_USER` | `DB_USERNAME` |
 | `PROD_DB_PASSWORD` | `DB_PASSWORD` |
