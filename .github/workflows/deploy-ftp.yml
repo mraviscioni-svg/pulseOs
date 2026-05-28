@@ -69,11 +69,10 @@ jobs:
           fi
           if [ "$REMOTE_SUBDIR" = "pulseOS" ]; then
             APP_DEBUG=false
-            APP_URL="${PROD_APP_URL:-https://tudominio.com/pulseOS}"
+            APP_URL="${PROD_APP_URL:-https://tallerboedo.com.ar/pulseOS/public}"
           else
             APP_DEBUG=true
-            # Pre-prod: URL por carpeta (no usa PROD_APP_URL para no mezclar paths)
-            APP_URL="https://tudominio.com/PulseOS-prep"
+            APP_URL="https://tallerboedo.com.ar/PulseOS-prep/public"
           fi
           {
             echo "APP_NAME=PulseOS"

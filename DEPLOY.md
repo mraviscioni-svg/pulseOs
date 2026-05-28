@@ -35,7 +35,7 @@ En el panel del hosting (una sola base si querés datos compartidos entre prep y
 APP_NAME=PulseOS
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://tudominio.com/pulseOS
+APP_URL=https://tallerboedo.com.ar/pulseOS/public
 
 DB_HOST=localhost
 DB_PORT=3306

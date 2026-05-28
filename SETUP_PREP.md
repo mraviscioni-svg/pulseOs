@@ -40,7 +40,7 @@ En la carpeta desplegada (`PulseOS-prep/`), crear `.env` (no va por Git):
 APP_NAME=PulseOS
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://TU-DOMINIO/ruta-a-PulseOS-prep
+APP_URL=https://tallerboedo.com.ar/PulseOS-prep/public
 
 DB_HOST=localhost
 DB_PORT=3306
@@ -61,8 +61,9 @@ El hosting debe servir la carpeta **`public/`**
 
 | Acceso | URL | Usuario | Clave |
 |--------|-----|---------|-------|
-| Comercio | `/login` | el que creaste en `/register` | tu clave |
-| Plataforma | `/admin/login` | `admin` | `password` |
+| Comercio | https://tallerboedo.com.ar/PulseOS-prep/public/login | usuario de `/register` (ej. `demo`) | tu clave |
+| Plataforma | https://tallerboedo.com.ar/PulseOS-prep/public/admin/login | `admin` | `password` |
+| Registro | https://tallerboedo.com.ar/PulseOS-prep/public/register | — | — |
 
 ---
 
