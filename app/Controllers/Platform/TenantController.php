@@ -26,9 +26,14 @@ final class TenantController extends Controller
 
     public function create(): void
     {
+        $defaultType = (string) old('business_type', 'otro');
+        $defaultModules = config('business_types')[$defaultType]['modules'] ?? [];
+
         $this->view('admin/tenants/create', [
             'title' => 'Nuevo comercio',
             'businessTypes' => config('business_types'),
+            'moduleLabels' => config('platform_modules'),
+            'activeModules' => is_array(old('modules')) ? old('modules') : $defaultModules,
         ], 'layouts/admin');
     }
 
@@ -57,6 +62,8 @@ final class TenantController extends Controller
             $this->redirect('/admin/tenants/create');
         }
 
+        $data['modules'] = is_array($data['modules'] ?? null) ? array_values($data['modules']) : null;
+
         try {
             $tenantId = (new TenantRegistrationService())->register($data);
             (new AuditService())->log(null, null, 'platform.tenant.created', 'tenant', $tenantId);
@@ -78,10 +85,18 @@ final class TenantController extends Controller
             $this->redirect('/admin/tenants');
         }
 
+        $settings = $detail['settings'] ?? [];
+        $activeModules = json_decode((string) ($settings['modules_json'] ?? '[]'), true) ?: [];
+        if ($activeModules === []) {
+            $activeModules = config('business_types')[$detail['tenant']['business_type']]['modules'] ?? [];
+        }
+
         $this->view('admin/tenants/show', [
             'title' => $detail['tenant']['name'],
             'detail' => $detail,
             'businessTypes' => config('business_types'),
+            'moduleLabels' => config('platform_modules'),
+            'activeModules' => $activeModules,
         ], 'layouts/admin');
     }
 
@@ -107,6 +122,7 @@ final class TenantController extends Controller
                 'phone' => $data['phone'] ?? null,
                 'address' => $data['address'] ?? null,
                 'business_type' => $data['business_type'],
+                'modules' => is_array($data['modules'] ?? null) ? array_values($data['modules']) : [],
             ]);
             (new AuditService())->log(null, null, 'platform.tenant.updated', 'tenant', $tenantId);
             Session::flash('success', 'Comercio actualizado.');

@@ -57,6 +57,15 @@
       <label class="label">Dirección</label>
       <input name="address" value="<?= e($t['address'] ?? '') ?>" class="input-field">
     </div>
+    <div class="border-t border-slate-800 pt-4">
+      <h4 class="mb-1 font-semibold">Módulos activos</h4>
+      <p class="mb-3 text-sm text-slate-400">Solo vos podés habilitar qué funciones ve este comercio en su menú.</p>
+      <?php
+      $moduleLabels = $moduleLabels ?? config('platform_modules');
+      $activeModules = $activeModules ?? [];
+      require __DIR__ . '/../partials/module_checkboxes.php';
+      ?>
+    </div>
     <button type="submit" class="btn-primary">Guardar cambios</button>
   </form>
 </div>

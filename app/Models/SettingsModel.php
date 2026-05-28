@@ -24,8 +24,8 @@ final class SettingsModel
         $db = Database::connection();
         $stmt = $db->prepare(
             'UPDATE business_settings SET currency = :currency, tax_rate = :tax_rate,
-             pos_receipt_footer = :footer, low_stock_alert = :alert, dark_mode = :dark,
-             modules_json = :modules WHERE tenant_id = :tenant_id'
+             pos_receipt_footer = :footer, low_stock_alert = :alert, dark_mode = :dark
+             WHERE tenant_id = :tenant_id'
         );
         $stmt->execute([
             'currency' => $data['currency'] ?? 'ARS',
@@ -33,7 +33,6 @@ final class SettingsModel
             'footer' => $data['pos_receipt_footer'] ?? null,
             'alert' => !empty($data['low_stock_alert']) ? 1 : 0,
             'dark' => !empty($data['dark_mode']) ? 1 : 0,
-            'modules' => json_encode($data['modules'] ?? [], JSON_UNESCAPED_UNICODE),
             'tenant_id' => $tenantId,
         ]);
 

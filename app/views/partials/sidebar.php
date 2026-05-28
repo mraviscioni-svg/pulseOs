@@ -21,8 +21,10 @@
     <?php endforeach;
 
     foreach ($navModules as $modKey => $meta):
-        if ($modKey === 'variants') {
-            if (!module_enabled('variants') && !module_enabled('ropa')) continue;
+        if ($modKey === 'categories') {
+            if (!module_enabled('categories') && !module_enabled('products')) {
+                continue;
+            }
         } elseif (!module_enabled($modKey)) {
             continue;
         }

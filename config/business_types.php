@@ -5,38 +5,38 @@ declare(strict_types=1);
 return [
     'kiosco' => [
         'label' => 'Kiosco',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'suppliers'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'reports'],
     ],
     'almacen' => [
         'label' => 'Almacén',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'suppliers'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'reports'],
     ],
     'taller' => [
         'label' => 'Taller mecánico',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'work_orders'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'reports', 'work_orders'],
     ],
     'boliche' => [
         'label' => 'Boliche',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'entries', 'bar'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'entries', 'bar', 'reports'],
     ],
     'ropa' => [
         'label' => 'Tienda de ropa',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'variants'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'variants', 'reports'],
     ],
     'ferreteria' => [
         'label' => 'Ferretería',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'suppliers'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'reports'],
     ],
     'distribuidora' => [
         'label' => 'Distribuidora',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'suppliers'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'reports'],
     ],
     'gimnasio' => [
         'label' => 'Gimnasio',
-        'modules' => ['products', 'pos', 'cash', 'memberships'],
+        'modules' => ['products', 'categories', 'pos', 'cash', 'memberships', 'reports'],
     ],
     'otro' => [
         'label' => 'Otro comercio',
-        'modules' => ['products', 'pos', 'stock', 'cash', 'purchases', 'suppliers'],
+        'modules' => ['products', 'categories', 'pos', 'stock', 'cash', 'purchases', 'suppliers', 'reports'],
     ],
 ];

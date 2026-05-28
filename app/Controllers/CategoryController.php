@@ -24,7 +24,12 @@ final class CategoryController extends Controller
     public function storeCategory(): void
     {
         $data = $this->input();
-        (new CategoryModel())->create($this->tenantId(), $data);
+        $name = trim((string) ($data['name'] ?? ''));
+        if ($name === '') {
+            Session::flash('error', 'El nombre de la categoría es obligatorio.');
+            $this->redirect('/categories');
+        }
+        (new CategoryModel())->create($this->tenantId(), ['name' => $name, 'description' => $data['description'] ?? null]);
         Session::flash('success', 'Categoría creada.');
         $this->redirect('/categories');
     }
@@ -32,7 +37,12 @@ final class CategoryController extends Controller
     public function storeBrand(): void
     {
         $data = $this->input();
-        (new BrandModel())->create($this->tenantId(), $data);
+        $name = trim((string) ($data['name'] ?? ''));
+        if ($name === '') {
+            Session::flash('error', 'El nombre de la marca es obligatorio.');
+            $this->redirect('/categories');
+        }
+        (new BrandModel())->create($this->tenantId(), ['name' => $name]);
         Session::flash('success', 'Marca creada.');
         $this->redirect('/categories');
     }

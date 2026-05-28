@@ -44,6 +44,15 @@
       <label class="label">Contraseña inicial del owner</label>
       <input type="password" name="password" required minlength="8" class="input-field" autocomplete="new-password">
     </div>
+    <div class="border-t border-slate-800 pt-4">
+      <h4 class="mb-1 font-semibold">Módulos activos</h4>
+      <p class="mb-3 text-sm text-slate-400">Por defecto según el rubro; podés ajustarlos antes de crear.</p>
+      <?php
+      $moduleLabels = $moduleLabels ?? config('platform_modules');
+      $activeModules = $activeModules ?? [];
+      require __DIR__ . '/../partials/module_checkboxes.php';
+      ?>
+    </div>
     <div class="flex gap-3 pt-2">
       <button type="submit" class="btn-primary">Crear comercio</button>
       <a href="<?= url('/admin/tenants') ?>" class="rounded-lg border border-slate-700 px-4 py-2 hover:bg-slate-900">Cancelar</a>

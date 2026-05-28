@@ -109,7 +109,7 @@
   <button class="btn-primary">Aplicar</button>
 </form>
 
-<?php if (module_enabled('variants') || module_enabled('ropa') || !empty($product['has_variants'])): ?>
+<?php if (module_enabled('variants') || !empty($product['has_variants'])): ?>
 <div class="card mt-6">
   <h3 class="mb-4 font-semibold">Variantes (talle, color, etc.)</h3>
   <table class="mb-4 w-full text-sm">

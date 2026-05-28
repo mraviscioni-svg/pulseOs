@@ -36,7 +36,10 @@ final class TenantRegistrationService
             ]);
             $tenantId = (int) $db->lastInsertId();
 
-            $modules = config('business_types')[$data['business_type'] ?? 'otro']['modules'] ?? [];
+            $modules = (new PlatformTenantService())->normalizeModules([
+                'modules' => $data['modules'] ?? null,
+                'business_type' => $data['business_type'] ?? 'otro',
+            ]);
             $settings = $db->prepare(
                 'INSERT INTO business_settings (tenant_id, modules_json) VALUES (:tenant_id, :modules)'
             );
