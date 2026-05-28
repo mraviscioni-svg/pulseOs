@@ -31,6 +31,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Instalar dependencias (Composer)
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
       - name: Definir carpeta remota según entorno
         run: |
           if [ "$DEPLOY_BRANCH" = "prod" ]; then

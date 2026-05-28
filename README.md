@@ -1,51 +1,78 @@
 # PulseOS
 
-Proyecto PulseOS — deploy automático a FTP (Taller Boedo).
+SaaS multitenant para gestión comercial: stock, ventas (POS), proveedores, compras y caja.
 
-## Ramas y entornos
+**Stack:** PHP 8.2+, MySQL/MariaDB, Tailwind CSS, Alpine.js, Composer.
 
-| Rama GitHub | Carpeta FTP (Taller Boedo) | Uso |
-|-------------|----------------------------|-----|
-| `prod` | `pulseOS/` | Producción |
-| `pre-prod` | `PulseOS-prep/` | Pre-producción |
+## Requisitos
 
-Cada **push** a la rama correspondiente dispara el deploy por GitHub Actions.
+- PHP 8.1+ con extensiones `pdo_mysql`, `mbstring`, `json`
+- MySQL 8+ o MariaDB 10.4+
+- Apache con `mod_rewrite` (o Nginx equivalente)
+- Composer (local o en CI)
 
-## Configuración inicial (una vez)
-
-1. En GitHub: [pulseOs → Settings → Secrets and variables → Actions](https://github.com/mraviscioni-svg/pulseOs/settings/secrets/actions)
-2. Crear estos secretos:
-
-| Secreto | Descripción |
-|---------|-------------|
-| `FTP_SERVER` | Host FTP (sin `ftp://`), ej. del hosting Taller Boedo |
-| `FTP_USERNAME` | Usuario FTP |
-| `FTP_PASSWORD` | Contraseña FTP |
-| `FTP_SERVER_DIR` | Carpeta base donde caés al conectar (terminar en `/`). Si al entrar ya estás en la raíz del sitio, usá `./`. Si entrás en una carpeta padre, ej. `public_html/` |
-
-Las carpetas `pulseOS/` y `PulseOS-prep/` se crean automáticamente en el primer deploy si no existen.
-
-3. En **Settings → General → Default branch**, elegí `prod` como rama por defecto (recomendado).
-
-Detalle completo: ver [DEPLOY.md](DEPLOY.md).
-
-## Flujo de trabajo
+## Instalación local
 
 ```powershell
 cd "c:\Users\marcelo.raviscioni\Desktop\pulseOs"
-
-# Desarrollo → pre-producción
-git checkout pre-prod
-git add .
-git commit -m "Tu mensaje"
-git push origin pre-prod
-
-# Cuando esté listo → producción
-git checkout prod
-git merge pre-prod
-git push origin prod
+composer install
+copy .env.example .env
 ```
 
-## Estado
+1. Crear base de datos `pulseos` en MySQL.
+2. Editar `.env` con credenciales DB.
+3. Importar migraciones en orden:
+   - `database/migrations/001_initial_schema.sql`
+   - `database/migrations/002_seed_roles_permissions.sql`
+4. Servir la carpeta `public/`:
 
-Repositorio preparado para desarrollo. El código de la aplicación se agregará en los próximos commits.
+```powershell
+php -S localhost:8080 -t public
+```
+
+5. Abrir http://localhost:8080/register y crear tu empresa.
+
+## Estructura
+
+```
+app/           Controladores, modelos, servicios, vistas, middleware
+config/        App, DB, rubros de negocio
+database/      Migraciones SQL
+public/        Document root (index.php, assets)
+routes/        Rutas web y API interna
+```
+
+## MVP incluido
+
+| Módulo | Estado |
+|--------|--------|
+| Registro de empresa (tenant) | ✓ |
+| Login / logout / roles | ✓ |
+| Dashboard | ✓ |
+| Productos + stock | ✓ |
+| POS + código de barras | ✓ |
+| Caja | ✓ |
+| Proveedores y compras | ✓ |
+| Usuarios | ✓ |
+| API interna (`/api/products/*`) | ✓ |
+
+## Multitenancy
+
+Cada tabla de negocio lleva `tenant_id`. La sesión fija el tenant; los modelos filtran por tenant. Ningún usuario accede a datos de otro negocio.
+
+## Deploy (FTP)
+
+Ver [DEPLOY.md](DEPLOY.md). En el servidor:
+
+1. Subir código (GitHub Actions incluye `vendor/` vía `composer install` en CI).
+2. Crear `.env` en la carpeta del sitio (no se sube por Git).
+3. Importar SQL en la base del hosting.
+4. Document root → carpeta `public/` (o usar `.htaccess` en la raíz del proyecto).
+
+## Próximos pasos (arquitectura preparada)
+
+- Facturación electrónica
+- Mercado Pago
+- Reportes avanzados
+- Multi-sucursal
+- API pública / app mobile

@@ -8,74 +8,66 @@ GitHub (mraviscioni-svg/pulseOs)
 └── rama prod      ──push──►  FTP …/pulseOS/
 ```
 
-El workflow está en `.github/workflows/deploy-ftp.yml`.
+El workflow ejecuta `composer install` antes de subir archivos (incluye `vendor/`).
 
 ## Secretos en GitHub
 
-Repo: https://github.com/mraviscioni-svg/pulseOs/settings/secrets/actions
-
 | Secreto | Valor |
 |---------|--------|
-| `FTP_SERVER` | Servidor FTP del hosting (ej. `ftp.tudominio.com`) |
-| `FTP_USERNAME` | Usuario FTP Taller Boedo |
+| `FTP_SERVER` | Host FTP |
+| `FTP_USERNAME` | Usuario FTP |
 | `FTP_PASSWORD` | Contraseña FTP |
-| `FTP_SERVER_DIR` | Directorio base al conectar, **con barra final**. Ejemplos: `./` si los archivos van en la raíz del login; o `public_html/` si el hosting abre ahí |
+| `FTP_SERVER_DIR` | Carpeta base al conectar, con `/` final |
 
-El action concatena la subcarpeta del entorno:
+## Base de datos en el servidor
 
-- **prod:** `{FTP_SERVER_DIR}pulseOS/`
-- **pre-prod:** `{FTP_SERVER_DIR}PulseOS-prep/`
+**No va en GitHub Actions** (MySQL del hosting suele ser solo `localhost`).
 
-No hace falta crear las carpetas a mano en el FTP: el primer deploy las crea al subir archivos.
+Por entorno (prep y prod), en el panel del hosting:
+
+1. Crear base MySQL y usuario.
+2. Importar:
+   - `database/migrations/001_initial_schema.sql`
+   - `database/migrations/002_seed_roles_permissions.sql`
+3. Crear `.env` en la carpeta desplegada (`PulseOS-prep` o `pulseOS`):
+
+```env
+APP_NAME=PulseOS
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tudominio.com/pulseOS
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=usuario_pulseos_prep
+DB_USERNAME=usuario_mysql
+DB_PASSWORD=***
+DB_CHARSET=utf8mb4
+```
+
+Usá **bases distintas** para pre-prod y producción.
+
+## Document root
+
+Ideal: apuntar el dominio/subcarpeta a `public/`.
+
+Si el hosting no permite cambiar el root, el `.htaccess` en la raíz del repo redirige a `public/`.
 
 ## Ramas
 
-| Rama | Deploy automático | Carpeta FTP |
-|------|-------------------|-------------|
-| `prod` | Sí (push) | `pulseOS` |
-| `pre-prod` | Sí (push) | `PulseOS-prep` |
-| `main` | No | — |
+| Rama | Carpeta FTP |
+|------|-------------|
+| `prod` | `pulseOS` |
+| `pre-prod` | `PulseOS-prep` |
 
-Recomendación: usar **`prod`** como rama por defecto en GitHub (Settings → General).
+## Qué no se sube
 
-## Comandos habituales
-
-```powershell
-cd "c:\Users\marcelo.raviscioni\Desktop\pulseOs"
-
-git checkout pre-prod
-# … cambios …
-git add .
-git commit -m "feat: descripción"
-git push origin pre-prod
-
-git checkout prod
-git merge pre-prod
-git push origin prod
-```
-
-## Deploy manual (sin push)
-
-1. GitHub → **Actions** → **Deploy to FTP**
-2. **Run workflow**
-3. Elegir `pre-prod` o `prod`
-
-## Qué se sube al FTP
-
-Todo el contenido del repo **excepto**:
-
+- `.env`
 - `.git`, `.github`
-- `README.md`, `DEPLOY.md`, `.gitignore`
-- `.env` y archivos de entorno
-- `node_modules/`
+- `README.md`, `DEPLOY.md` (documentación)
 
-Cuando agregues la app (PHP, HTML, assets), esos archivos sí se despliegan.
+## Verificar
 
-## FTPS
-
-Si el hosting exige FTP seguro, en `deploy-ftp.yml` cambiá `protocol: ftp` por `protocol: ftps`.
-
-## Verificar el deploy
-
-1. **Actions** → último run en verde
-2. En el FTP, revisar `pulseOS/` o `PulseOS-prep/` según la rama
+1. Actions en verde
+2. `/register` o `/login` carga la UI
+3. Crear empresa de prueba en pre-prod

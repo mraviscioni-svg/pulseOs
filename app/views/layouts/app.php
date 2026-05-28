@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" class="dark h-full">
+<head>
+<?php require __DIR__ . '/../partials/head.php'; ?>
+</head>
+<body class="min-h-full bg-slate-950 text-slate-100">
+<?php require __DIR__ . '/../partials/sidebar.php'; ?>
+<div class="pl-64">
+  <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 backdrop-blur">
+    <h1 class="text-lg font-semibold"><?= e($title ?? '') ?></h1>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-slate-400"><?= e(\App\Core\Session::get('user_name', '')) ?></span>
+      <form method="post" action="<?= url('/logout') ?>">
+        <?= csrf_field() ?>
+        <button class="rounded-lg border border-slate-700 px-3 py-1.5 hover:bg-slate-900">Salir</button>
+      </form>
+    </div>
+  </header>
+  <main class="p-6">
+    <?php require __DIR__ . '/../partials/flash.php'; ?>
+    <?= $content ?>
+  </main>
+</div>
+</body>
+</html>
