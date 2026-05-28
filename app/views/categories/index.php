@@ -1,18 +1,18 @@
-<div class="mb-6">
-  <h2 class="text-xl font-bold">Categorías y marcas</h2>
-  <p class="mt-1 text-sm text-slate-400">
-    Rubro <strong class="text-slate-300"><?= e($businessTypeLabel) ?></strong> — lo que agregues queda en el catálogo compartido para futuros comercios del mismo tipo.
-  </p>
-</div>
+<?php
+$pageEyebrow = 'Catálogo';
+$pageTitle = 'Categorías y marcas';
+$pageDescription = 'Rubro ' . $businessTypeLabel . ' — lo que agregues queda en el catálogo compartido para futuros comercios del mismo tipo.';
+require __DIR__ . '/../partials/crud_page_header.php';
+?>
 
 <div class="grid gap-6 lg:grid-cols-2">
   <div class="form-card">
-    <h3 class="mb-1 text-lg font-semibold">Categorías</h3>
+    <h3 class="mb-1 text-base font-semibold text-navy-900">Categorías</h3>
     <p class="mb-4 text-sm text-slate-500">Usalas al crear productos.</p>
 
     <?php if (!empty($suggestedCategories)): ?>
-    <div class="mb-4 rounded-xl border border-indigo-500/20 bg-indigo-950/30 p-3">
-      <p class="mb-2 text-xs font-medium uppercase tracking-wide text-indigo-300">Sugeridas del rubro</p>
+    <div class="mb-4 rounded-xl border border-accent-200 bg-accent-50 p-3">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-accent-600">Sugeridas del rubro</p>
       <div class="flex flex-wrap gap-2">
         <?php foreach ($suggestedCategories as $s): ?>
         <form method="post" action="<?= url('/categories/import') ?>" class="inline">
@@ -28,13 +28,13 @@
     <?php if (!$categories): ?>
     <p class="mb-4 text-sm text-slate-500">Todavía no hay categorías en este comercio.</p>
     <?php else: ?>
-    <ul class="mb-4 divide-y divide-slate-800 text-sm">
+    <ul class="mb-4 divide-y divide-slate-100 text-sm">
       <?php foreach ($categories as $c): ?>
       <li class="flex justify-between gap-2 py-2.5">
-        <span><?= e($c['name']) ?></span>
+        <span class="font-medium text-navy-900"><?= e($c['name']) ?></span>
         <form method="post" action="<?= url('/categories/' . $c['id'] . '/delete') ?>" class="inline" onsubmit="return confirm('¿Eliminar esta categoría?');">
           <?= csrf_field() ?>
-          <button type="submit" class="btn-ghost text-rose-400">Eliminar</button>
+          <button type="submit" class="btn-ghost text-rose-600">Eliminar</button>
         </form>
       </li>
       <?php endforeach; ?>
@@ -57,12 +57,12 @@
   </div>
 
   <div class="form-card">
-    <h3 class="mb-1 text-lg font-semibold">Marcas</h3>
+    <h3 class="mb-1 text-base font-semibold text-navy-900">Marcas</h3>
     <p class="mb-4 text-sm text-slate-500">Opcional, para filtrar y etiquetar productos.</p>
 
     <?php if (!empty($suggestedBrands)): ?>
-    <div class="mb-4 rounded-xl border border-indigo-500/20 bg-indigo-950/30 p-3">
-      <p class="mb-2 text-xs font-medium uppercase tracking-wide text-indigo-300">Sugeridas del rubro</p>
+    <div class="mb-4 rounded-xl border border-accent-200 bg-accent-50 p-3">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-accent-600">Sugeridas del rubro</p>
       <div class="flex flex-wrap gap-2">
         <?php foreach ($suggestedBrands as $s): ?>
         <form method="post" action="<?= url('/brands/import') ?>" class="inline">
@@ -78,13 +78,13 @@
     <?php if (!$brands): ?>
     <p class="mb-4 text-sm text-slate-500">Todavía no hay marcas en este comercio.</p>
     <?php else: ?>
-    <ul class="mb-4 divide-y divide-slate-800 text-sm">
+    <ul class="mb-4 divide-y divide-slate-100 text-sm">
       <?php foreach ($brands as $b): ?>
       <li class="flex justify-between gap-2 py-2.5">
-        <span><?= e($b['name']) ?></span>
+        <span class="font-medium text-navy-900"><?= e($b['name']) ?></span>
         <form method="post" action="<?= url('/brands/' . $b['id'] . '/delete') ?>" class="inline" onsubmit="return confirm('¿Eliminar esta marca?');">
           <?= csrf_field() ?>
-          <button type="submit" class="btn-ghost text-rose-400">Eliminar</button>
+          <button type="submit" class="btn-ghost text-rose-600">Eliminar</button>
         </form>
       </li>
       <?php endforeach; ?>

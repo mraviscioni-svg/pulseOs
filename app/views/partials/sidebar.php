@@ -26,15 +26,12 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
 ?>
 <aside class="sidebar">
   <div class="sidebar-brand">
-    <a href="<?= url('/dashboard') ?>" class="flex items-center gap-3 hover:opacity-90" title="PulseOS">
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .9-4.5 4.2 1.1 6.3L12 16.8 6.4 19.4l1.1-6.3L3 8.9 9 8z"/></svg>
-      </span>
-      <div class="min-w-0">
-        <p class="truncate text-sm font-bold text-navy-900">PulseOS</p>
-        <p class="truncate text-xs text-slate-500"><?= e($tenantName) ?></p>
-      </div>
+    <a href="<?= url('/dashboard') ?>" class="block hover:opacity-90" title="PulseOS">
+      <img src="<?= asset('images/logo.svg') ?>" alt="PulseOS" class="h-9 w-auto max-w-full object-contain object-left" width="212" height="52">
     </a>
+    <?php if ($tenantName !== ''): ?>
+    <p class="mt-2 truncate text-xs text-slate-500"><?= e($tenantName) ?></p>
+    <?php endif; ?>
   </div>
   <nav class="sidebar-nav">
     <?php

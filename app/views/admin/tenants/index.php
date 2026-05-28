@@ -1,22 +1,25 @@
-<div class="page-header">
-  <div class="page-header-main">
-    <p class="page-eyebrow">Platform</p>
-    <h2>Comercios</h2>
-    <p>Tenants registrados en la plataforma PulseOS.</p>
-  </div>
-</div>
+<?php
+$pageEyebrow = 'Platform';
+$pageTitle = 'Comercios';
+$pageDescription = 'Tenants registrados en la plataforma PulseOS.';
+$createUrl = url('/admin/tenants/create');
+$createLabel = '+ Nuevo comercio';
+require __DIR__ . '/../../partials/crud_page_header.php';
+?>
 
 <?php
 $basePath = '/admin/tenants';
-$searchPlaceholder = 'Nombre, email o slug…';
-$createUrl = url('/admin/tenants/create');
-$createLabel = '+ Nuevo comercio';
+$searchPlaceholder = 'Buscar por nombre, email o slug';
 $totalCount = count($tenants);
 require __DIR__ . '/../../partials/crud_toolbar.php';
 ?>
 
 <div class="data-table-wrap">
-  <table class="data-table">
+  <div class="data-table-head">
+    <h3>Listado</h3>
+  </div>
+  <div class="data-table-scroll">
+    <table class="data-table">
     <thead>
       <tr>
         <th>Negocio</th>
@@ -36,7 +39,7 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
         <p class="font-medium text-navy-900"><?= e($t['name']) ?></p>
         <p class="text-xs text-slate-500"><?= e($t['slug']) ?> · <?= e($t['email'] ?? '—') ?></p>
       </td>
-      <td class="capitalize text-slate-300"><?= e(str_replace('_', ' ', (string) $t['business_type'])) ?></td>
+      <td class="capitalize text-slate-600"><?= e(str_replace('_', ' ', (string) $t['business_type'])) ?></td>
       <td><?= (int) $t['users_count'] ?></td>
       <td><?= (int) $t['products_count'] ?></td>
       <td><?= money($t['sales_total']) ?></td>
@@ -67,5 +70,6 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
     <tr><td colspan="8"><?php $message = 'No hay comercios' . ($q ? ' para esa búsqueda' : ''); $actionUrl = url('/admin/tenants/create'); require __DIR__ . '/../../partials/empty_state.php'; ?></td></tr>
     <?php endif; ?>
     </tbody>
-  </table>
+    </table>
+  </div>
 </div>

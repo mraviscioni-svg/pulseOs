@@ -23,50 +23,15 @@ final class ProductController extends Controller
 
     public function index(): void
     {
-        $q = trim((string) ($_GET['q'] ?? ''));
-        $status = (string) ($_GET['status'] ?? 'all');
-        if (!in_array($status, ['all', 'active', 'inactive'], true)) {
-            $status = 'all';
-        }
-
-        $products = (new ProductModel())->search(
-            $this->tenantId(),
-            $q !== '' ? $q : null,
-            500,
-            $status === 'all' ? null : $status
-        );
-
-        $rows = [];
-        foreach ($products as $p) {
-            $rows[] = [
-                $p['name'],
-                $p['sku'] ?? '',
-                $p['barcode'] ?? '',
-                $p['category_name'] ?? '',
-                $p['stock'],
-                $p['price'],
-                $p['is_active'] ? 'Activo' : 'Inactivo',
-            ];
-        }
-
-        $this->maybeExportList(
-            'Productos',
-            ['Nombre', 'SKU', 'Código', 'Categoría', 'Stock', 'Precio', 'Estado'],
-            $rows,
-            'productos'
-        );
-
-        $this->view('products/index', [
-            'title' => 'Productos',
-            'products' => $products,
-            'q' => $q,
-            'status' => $status,
-        ]);
+        $this->renderIndex();
     }
 
     public function create(): void
     {
-        $this->formView('Nuevo producto', null);
+        $this->renderIndex([
+            'modal' => $this->modalMeta('Nuevo producto', 'Los datos se guardan en tu tenant actual.'),
+            ...$this->formDependencies(null),
+        ]);
     }
 
     public function store(): void
@@ -77,14 +42,14 @@ final class ProductController extends Controller
         }
 
         try {
-            if (!empty($_FILES['image'])) {
+            if (!empty($_FILES['image']['name'])) {
                 $data['image_path'] = (new UploadService())->storeImage($_FILES['image']);
             }
-            $data['is_active'] = 1;
+            $data['is_active'] = !empty($data['is_active']) ? 1 : 0;
             $id = (new ProductModel())->create($this->tenantId(), $data);
             (new AuditService())->log($this->tenantId(), $this->userId(), 'product.created', 'product', $id);
             Session::flash('success', 'Producto creado.');
-            $this->redirect('/products/' . $id . '/edit');
+            $this->redirect('/products');
         } catch (\Throwable $e) {
             Session::flash('error', $e->getMessage());
             $this->redirect('/products/create');
@@ -97,7 +62,11 @@ final class ProductController extends Controller
         if (!$product) {
             $this->redirect('/products');
         }
-        $this->formView('Editar producto', $product);
+
+        $this->renderIndex([
+            'modal' => $this->modalMeta('Editar producto', 'Los datos se guardan en tu tenant actual.'),
+            ...$this->formDependencies($product),
+        ]);
     }
 
     public function update(array $params): void
@@ -119,7 +88,7 @@ final class ProductController extends Controller
         } catch (\Throwable $e) {
             Session::flash('error', $e->getMessage());
         }
-        $this->redirect('/products/' . $id . '/edit');
+        $this->redirect('/products');
     }
 
     public function toggle(array $params): void
@@ -185,22 +154,76 @@ final class ProductController extends Controller
         $this->redirect('/products/' . $params['id'] . '/edit');
     }
 
-    /** @param array<string, mixed>|null $product */
-    private function formView(string $title, ?array $product): void
+    /** @param array<string, mixed> $extra */
+    private function renderIndex(array $extra = []): void
+    {
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $status = (string) ($_GET['status'] ?? 'all');
+        if (!in_array($status, ['all', 'active', 'inactive'], true)) {
+            $status = 'all';
+        }
+
+        $products = (new ProductModel())->search(
+            $this->tenantId(),
+            $q !== '' ? $q : null,
+            500,
+            $status === 'all' ? null : $status
+        );
+
+        $rows = [];
+        foreach ($products as $p) {
+            $rows[] = [
+                $p['name'],
+                $p['barcode'] ?? '',
+                $p['category_name'] ?? '',
+                $p['cost'] ?? 0,
+                $p['price'],
+                $p['stock'] . ' / min ' . $p['min_stock'],
+                $p['is_active'] ? 'Activo' : 'Inactivo',
+            ];
+        }
+
+        $this->maybeExportList(
+            'Productos',
+            ['Producto', 'Barcode', 'Categoría', 'Compra', 'Venta', 'Stock', 'Estado'],
+            $rows,
+            'productos'
+        );
+
+        $this->view('products/index', array_merge([
+            'title' => 'Productos',
+            'products' => $products,
+            'q' => $q,
+            'status' => $status,
+        ], $extra));
+    }
+
+    /** @return array{modal: array{title: string, subtitle: string, closeUrl: string}} */
+    private function modalMeta(string $title, string $subtitle): array
+    {
+        return [
+            'title' => $title,
+            'subtitle' => $subtitle,
+            'closeUrl' => url('/products'),
+        ];
+    }
+
+    /** @param array<string, mixed>|null $product
+     *  @return array<string, mixed>
+     */
+    private function formDependencies(?array $product): array
     {
         $tenantId = $this->tenantId();
-        $variants = $product
-            ? (new ProductVariantModel())->forProduct($tenantId, (int) $product['id'])
-            : [];
 
-        $this->view('products/form', [
-            'title' => $title,
+        return [
             'product' => $product,
-            'variants' => $variants,
+            'variants' => $product
+                ? (new ProductVariantModel())->forProduct($tenantId, (int) $product['id'])
+                : [],
             'categories' => (new CategoryModel())->allForTenant($tenantId, 'name ASC'),
             'brands' => (new BrandModel())->allForTenant($tenantId, 'name ASC'),
             'suppliers' => (new SupplierModel())->search($tenantId, null, 'active'),
-        ]);
+        ];
     }
 
     /** @param array<string, mixed> $data */

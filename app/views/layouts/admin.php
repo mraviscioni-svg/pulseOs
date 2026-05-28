@@ -6,15 +6,10 @@
 <body class="min-h-full">
 <aside class="sidebar !w-56">
   <div class="sidebar-brand">
-    <a href="<?= url('/admin/tenants') ?>" class="flex items-center gap-3 hover:opacity-90" title="PulseOS Platform">
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .9-4.5 4.2 1.1 6.3L12 16.8 6.4 19.4l1.1-6.3L3 8.9 9 8z"/></svg>
-      </span>
-      <div>
-        <p class="text-sm font-bold text-navy-900">PulseOS</p>
-        <p class="text-xs text-slate-500">Platform</p>
-      </div>
+    <a href="<?= url('/admin/tenants') ?>" class="block hover:opacity-90" title="PulseOS Platform">
+      <img src="<?= asset('images/logo.svg') ?>" alt="PulseOS" class="h-9 w-auto max-w-full object-contain object-left" width="212" height="52">
     </a>
+    <p class="mt-2 text-xs text-slate-500">Platform</p>
   </div>
   <nav class="sidebar-nav">
     <?php $current = $_SERVER['REQUEST_URI'] ?? ''; ?>

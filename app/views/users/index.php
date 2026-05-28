@@ -1,21 +1,25 @@
-<div class="page-header">
-  <div class="page-header-main">
-    <p class="page-eyebrow">Equipo</p>
-    <h2>Usuarios</h2>
-    <p>Equipo con acceso al panel de tu comercio.</p>
-  </div>
-</div>
+<?php
+$pageEyebrow = 'Equipo';
+$pageTitle = 'Usuarios';
+$pageDescription = 'Equipo con acceso al panel de tu comercio.';
+$createUrl = url('/users?invite=1');
+$createLabel = '+ Invitar usuario';
+require __DIR__ . '/../partials/crud_page_header.php';
+?>
 
 <?php
 $basePath = '/users';
-$searchPlaceholder = 'Nombre, usuario o email…';
+$searchPlaceholder = 'Buscar por nombre, usuario o email';
 $showStatusFilter = true;
 $totalCount = count($users);
 require __DIR__ . '/../partials/crud_toolbar.php';
 ?>
 
-<div class="grid gap-6 xl:grid-cols-3">
-  <div class="data-table-wrap xl:col-span-2">
+<div class="data-table-wrap">
+  <div class="data-table-head">
+    <h3>Listado</h3>
+  </div>
+  <div class="data-table-scroll">
     <table class="data-table">
       <thead>
         <tr>
@@ -31,9 +35,9 @@ require __DIR__ . '/../partials/crud_toolbar.php';
       <?php foreach ($users as $u): ?>
       <tr class="<?= !$u['is_active'] ? 'opacity-60' : '' ?>">
         <td class="font-mono text-sm text-accent-600"><?= e($u['username'] ?? '') ?></td>
-        <td class="font-medium"><?= e($u['name']) ?></td>
-        <td class="text-slate-400 text-xs"><?= e($u['email']) ?></td>
-        <td><?= e($u['role_name']) ?></td>
+        <td class="font-medium text-navy-900"><?= e($u['name']) ?></td>
+        <td class="text-xs text-slate-500"><?= e($u['email']) ?></td>
+        <td class="text-slate-600"><?= e($u['role_name']) ?></td>
         <td><?php $active = (bool) $u['is_active']; require __DIR__ . '/../partials/status_badge.php'; ?></td>
         <td>
           <?php
@@ -56,30 +60,16 @@ require __DIR__ . '/../partials/crud_toolbar.php';
       </tbody>
     </table>
   </div>
-
-  <form method="post" action="<?= url('/users') ?>" class="form-card h-fit space-y-4">
-    <?= csrf_field() ?>
-    <h3 class="text-lg font-semibold">Invitar usuario</h3>
-    <p class="text-sm text-slate-400">Creá un acceso con contraseña temporal.</p>
-    <?php
-    $name = 'name'; $label = 'Nombre completo'; $type = 'input'; $value = ''; $required = true;
-    require __DIR__ . '/../partials/form_group.php';
-    $name = 'username'; $label = 'Usuario'; $type = 'input'; $placeholder = 'unico.en.pulseos';
-    $hint = 'Solo letras, números, punto y guión.';
-    require __DIR__ . '/../partials/form_group.php';
-    $name = 'email'; $label = 'Email'; $type = 'email'; $hint = null;
-    require __DIR__ . '/../partials/form_group.php';
-    $name = 'password'; $label = 'Contraseña temporal'; $type = 'password'; $required = true;
-    require __DIR__ . '/../partials/form_group.php';
-    ?>
-    <div class="form-group">
-      <label class="label">Rol</label>
-      <select name="role_id" required class="input-field">
-        <?php foreach ($roles as $r): ?>
-        <option value="<?= (int) $r['id'] ?>"><?= e($r['name']) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <button type="submit" class="btn-primary w-full">Crear usuario</button>
-  </form>
 </div>
+
+<?php if (!empty($modal)): ?>
+<?php
+ob_start();
+require __DIR__ . '/_form_modal.php';
+$modalContent = ob_get_clean();
+$modalTitle = $modal['title'];
+$modalSubtitle = $modal['subtitle'] ?? null;
+$closeUrl = $modal['closeUrl'] ?? url('/users');
+require __DIR__ . '/../partials/form_modal.php';
+?>
+<?php endif; ?>

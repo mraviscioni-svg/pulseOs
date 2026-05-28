@@ -2,13 +2,10 @@
 /**
  * @var string $basePath ej. /products
  * @var string $q
- * @var string|null $createUrl
- * @var string|null $createLabel
  * @var string|null $status current status filter
  * @var bool $showStatusFilter
  * @var int|null $totalCount
  */
-$createLabel = $createLabel ?? 'Nuevo';
 $showStatusFilter = $showStatusFilter ?? false;
 $status = $status ?? 'all';
 $queryExtra = $queryExtra ?? [];
@@ -23,7 +20,7 @@ $queryExtra = $queryExtra ?? [];
       <input type="search" name="q" value="<?= e($q ?? '') ?>" placeholder="<?= e($searchPlaceholder ?? 'Buscar…') ?>" class="input-field">
     </div>
     <?php if ($showStatusFilter): ?>
-    <select name="status" class="input-field w-auto min-w-[8rem]" onchange="this.form.submit()">
+    <select name="status" class="input-field w-auto min-w-[8.5rem]" onchange="this.form.submit()">
       <?php
       $statusOptions = $statusOptions ?? ['all' => 'Todos', 'active' => 'Activos', 'inactive' => 'Inactivos'];
       foreach ($statusOptions as $val => $label):
@@ -32,7 +29,6 @@ $queryExtra = $queryExtra ?? [];
       <?php endforeach; ?>
     </select>
     <?php endif; ?>
-    <button type="submit" class="btn-secondary">Buscar</button>
   </form>
 
   <div class="crud-toolbar-actions">
@@ -49,8 +45,5 @@ $queryExtra = $queryExtra ?? [];
       <a href="<?= url($basePath) ?>?<?= e($csvQs) ?>" class="btn-export" title="Excel (CSV)">Excel</a>
       <a href="<?= url($basePath) ?>?<?= e($pdfQs) ?>" class="btn-export" title="PDF" target="_blank" rel="noopener">PDF</a>
     </div>
-    <?php if (!empty($createUrl)): ?>
-    <a href="<?= e($createUrl) ?>" class="btn-primary"><?= e($createLabel) ?></a>
-    <?php endif; ?>
   </div>
 </div>
