@@ -27,7 +27,7 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** @return list<array<string, mixed>> */
@@ -42,7 +42,7 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** @return list<array<string, mixed>> */
@@ -57,7 +57,7 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** @return list<array<string, mixed>> */
@@ -69,7 +69,7 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** @return list<array<string, mixed>> */
@@ -89,13 +89,14 @@ final class ReportService
              ORDER BY (SUM(si.total) - SUM(si.quantity * p.cost)) DESC LIMIT 30"
         );
         $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
-        $rows = $stmt->fetchAll();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as &$row) {
             $row['margin'] = (float) $row['revenue'] - (float) $row['cost_total'];
             $row['margin_pct'] = $row['revenue'] > 0
                 ? round(((float) $row['margin'] / (float) $row['revenue']) * 100, 1)
                 : 0;
         }
+        unset($row);
 
         return $rows;
     }
@@ -113,7 +114,7 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** @return list<array<string, mixed>> */
@@ -126,7 +127,7 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId, 'from' => $from, 'to' => $to]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** @return list<array<string, mixed>> */
@@ -146,6 +147,6 @@ final class ReportService
         );
         $stmt->execute(['tenant_id' => $tenantId, 'tenant_id2' => $tenantId, 'days' => $days]);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -17,7 +17,7 @@ final class ReportController extends Controller
         $tenantId = $this->tenantId();
         $reports = new ReportService();
 
-        $data = match ($type) {
+        $raw = match ($type) {
             'sales_day' => $reports->salesByDay($tenantId, $from, $to),
             'sales_user' => $reports->salesByUser($tenantId, $from, $to),
             'top_products' => $reports->topProducts($tenantId, $from, $to),
@@ -29,6 +29,8 @@ final class ReportController extends Controller
             default => [],
         };
 
+        $data = $this->asRows($raw);
+
         $this->view('reports/index', [
             'title' => 'Reportes',
             'type' => $type,
@@ -38,5 +40,15 @@ final class ReportController extends Controller
             'chartLabels' => $type === 'sales_day' ? array_column($data, 'day') : [],
             'chartValues' => $type === 'sales_day' ? array_map('floatval', array_column($data, 'total')) : [],
         ]);
+    }
+
+    /** Asegura listado de filas (array_column falla si recibe una sola fila asociativa). */
+    private function asRows(mixed $data): array
+    {
+        if (!is_array($data) || $data === []) {
+            return [];
+        }
+
+        return array_is_list($data) ? $data : [$data];
     }
 }
