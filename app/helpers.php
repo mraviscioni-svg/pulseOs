@@ -122,6 +122,15 @@ function module_enabled(string $module): bool
     return \App\Services\ModuleService::enabled($module);
 }
 
+/** @return array<string, mixed> Paleta de marca (variante A por defecto en UI). */
+function brand_palette(?string $theme = null): array
+{
+    $brand = config('brand');
+    $theme ??= (string) ($brand['default_theme'] ?? 'light');
+
+    return $theme === 'dark' ? $brand['dark'] : $brand['light'];
+}
+
 function wo_status_label(string $status): string
 {
     $labels = config('work_order_statuses')['labels'] ?? [];

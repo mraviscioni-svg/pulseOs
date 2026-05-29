@@ -1,12 +1,10 @@
 <?php
 /**
- * Wordmark PulseOS como SVG (colores fijos, no heredan text-white del layout).
+ * Wordmark variante A: Pulse (navy) + OS (dorado) en fondo claro.
  * @var string $logoTheme light|dark
  * @var string $logoSize sm|md|lg
  */
-$theme = $logoTheme ?? 'light';
-$pulseFill = $theme === 'dark' ? '#ffffff' : '#0c1524';
-$osFill = '#E8B44A';
+$palette = brand_palette($logoTheme ?? null);
 
 $viewBox = match ($logoSize ?? 'sm') {
     'lg' => '0 0 118 36',
@@ -26,6 +24,6 @@ $y = match ($logoSize ?? 'sm') {
 ?>
 <svg class="brand-wordmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="<?= $viewBox ?>" fill="none" aria-hidden="true">
   <text x="0" y="<?= $y ?>" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="<?= $fontSize ?>" font-weight="700" letter-spacing="-0.02em">
-    <tspan fill="<?= $pulseFill ?>">Pulse</tspan><tspan fill="<?= $osFill ?>">OS</tspan>
+    <tspan fill="<?= $palette['word_pulse'] ?>">Pulse</tspan><tspan fill="<?= $palette['word_os'] ?>">OS</tspan>
   </text>
 </svg>

@@ -1,8 +1,9 @@
 <?php
 /**
- * Marca PulseOS — isotipo original (pulso + edificio) + wordmark.
- * Tema claro: edificio navy, pulso dorado. Tema oscuro: edificio blanco.
+ * Marca PulseOS — variante A (fondos claros en toda la app).
+ * Isotipo: pulso dorado + edificio navy. Wordmark: Pulse navy + OS dorado.
  */
+$brand = config('brand');
 $size = $logoSize ?? 'md';
 $logoSize = $size;
 $iconOnly = $logoIconOnly ?? false;
@@ -10,7 +11,7 @@ $href = $logoHref ?? null;
 $tagline = $logoTagline ?? null;
 $align = $logoAlign ?? 'center';
 $layout = $logoLayout ?? ($align === 'left' ? 'inline' : 'stacked');
-$logoTheme = $logoTheme ?? 'light';
+$logoTheme = $logoTheme ?? (string) ($brand['default_theme'] ?? 'light');
 
 $brandName = app_name();
 
@@ -29,11 +30,11 @@ $layoutClass = $layout === 'inline'
     ? 'brand-inline'
     : 'brand-stacked ' . ($align === 'center' ? '' : 'items-start text-left');
 
-$themeClass = $logoTheme === 'dark' ? 'brand-theme-dark' : 'brand-theme-light';
+$isLight = $logoTheme !== 'dark';
+$themeClass = $isLight ? 'brand-theme-light brand-variant-a' : 'brand-theme-dark';
 $wrapClass = trim("brand-lockup $themeClass $layoutClass " . ($logoClass ?? ''));
 
 ob_start();
-/** @var string $logoTheme */
 require __DIR__ . '/logo-mark-svg.php';
 $markSvg = ob_get_clean();
 

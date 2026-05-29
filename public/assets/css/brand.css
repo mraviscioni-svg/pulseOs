@@ -1,5 +1,6 @@
 /**
- * Marca PulseOS — isotipo horizontal (64×52), sin recorte en cuadrado.
+ * PulseOS — Variante A (activa en sidebar, login, admin).
+ * Isotipo: edificio #0c1524, pulso #e8b44a. Texto: Pulse navy + OS dorado.
  */
 .brand-lockup {
   display: flex;
@@ -7,6 +8,7 @@
   text-decoration: none;
   color: #0c1524;
 }
+.brand-variant-a,
 .brand-theme-light {
   color: #0c1524;
 }
@@ -72,11 +74,13 @@
 .brand-wordmark-lg .brand-wordmark-svg {
   height: 1.75rem;
 }
-.brand-pulse {
+.brand-variant-a .brand-pulse,
+.brand-theme-light .brand-pulse {
   color: #0c1524 !important;
   -webkit-text-fill-color: #0c1524 !important;
 }
-.brand-os {
+.brand-variant-a .brand-os,
+.brand-theme-light .brand-os {
   color: #e8b44a !important;
   -webkit-text-fill-color: #e8b44a !important;
 }

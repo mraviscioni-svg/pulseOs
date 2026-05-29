@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PulseOS — Opciones de logo (fondo claro)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #f1f5f9;
+      color: #0c1524;
+      margin: 0;
+      padding: 2rem 1rem 3rem;
+    }
+    h1 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+    .sub { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; max-width: 42rem; }
+    .ref {
+      background: #000;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      max-width: 420px;
+    }
+    .grid { display: grid; gap: 1rem; max-width: 520px; }
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 3px rgba(12,21,36,.06);
+    }
+    .card h2 { font-size: 0.85rem; margin: 0 0 0.35rem; color: #0c1524; }
+    .card p { font-size: 0.75rem; color: #64748b; margin: 0 0 1rem; line-height: 1.4; }
+    .lockup { display: flex; align-items: center; gap: 0.75rem; min-height: 52px; }
+    .mark { flex-shrink: 0; height: 52px; width: auto; }
+    .word { height: 28px; width: auto; }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #0c1524;
+      color: #e8b44a;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      margin-right: 0.35rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>PulseOS — Opciones en fondo claro</h1>
+  <p class="sub">Vista previa con el isotipo real (pulso + edificio). <strong>Opción A activa en la app.</strong></p>
+
+  <p style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;">Referencia — tu concepto (fondo negro)</p>
+  <div class="ref">
+    <div class="lockup" id="ref-dark"></div>
+  </div>
+
+  <div class="grid" id="options"></div>
+
+  <script>
+    const NAVY = '#0c1524';
+    const GOLD = '#E8B44A';
+    const WHITE = '#ffffff';
+
+    function isotype(house, pulseGold) {
+      const pulse = pulseGold ? GOLD : house;
+      return `<svg class="mark" viewBox="0 0 64 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 34 H14 L18 16 L22 34 H26" stroke="${pulse}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="18" cy="10" r="2.5" fill="${pulse}"/>
+        <path d="M26 34 H30" stroke="${pulse}" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="28" y="14" width="32" height="36" rx="7" stroke="${house}" stroke-width="2"/>
+        <rect x="40" y="38" width="8" height="12" rx="1" stroke="${house}" stroke-width="1.5"/>
+        <rect x="32" y="24" width="7" height="7" rx="1" stroke="${house}" stroke-width="1.5"/>
+        <rect x="49" y="24" width="7" height="7" rx="1" stroke="${house}" stroke-width="1.5"/>
+        <path d="M30 32 H58" stroke="${pulse}" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>`;
+    }
+
+    function wordmark(pulse, os, single) {
+      if (single) {
+        return `<svg class="word" viewBox="0 0 120 28"><text x="0" y="22" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="${pulse}">PulseOS</text></svg>`;
+      }
+      return `<svg class="word" viewBox="0 0 108 28"><text x="0" y="22" font-family="Inter,sans-serif" font-size="22" font-weight="700" letter-spacing="-0.02em"><tspan fill="${pulse}">Pulse</tspan><tspan fill="${os}">OS</tspan></text></svg>`;
+    }
+
+    function lockup(house, pulseGold, pulseT, osT, single, iconOnly) {
+      return `<div class="lockup">${isotype(house, pulseGold)}${iconOnly ? '' : wordmark(pulseT, osT, single)}</div>`;
+    }
+
+    document.getElementById('ref-dark').innerHTML =
+      isotype(WHITE, true) +
+      '<svg class="word" viewBox="0 0 120 28"><text x="0" y="22" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="#ffffff">PulseOS</text></svg>';
+
+    const opts = [
+      { id: 'A', title: 'Marca dual ✓ ACTIVA EN APP', desc: 'Casa navy · pulso dorado · Pulse navy + OS dorado', house: NAVY, gold: true, p: NAVY, o: GOLD },
+      { id: 'B', title: 'Monocromo navy', desc: 'Todo navy, sin dorado', house: NAVY, gold: false, p: NAVY, o: NAVY, single: true },
+      { id: 'C', title: 'Isotipo dorado + texto navy', desc: 'Pulso dorado · PulseOS todo navy', house: NAVY, gold: true, p: NAVY, o: NAVY, single: true },
+      { id: 'D', title: 'Solo isotipo en menú', desc: 'Sin wordmark (sidebar)', house: NAVY, gold: true, iconOnly: true },
+      { id: 'E', title: 'Igual que A en app', desc: 'En marketing oscuro: versión blanca de referencia', house: NAVY, gold: true, p: NAVY, o: GOLD },
+    ];
+
+    document.getElementById('options').innerHTML = opts.map(o => `
+      <div class="card">
+        <h2><span class="badge">${o.id}</span>${o.title}</h2>
+        <p>${o.desc}</p>
+        ${lockup(o.house, o.gold, o.p || NAVY, o.o || GOLD, o.single, o.iconOnly)}
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>
