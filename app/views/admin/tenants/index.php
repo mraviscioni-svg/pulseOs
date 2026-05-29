@@ -54,7 +54,11 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
       <td>
         <div class="row-actions">
           <a href="<?= url('/admin/tenants/' . $t['id']) ?>" class="btn-action btn-action-edit">Gestionar</a>
-          <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>" class="inline">
+          <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>" class="inline"
+            data-confirm-title="<?= $t['is_active'] ? 'Suspender comercio' : 'Activar comercio' ?>"
+            data-confirm-message="<?= $t['is_active'] ? 'El comercio no podrá ingresar hasta que lo reactives.' : '¿Reactivar este comercio?' ?>"
+            data-confirm-label="<?= $t['is_active'] ? 'Suspender' : 'Activar' ?>"
+            data-confirm-danger="<?= $t['is_active'] ? '1' : '0' ?>">
             <?= csrf_field() ?>
             <input type="hidden" name="return" value="list">
             <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">

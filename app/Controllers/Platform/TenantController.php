@@ -219,4 +219,40 @@ final class TenantController extends Controller
 
         $this->redirect('/admin/tenants/' . $tenantId);
     }
+
+    public function destroy(array $params): void
+    {
+        $tenantId = (int) $params['id'];
+        $service = new PlatformTenantService();
+        $detail = $service->detail($tenantId);
+
+        if (!$detail) {
+            Session::flash('error', 'Comercio no encontrado.');
+            $this->redirect('/admin/tenants');
+        }
+
+        $tenant = $detail['tenant'];
+        $confirmSlug = strtolower(trim((string) ($this->input()['confirm_slug'] ?? '')));
+        $expectedSlug = strtolower((string) ($tenant['slug'] ?? ''));
+
+        if ($confirmSlug === '' || $confirmSlug !== $expectedSlug) {
+            Session::flash('error', 'Escribí el slug exacto («' . $expectedSlug . '») para confirmar la eliminación.');
+            $this->redirect('/admin/tenants/' . $tenantId);
+        }
+
+        try {
+            $name = (string) $tenant['name'];
+            $service->delete($tenantId);
+            (new AuditService())->log(null, null, 'platform.tenant.deleted', 'tenant', $tenantId, [
+                'name' => $name,
+                'slug' => $expectedSlug,
+            ]);
+            Session::flash('success', 'Comercio «' . $name . '» eliminado definitivamente.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'No se pudo eliminar: ' . $e->getMessage());
+            $this->redirect('/admin/tenants/' . $tenantId);
+        }
+
+        $this->redirect('/admin/tenants');
+    }
 }

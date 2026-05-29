@@ -24,6 +24,7 @@ return function ($router, array $mw) {
     $router->get('/admin/tenants/{id}', [TenantController::class, 'show'], $adminAuth);
     $router->post('/admin/tenants/{id}', [TenantController::class, 'update'], $adminAuth);
     $router->post('/admin/tenants/{id}/toggle', [TenantController::class, 'toggle'], $adminAuth);
+    $router->post('/admin/tenants/{id}/delete', [TenantController::class, 'destroy'], $adminAuth);
     $router->post('/admin/tenants/{id}/enter', [TenantController::class, 'enter'], $adminAuth);
     $router->post('/admin/stop-impersonate', [AuthController::class, 'stopImpersonate'], $adminAuth);
 };

@@ -47,7 +47,8 @@ require __DIR__ . '/../partials/crud_page_header.php';
             <span class="text-slate-500"> — <?= e($v['description']) ?></span>
             <?php endif; ?>
           </div>
-          <form method="post" action="<?= url('/customers/' . $customer['id'] . '/vehicles/' . $v['id'] . '/delete') ?>" class="inline" onsubmit="return confirm('¿Eliminar este vehículo?')">
+          <form method="post" action="<?= url('/customers/' . $customer['id'] . '/vehicles/' . $v['id'] . '/delete') ?>" class="inline"
+            data-confirm-title="Eliminar vehículo" data-confirm-message="¿Eliminar este vehículo del cliente?" data-confirm-label="Eliminar" data-confirm-danger="1">
             <?= csrf_field() ?>
             <button type="submit" class="text-xs text-rose-500 hover:underline">Eliminar</button>
           </form>

@@ -87,6 +87,15 @@ final class PlatformTenantService
         $stmt->execute(['active' => $active ? 1 : 0, 'id' => $tenantId]);
     }
 
+    public function delete(int $tenantId): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM tenants WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $tenantId]);
+        if ($stmt->rowCount() === 0) {
+            throw new \RuntimeException('Comercio no encontrado.');
+        }
+    }
+
     /** @param array{name: string, email: string, phone?: ?string, address?: ?string, business_type: string, modules?: list<string>} $data */
     public function update(int $tenantId, array $data): void
     {

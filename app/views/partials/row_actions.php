@@ -5,10 +5,12 @@
  * @var bool $isActive
  * @var string|null $deleteUrl
  * @var string|null $deleteConfirm
+ * @var string|null $toggleConfirm
  * @var list<array{url: string, label: string, class?: string}> $extra
  */
 $isActive = $isActive ?? true;
 $deleteConfirm = $deleteConfirm ?? '¿Eliminar este registro?';
+$toggleConfirm = $toggleConfirm ?? null;
 $extra = $extra ?? [];
 ?>
 <div class="row-actions">
@@ -19,7 +21,10 @@ $extra = $extra ?? [];
   </a>
   <?php endif; ?>
   <?php if (!empty($toggleUrl)): ?>
-  <form method="post" action="<?= e($toggleUrl) ?>" class="inline">
+  <form method="post" action="<?= e($toggleUrl) ?>" class="inline"
+    <?php if ($toggleConfirm): ?>
+    data-confirm-title="Confirmar" data-confirm-message="<?= e($toggleConfirm) ?>" data-confirm-label="<?= $isActive ? 'Desactivar' : 'Activar' ?>" data-confirm-danger="<?= $isActive ? '1' : '0' ?>"
+    <?php endif; ?>>
     <?= csrf_field() ?>
     <input type="hidden" name="is_active" value="<?= $isActive ? '0' : '1' ?>">
     <button type="submit" class="btn-action <?= $isActive ? 'btn-action-warn' : 'btn-action-ok' ?>" title="<?= $isActive ? 'Desactivar' : 'Activar' ?>">
@@ -31,7 +36,8 @@ $extra = $extra ?? [];
   <a href="<?= e($action['url']) ?>" class="btn-action <?= e($action['class'] ?? '') ?>"><?= e($action['label']) ?></a>
   <?php endforeach; ?>
   <?php if (!empty($deleteUrl)): ?>
-  <form method="post" action="<?= e($deleteUrl) ?>" class="inline" onsubmit="return confirm(<?= json_encode($deleteConfirm, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);">
+  <form method="post" action="<?= e($deleteUrl) ?>" class="inline"
+    data-confirm-title="Eliminar" data-confirm-message="<?= e($deleteConfirm) ?>" data-confirm-label="Eliminar" data-confirm-danger="1">
     <?= csrf_field() ?>
     <button type="submit" class="btn-action btn-action-danger" title="Eliminar">Eliminar</button>
   </form>
