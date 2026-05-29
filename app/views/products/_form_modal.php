@@ -53,7 +53,7 @@ $marginPct = $costVal > 0 && $priceVal > 0 ? round((($priceVal - $costVal) / $co
             <?php endforeach; ?>
           </select>
           <?php if (!$categories): ?>
-          <p class="form-hint"><a href="<?= url('/categories') ?>" class="link-accent">Creá categorías</a> para organizar mejor el catálogo.</p>
+          <p class="form-hint"><a href="<?= url('/categories') ?>" class="link-accent">Categorías</a> · <a href="<?= url('/brands') ?>" class="link-accent">Marcas</a></p>
           <?php endif; ?>
         </div>
       </div>

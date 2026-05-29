@@ -5,7 +5,8 @@ declare(strict_types=1);
 /** Módulos que el admin de plataforma puede activar por tenant. */
 return [
     'products' => 'Productos',
-    'categories' => 'Categorías y marcas',
+    'categories' => 'Categorías',
+    'brands' => 'Marcas',
     'stock' => 'Stock / inventario',
     'pos' => 'Punto de venta',
     'suppliers' => 'Proveedores',

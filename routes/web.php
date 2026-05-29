@@ -7,6 +7,7 @@ use App\Controllers\Api\ProductApiController;
 use App\Controllers\CustomerController;
 use App\Controllers\AuthController;
 use App\Controllers\CashRegisterController;
+use App\Controllers\BrandController;
 use App\Controllers\CategoryController;
 use App\Controllers\DashboardController;
 use App\Controllers\HealthController;
@@ -65,13 +66,26 @@ return function ($router, array $mw) {
     $router->post('/products/{id}/variants', [ProductController::class, 'storeVariant'], $auth);
     $router->post('/products/{id}/variants/{variant_id}/delete', [ProductController::class, 'deleteVariant'], $auth);
 
-    $router->get('/categories', [CategoryController::class, 'index'], array_merge($auth, [$perm('products.manage')]));
-    $router->post('/categories', [CategoryController::class, 'storeCategory'], array_merge($auth, [$perm('products.manage')]));
-    $router->post('/brands', [CategoryController::class, 'storeBrand'], array_merge($auth, [$perm('products.manage')]));
-    $router->post('/categories/{id}/delete', [CategoryController::class, 'deleteCategory'], array_merge($auth, [$perm('products.manage')]));
-    $router->post('/brands/{id}/delete', [CategoryController::class, 'deleteBrand'], array_merge($auth, [$perm('products.manage')]));
-    $router->post('/categories/import', [CategoryController::class, 'importCategory'], array_merge($auth, [$perm('products.manage')]));
-    $router->post('/brands/import', [CategoryController::class, 'importBrand'], array_merge($auth, [$perm('products.manage')]));
+    $catalogPerm = array_merge($auth, [$perm('products.manage')]);
+    $router->get('/categories', [CategoryController::class, 'index'], $catalogPerm);
+    $router->get('/categories/create', [CategoryController::class, 'create'], $catalogPerm);
+    $router->post('/categories', [CategoryController::class, 'store'], $catalogPerm);
+    $router->get('/categories/{id}/edit', [CategoryController::class, 'edit'], $catalogPerm);
+    $router->post('/categories/{id}', [CategoryController::class, 'update'], $catalogPerm);
+    $router->post('/categories/{id}/delete', [CategoryController::class, 'delete'], $catalogPerm);
+    $router->post('/categories/import', [CategoryController::class, 'import'], $catalogPerm);
+    $router->post('/categories/suggestions/reset', [CategoryController::class, 'resetSuggestions'], $catalogPerm);
+    $router->post('/categories/suggestions/dismiss', [CategoryController::class, 'dismissSuggestions'], $catalogPerm);
+
+    $router->get('/brands', [BrandController::class, 'index'], $catalogPerm);
+    $router->get('/brands/create', [BrandController::class, 'create'], $catalogPerm);
+    $router->post('/brands', [BrandController::class, 'store'], $catalogPerm);
+    $router->get('/brands/{id}/edit', [BrandController::class, 'edit'], $catalogPerm);
+    $router->post('/brands/{id}', [BrandController::class, 'update'], $catalogPerm);
+    $router->post('/brands/{id}/delete', [BrandController::class, 'delete'], $catalogPerm);
+    $router->post('/brands/import', [BrandController::class, 'import'], $catalogPerm);
+    $router->post('/brands/suggestions/reset', [BrandController::class, 'resetSuggestions'], $catalogPerm);
+    $router->post('/brands/suggestions/dismiss', [BrandController::class, 'dismissSuggestions'], $catalogPerm);
 
     $router->get('/inventory', [InventoryController::class, 'index'], array_merge($auth, [$perm('stock.manage')]));
     $router->post('/inventory/adjust', [InventoryController::class, 'adjust'], array_merge($auth, [$perm('stock.manage')]));

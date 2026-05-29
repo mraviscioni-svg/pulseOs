@@ -10,14 +10,44 @@ final class CategoryModel extends Model
 {
     protected string $table = 'product_categories';
 
-    public function existsByName(int $tenantId, string $name): bool
+    public function existsByName(int $tenantId, string $name, ?int $exceptId = null): bool
     {
-        $stmt = $this->db->prepare(
-            'SELECT id FROM product_categories WHERE tenant_id = :tenant_id AND LOWER(name) = LOWER(:name) LIMIT 1'
-        );
-        $stmt->execute(['tenant_id' => $tenantId, 'name' => trim($name)]);
+        $sql = 'SELECT id FROM product_categories WHERE tenant_id = :tenant_id AND LOWER(name) = LOWER(:name)';
+        if ($exceptId !== null) {
+            $sql .= ' AND id != :except_id';
+        }
+        $sql .= ' LIMIT 1';
+        $stmt = $this->db->prepare($sql);
+        $params = ['tenant_id' => $tenantId, 'name' => trim($name)];
+        if ($exceptId !== null) {
+            $params['except_id'] = $exceptId;
+        }
+        $stmt->execute($params);
 
         return (bool) $stmt->fetch();
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function search(int $tenantId, ?string $q = null): array
+    {
+        $sql = 'SELECT c.*, (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.tenant_id = c.tenant_id) AS product_count
+                FROM product_categories c WHERE c.tenant_id = :tenant_id';
+        $params = ['tenant_id' => $tenantId];
+        if ($q !== null && $q !== '') {
+            $sql .= ' AND (c.name LIKE :q OR c.description LIKE :q)';
+            $params['q'] = '%' . $q . '%';
+        }
+        $sql .= ' ORDER BY c.name ASC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll();
+    }
+
+    public function deleteForTenant(int $tenantId, int $id): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM product_categories WHERE id = :id AND tenant_id = :tenant_id');
+        $stmt->execute(['id' => $id, 'tenant_id' => $tenantId]);
     }
 
     /** @param array<string, mixed> $data */

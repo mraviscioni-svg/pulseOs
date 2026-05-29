@@ -65,6 +65,21 @@ final class BusinessCatalogService
             return;
         }
 
+        $this->seedDefaultsFromConfig($businessType);
+    }
+
+    /** Borra el catálogo del rubro y vuelve a cargar las sugerencias por defecto. */
+    public function resetCatalogForType(string $businessType): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM business_catalog_categories WHERE business_type = :type');
+        $stmt->execute(['type' => $businessType]);
+        $stmt = $this->db->prepare('DELETE FROM business_catalog_brands WHERE business_type = :type');
+        $stmt->execute(['type' => $businessType]);
+        $this->seedDefaultsFromConfig($businessType);
+    }
+
+    private function seedDefaultsFromConfig(string $businessType): void
+    {
         $defaults = config('catalog_defaults')[$businessType] ?? config('catalog_defaults')['otro'] ?? [];
         foreach ($defaults['categories'] ?? [] as $name) {
             $this->rememberCategory($businessType, (string) $name);

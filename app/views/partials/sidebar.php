@@ -50,7 +50,7 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
 
     $navModules = config('nav_modules');
     foreach ($navModules as $modKey => $meta):
-        if ($modKey === 'categories') {
+        if (in_array($modKey, ['categories', 'brands'], true)) {
             if (!module_enabled('categories') && !module_enabled('products')) {
                 continue;
             }
@@ -73,7 +73,7 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
         if ($modKey === 'memberships') {
             $href = '/memberships';
         }
-        $iconKey = in_array($modKey, ['categories', 'variants'], true) ? 'categories' : $modKey;
+        $iconKey = in_array($modKey, ['categories', 'brands', 'variants'], true) ? 'categories' : $modKey;
         $active = str_contains($current, $href);
     ?>
     <a href="<?= url($href) ?>" class="nav-link <?= $active ? 'nav-active' : '' ?>">
