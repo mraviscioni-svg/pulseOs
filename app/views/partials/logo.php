@@ -1,14 +1,14 @@
 <?php
 /**
- * Marca PulseOS: ícono SVG + nombre en HTML (tipografía Inter, siempre «PulseOS»).
+ * Marca PulseOS: badge (ícono) + wordmark «Pulse» + «OS».
  *
  * @var string $logoSize sm|md|lg
- * @var bool $logoIconOnly solo ícono
+ * @var bool $logoIconOnly
  * @var string|null $logoHref
  * @var string $logoClass
  * @var string|null $logoTagline
  * @var string $logoAlign left|center
- * @var string $logoVariant light|dark  light = fondos claros, dark = fondos navy
+ * @var string $logoVariant light|dark
  * @var string $logoLayout inline|stacked
  */
 $size = $logoSize ?? 'md';
@@ -21,9 +21,9 @@ $layout = $logoLayout ?? ($align === 'left' ? 'inline' : 'stacked');
 
 $brandName = app_name();
 
-$markHeights = ['sm' => 'brand-mark-sm', 'md' => 'brand-mark-md', 'lg' => 'brand-mark-lg'];
+$markWrapSizes = ['sm' => 'brand-mark-wrap-sm', 'md' => 'brand-mark-wrap-md', 'lg' => 'brand-mark-wrap-lg'];
 $wordSizes = ['sm' => 'brand-wordmark-sm', 'md' => 'brand-wordmark-md', 'lg' => 'brand-wordmark-lg'];
-$markClass = $markHeights[$size] ?? $markHeights['md'];
+$markWrapClass = $markWrapSizes[$size] ?? $markWrapSizes['md'];
 $wordClass = $wordSizes[$size] ?? $wordSizes['md'];
 
 $markSrc = asset($variant === 'dark' ? 'images/logo-mark-light.svg' : 'images/logo-mark.svg');
@@ -34,9 +34,15 @@ $layoutClass = $layout === 'inline'
 
 $wrapClass = trim("brand-lockup $layoutClass " . ($logoClass ?? ''));
 
-$mark = '<img src="' . e($markSrc) . '" alt="" class="brand-mark ' . e($markClass) . '" width="56" height="48" decoding="async">';
+$mark = '<span class="brand-mark-wrap ' . e($markWrapClass) . '">'
+    . '<img src="' . e($markSrc) . '" alt="" class="brand-mark" width="40" height="40" decoding="async">'
+    . '</span>';
 
-$wordmark = $iconOnly ? '' : '<span class="brand-wordmark ' . e($wordClass) . '">' . e($brandName) . '</span>';
+$wordmark = $iconOnly
+    ? ''
+    : '<span class="brand-wordmark ' . e($wordClass) . '" aria-label="' . e($brandName) . '">'
+        . '<span class="brand-pulse">Pulse</span><span class="brand-os">OS</span>'
+        . '</span>';
 
 $taglineHtml = $tagline && !$iconOnly
     ? '<span class="brand-tagline">' . e($tagline) . '</span>'

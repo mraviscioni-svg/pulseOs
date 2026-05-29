@@ -23,10 +23,8 @@ module.exports = {
           500: '#3b82f6',
           600: '#2563eb',
         },
-        surface: {
-          DEFAULT: '#f3f5f9',
-          card: '#ffffff',
-          muted: '#eef1f6',
+        brand: {
+          gold: '#E8B44A',
         },
       },
       boxShadow: {
