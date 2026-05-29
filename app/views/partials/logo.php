@@ -53,7 +53,10 @@ $taglineHtml = $tagline && !$iconOnly
     : '';
 
 $inner = $mark . $wordmark . $taglineHtml;
+$brandRev = 'A-' . (is_readable($root = dirname(__DIR__, 3) . '/config/brand.php')
+    ? (string) filemtime($root) : '1');
 ?>
+<!-- pulseos-brand <?= e($brandRev) ?> -->
 <?php if ($href !== null): ?>
 <a href="<?= url($href) ?>" class="<?= e(trim($wrapClass . ' brand-link')) ?>" title="<?= e($brandName) ?>">
   <?= $inner ?>

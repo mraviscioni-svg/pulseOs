@@ -105,3 +105,31 @@
 .sidebar-brand .brand-tagline {
   color: #64748b !important;
 }
+
+/* Login / pantallas guest: lockup horizontal más grande (como el concepto) */
+.brand-lockup-hero {
+  gap: 1rem;
+}
+.brand-lockup-hero.justify-center {
+  justify-content: center;
+}
+.brand-lockup-hero .brand-mark-wrap-lg {
+  height: 3.25rem;
+}
+.brand-lockup-hero.brand-inline .brand-wordmark-lg .brand-wordmark-svg {
+  height: 2.125rem;
+}
+.brand-lockup-hero.brand-stacked .brand-mark-wrap-lg {
+  height: 3.5rem;
+}
+.brand-lockup-hero.brand-stacked .brand-wordmark-lg .brand-wordmark-svg {
+  height: 2rem;
+}
+.brand-lockup-hero .brand-tagline {
+  flex-basis: 100%;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+.brand-lockup-hero.brand-inline {
+  flex-wrap: wrap;
+}

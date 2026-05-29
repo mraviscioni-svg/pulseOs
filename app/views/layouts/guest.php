@@ -8,8 +8,9 @@
     <div class="mb-8">
       <?php
       $logoSize = 'lg';
-      $logoLayout = 'stacked';
+      $logoLayout = 'inline';
       $logoAlign = 'center';
+      $logoClass = 'brand-lockup-hero justify-center';
       $logoTagline = 'Gestión comercial multitenant';
       require __DIR__ . '/../partials/logo.php';
       ?>
