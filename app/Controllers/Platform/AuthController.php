@@ -14,7 +14,7 @@ final class AuthController extends Controller
 {
     public function showLogin(): void
     {
-        $this->view('admin/auth/login', ['title' => 'Admin PulseOS'], 'layouts/admin-guest');
+        $this->view('admin/auth/login', ['title' => 'Admin ' . app_name()], 'layouts/admin-guest');
     }
 
     public function login(): void

@@ -8,6 +8,7 @@
   <div class="sidebar-brand">
     <?php
     $logoSize = 'sm';
+    $logoLayout = 'inline';
     $logoAlign = 'left';
     $logoHref = '/admin/tenants';
     require __DIR__ . '/../partials/logo.php';

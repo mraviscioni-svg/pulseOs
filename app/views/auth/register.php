@@ -13,7 +13,7 @@
       <label class="mb-1 block text-sm text-slate-400">Usuario de acceso</label>
       <input name="username" value="<?= e(old('username')) ?>" required minlength="3" pattern="[a-zA-Z0-9._-]+"
         class="input-field" autocomplete="username" placeholder="ej: juan.kiosco">
-      <p class="mt-1 text-xs text-slate-500">Único en todo PulseOS. Solo letras, números, . _ -</p>
+      <p class="mt-1 text-xs text-slate-500">Único en todo <?= e(app_name()) ?>. Solo letras, números, . _ -</p>
     </div>
     <div>
       <label class="mb-1 block text-sm text-slate-400">Rubro</label>

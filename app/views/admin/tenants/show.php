@@ -65,7 +65,7 @@ require __DIR__ . '/../../partials/crud_page_header.php';
 <div class="grid gap-6 xl:grid-cols-3">
   <div class="form-card xl:col-span-2">
     <h3 class="mb-1 text-base font-semibold text-navy-900">Configuración del comercio</h3>
-    <p class="mb-6 text-sm text-slate-500">Datos generales y módulos habilitados en PulseOS.</p>
+    <p class="mb-6 text-sm text-slate-500">Datos generales y módulos habilitados en <?= e(app_name()) ?>.</p>
     <form method="post" action="<?= url('/admin/tenants/' . $t['id']) ?>" class="space-y-6">
       <?= csrf_field() ?>
       <div class="grid gap-4 sm:grid-cols-2">

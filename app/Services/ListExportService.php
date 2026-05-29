@@ -35,7 +35,7 @@ final class ListExportService
      */
     public function pdf(string $title, array $headers, array $rows, string $subtitle = ''): never
     {
-        $tenant = (string) (\App\Core\Session::get('tenant_name') ?: 'PulseOS');
+        $tenant = (string) (\App\Core\Session::get('tenant_name') ?: app_name());
         ob_start();
         require dirname(__DIR__) . '/views/export/table-pdf.php';
         $html = (string) ob_get_clean();

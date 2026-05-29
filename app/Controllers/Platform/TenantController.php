@@ -38,7 +38,7 @@ final class TenantController extends Controller
         }
 
         $this->maybeExportList(
-            'Comercios PulseOS',
+            'Comercios ' . app_name(),
             ['Nombre', 'Slug', 'Rubro', 'Usuarios', 'Productos', 'Ventas', 'Estado', 'Alta'],
             $rows,
             'comercios'

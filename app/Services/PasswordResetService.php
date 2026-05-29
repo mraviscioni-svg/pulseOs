@@ -63,8 +63,9 @@ final class PasswordResetService
     private function sendMail(string $to, string $resetUrl): void
     {
         $from = $_ENV['MAIL_FROM'] ?? 'noreply@localhost';
-        $subject = 'Recuperar contraseña — PulseOS';
-        $body = "Hola,\n\nUsá este enlace para restablecer tu contraseña (válido 2 horas):\n{$resetUrl}\n\n— PulseOS";
+        $app = app_name();
+        $subject = 'Recuperar contraseña — ' . $app;
+        $body = "Hola,\n\nUsá este enlace para restablecer tu contraseña (válido 2 horas):\n{$resetUrl}\n\n— {$app}";
         $headers = 'From: ' . $from . "\r\nContent-Type: text/plain; charset=UTF-8";
         @mail($to, $subject, $body, $headers);
     }

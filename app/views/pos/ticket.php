@@ -1,5 +1,5 @@
 <h2 style="text-align:center"><?= e($tenantName) ?></h2>
-<p style="text-align:center;font-size:11px;font-weight:bold;letter-spacing:0.05em">PulseOS</p>
+<p style="text-align:center;font-size:11px;font-weight:bold;letter-spacing:0.05em"><?= e(app_name()) ?></p>
 <hr>
 <p><strong><?= e($sale['sale_number']) ?></strong></p>
 <p>Vendedor: <?= e($sale['seller_name'] ?? '—') ?></p>

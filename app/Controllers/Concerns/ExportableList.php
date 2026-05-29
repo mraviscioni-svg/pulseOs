@@ -20,7 +20,7 @@ trait ExportableList
         }
 
         $service = new ListExportService();
-        $subtitle = 'Exportado desde PulseOS';
+        $subtitle = 'Exportado desde ' . app_name();
 
         if ($export === 'csv' || $export === 'excel') {
             $service->csv($filename, $headers, $rows);

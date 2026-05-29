@@ -15,7 +15,7 @@
 
   <p class="page-eyebrow">Acceso</p>
   <h2 class="mt-1 text-xl font-bold text-navy-900">
-    <?= !empty($loginTenant) ? 'Ingresá a tu comercio' : 'Ingresá a PulseOS' ?>
+    <?= !empty($loginTenant) ? 'Ingresá a tu comercio' : 'Ingresá a ' . app_name() ?>
   </h2>
   <p class="mb-6 mt-1 text-sm text-slate-500">
     <?= !empty($loginTenant)
@@ -41,7 +41,7 @@
     <a href="<?= url('/forgot-password') ?>" class="link-accent">¿Olvidaste tu contraseña?</a>
   </p>
   <p class="mt-4 text-center text-xs text-slate-400">
-    El alta de comercios la gestiona el administrador de PulseOS.
+    El alta de comercios la gestiona el administrador de <?= e(app_name()) ?>.
   </p>
   <p class="mt-2 text-center text-xs text-slate-400">
     <a href="<?= url('/admin/login') ?>" class="link-accent">Administración plataforma</a>

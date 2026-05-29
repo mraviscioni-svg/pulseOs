@@ -30,5 +30,5 @@ require __DIR__ . '/../partials/crud_page_header.php';
 </div>
 
 <div class="mt-6 max-w-3xl rounded-2xl border border-slate-200/80 bg-white p-5 text-sm text-slate-500 shadow-card">
-  Los módulos del sistema (POS, compras, reportes, etc.) los habilita el administrador de <strong class="text-navy-900">PulseOS</strong>.
+  Los módulos del sistema (POS, compras, reportes, etc.) los habilita el administrador de <strong class="text-navy-900"><?= e(app_name()) ?></strong>.
 </div>

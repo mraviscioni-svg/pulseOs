@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error — PulseOS</title>
+  <title>Error — <?= e(app_name()) ?></title>
   <style>
     body { font-family: system-ui, sans-serif; background: #020617; color: #e2e8f0; margin: 0; padding: 2rem; }
     .box { max-width: 32rem; margin: 2rem auto; padding: 1.5rem; border: 1px solid #334155; border-radius: 1rem; background: #0f172a; }

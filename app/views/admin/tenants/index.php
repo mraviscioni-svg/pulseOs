@@ -1,7 +1,7 @@
 <?php
 $pageEyebrow = 'Platform';
 $pageTitle = 'Comercios';
-$pageDescription = 'Tenants registrados en la plataforma PulseOS.';
+$pageDescription = 'Tenants registrados en la plataforma ' . app_name() . '.';
 $createUrl = url('/admin/tenants/create');
 $createLabel = '+ Nuevo comercio';
 require __DIR__ . '/../../partials/crud_page_header.php';

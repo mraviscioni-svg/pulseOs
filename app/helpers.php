@@ -21,6 +21,14 @@ function config(string $file): array
     return app()->config($file);
 }
 
+/** Nombre de la app para UI: siempre «PulseOS». */
+function app_name(): string
+{
+    $name = (string) (config('app')['name'] ?? 'PulseOS');
+
+    return $name !== '' ? $name : 'PulseOS';
+}
+
 /** Ruta base de la app (ej. /PulseOS-prep/public) */
 function base_path(): string
 {

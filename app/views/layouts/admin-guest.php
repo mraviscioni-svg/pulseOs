@@ -8,6 +8,8 @@
     <div class="mb-8">
       <?php
       $logoSize = 'lg';
+      $logoLayout = 'stacked';
+      $logoAlign = 'center';
       $logoTagline = 'Administración de tenants';
       require __DIR__ . '/../partials/logo.php';
       ?>

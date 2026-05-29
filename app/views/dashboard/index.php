@@ -124,11 +124,11 @@ new Chart(document.getElementById('dashChart'), {
     </div>
 
     <div class="promo-card">
-      <p class="text-xs font-semibold uppercase tracking-wider text-white/70">PulseOS</p>
+      <p class="text-xs font-semibold uppercase tracking-wider text-white/70"><?= e(app_name()) ?></p>
       <p class="mt-2 text-sm leading-relaxed text-white/90">Vista filtrada por tu comercio y rol. Los totales se calculan en el servidor con los permisos de tu sesión.</p>
       <div class="mt-4 flex flex-wrap gap-2">
         <span class="promo-pill">Rol: <?= e(strtoupper(\App\Core\Session::get('role_slug', 'user'))) ?></span>
-        <span class="promo-pill">PulseOS</span>
+        <span class="promo-pill"><?= e(app_name()) ?></span>
       </div>
     </div>
   </div>

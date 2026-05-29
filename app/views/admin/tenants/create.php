@@ -18,7 +18,7 @@
       require __DIR__ . '/../../partials/form_group.php';
       $name = 'username'; $label = 'Usuario de acceso'; $type = 'input'; $value = old('username'); $required = true;
       $placeholder = 'ej: taller.boedo';
-      $hint = 'Único en todo PulseOS. Mínimo 3 caracteres.';
+      $hint = 'Único en todo ' . app_name() . '. Mínimo 3 caracteres.';
       require __DIR__ . '/../../partials/form_group.php';
       $name = 'business_type'; $label = 'Rubro'; $type = 'select'; $value = old('business_type', 'otro'); $required = true;
       $options = [];

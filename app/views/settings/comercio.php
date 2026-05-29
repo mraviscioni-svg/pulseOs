@@ -33,7 +33,7 @@ require __DIR__ . '/../partials/crud_page_header.php';
     <div class="sm:col-span-2 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-xs text-slate-500">
       <span class="font-semibold uppercase tracking-wider text-slate-400">Slug técnico</span>
       <p class="mt-1 font-mono text-sm text-navy-900"><?= e($tenant['slug'] ?? '—') ?></p>
-      <p class="mt-1">Identificador interno del comercio en PulseOS (solo lectura).</p>
+      <p class="mt-1">Identificador interno del comercio en <?= e(app_name()) ?> (solo lectura).</p>
     </div>
   </div>
   <div class="form-actions mt-6">

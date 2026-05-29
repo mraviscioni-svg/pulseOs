@@ -28,6 +28,7 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
   <div class="sidebar-brand">
     <?php
     $logoSize = 'sm';
+    $logoLayout = 'inline';
     $logoAlign = 'left';
     $logoHref = '/dashboard';
     require __DIR__ . '/logo.php';

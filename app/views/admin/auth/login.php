@@ -2,7 +2,7 @@
   <?= csrf_field() ?>
   <p class="page-eyebrow">Platform</p>
   <h2 class="mt-1 text-xl font-bold text-navy-900">Ingresar a plataforma</h2>
-  <p class="mb-6 mt-1 text-sm text-slate-500">Administración de comercios PulseOS.</p>
+  <p class="mb-6 mt-1 text-sm text-slate-500">Administración de comercios <?= e(app_name()) ?>.</p>
   <div class="space-y-4">
     <div>
       <label class="label">Usuario</label>

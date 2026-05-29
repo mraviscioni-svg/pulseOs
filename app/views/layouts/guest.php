@@ -8,6 +8,8 @@
     <div class="mb-8">
       <?php
       $logoSize = 'lg';
+      $logoLayout = 'stacked';
+      $logoAlign = 'center';
       $logoTagline = 'Gestión comercial multitenant';
       require __DIR__ . '/../partials/logo.php';
       ?>
