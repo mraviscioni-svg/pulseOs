@@ -65,6 +65,15 @@ function asset(string $path): string
     return url('/assets/' . ltrim($path, '/'));
 }
 
+/** URL de asset con versión por fecha de modificación (evita caché vieja en el hosting). */
+function asset_version(string $path): string
+{
+    $file = dirname(__DIR__) . '/public/assets/' . ltrim($path, '/');
+    $version = is_file($file) ? (string) filemtime($file) : '1';
+
+    return asset($path) . '?v=' . rawurlencode($version);
+}
+
 /** URL de login del comercio con slug y usuario opcional para prellenar el acceso. */
 function tenant_login_url(?string $slug = null, ?string $username = null): string
 {

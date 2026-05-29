@@ -6,7 +6,7 @@
   display: flex;
   min-width: 0;
   text-decoration: none;
-  color: inherit;
+  color: #0c1524;
 }
 .brand-inline {
   flex-direction: row;
@@ -67,10 +67,10 @@
   font-size: 1.75rem;
 }
 .brand-pulse {
-  color: #0c1524;
+  color: #0c1524 !important;
 }
 .brand-os {
-  color: #e8b44a;
+  color: #e8b44a !important;
 }
 .brand-tagline {
   display: block;

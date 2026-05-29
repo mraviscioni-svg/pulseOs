@@ -1,14 +1,6 @@
 <?php
 /**
  * Marca PulseOS sobre fondo blanco: badge navy + Pulse (navy) + OS (dorado).
- *
- * @var string $logoSize sm|md|lg
- * @var bool $logoIconOnly
- * @var string|null $logoHref
- * @var string $logoClass
- * @var string|null $logoTagline
- * @var string $logoAlign left|center
- * @var string $logoLayout inline|stacked
  */
 $size = $logoSize ?? 'md';
 $iconOnly = $logoIconOnly ?? false;
@@ -42,24 +34,28 @@ $markSvg = ob_get_clean();
 
 $mark = '<span class="' . e($markWrapClass) . '">' . $markSvg . '</span>';
 
+$pulseStyle = 'color:#0c1524';
+$osStyle = 'color:#E8B44A';
+
 $wordmark = $iconOnly
     ? ''
     : '<span class="' . e($wordClass) . '" aria-label="' . e($brandName) . '">'
-        . '<span class="brand-pulse">Pulse</span><span class="brand-os">OS</span>'
+        . '<span class="brand-pulse" style="' . $pulseStyle . '">Pulse</span>'
+        . '<span class="brand-os" style="' . $osStyle . '">OS</span>'
         . '</span>';
 
 $taglineHtml = $tagline && !$iconOnly
-    ? '<span class="brand-tagline">' . e($tagline) . '</span>'
+    ? '<span class="brand-tagline" style="color:#64748b">' . e($tagline) . '</span>'
     : '';
 
 $inner = $mark . $wordmark . $taglineHtml;
 ?>
 <?php if ($href !== null): ?>
-<a href="<?= url($href) ?>" class="<?= e(trim($wrapClass . ' brand-link')) ?>" title="<?= e($brandName) ?>">
+<a href="<?= url($href) ?>" class="<?= e(trim($wrapClass . ' brand-link')) ?>" title="<?= e($brandName) ?>" style="color:#0c1524;text-decoration:none">
   <?= $inner ?>
 </a>
 <?php else: ?>
-<div class="<?= e($wrapClass) ?>">
+<div class="<?= e($wrapClass) ?>" style="color:#0c1524">
   <?= $inner ?>
 </div>
 <?php endif; ?>
