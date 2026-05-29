@@ -6,6 +6,8 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Core\TenantContext;
+use App\Models\CustomerModel;
+use App\Models\CustomerVehicleModel;
 use App\Models\ProductModel;
 use App\Models\WorkOrderModel;
 use PDO;
@@ -30,18 +32,19 @@ final class WorkOrderService
         $db->beginTransaction();
 
         try {
+            $header = $this->normalizeHeader($tenantId, $header);
             $number = $this->orders->nextOrderNumber($db, $tenantId);
             $totals = $this->sumLines($lines);
 
             $stmt = $db->prepare(
                 'INSERT INTO work_orders (
-                    tenant_id, order_number, status, priority,
+                    tenant_id, customer_id, customer_vehicle_id, order_number, status, priority,
                     customer_name, customer_phone, customer_email,
                     vehicle_label, vehicle_notes, odometer_km, reported_issue,
                     assigned_user_id, created_by_user_id,
                     subtotal, total, notes_internal, notes_customer
                 ) VALUES (
-                    :tenant_id, :order_number, :status, :priority,
+                    :tenant_id, :customer_id, :customer_vehicle_id, :order_number, :status, :priority,
                     :customer_name, :customer_phone, :customer_email,
                     :vehicle_label, :vehicle_notes, :odometer_km, :reported_issue,
                     :assigned_user_id, :created_by,
@@ -50,6 +53,8 @@ final class WorkOrderService
             );
             $stmt->execute([
                 'tenant_id' => $tenantId,
+                'customer_id' => $header['customer_id'] ?? null,
+                'customer_vehicle_id' => $header['customer_vehicle_id'] ?? null,
                 'order_number' => $number,
                 'status' => $header['status'] ?? 'borrador',
                 'priority' => $header['priority'] ?? 'normal',
@@ -100,10 +105,13 @@ final class WorkOrderService
         $db->beginTransaction();
 
         try {
+            $header = $this->normalizeHeader($tenantId, $header);
             $totals = $this->sumLines($lines);
 
             $stmt = $db->prepare(
                 'UPDATE work_orders SET
+                    customer_id = :customer_id,
+                    customer_vehicle_id = :customer_vehicle_id,
                     priority = :priority,
                     customer_name = :customer_name,
                     customer_phone = :customer_phone,
@@ -120,6 +128,8 @@ final class WorkOrderService
                  WHERE id = :id AND tenant_id = :tenant_id'
             );
             $stmt->execute([
+                'customer_id' => $header['customer_id'] ?? null,
+                'customer_vehicle_id' => $header['customer_vehicle_id'] ?? null,
                 'priority' => $header['priority'] ?? 'normal',
                 'customer_name' => $header['customer_name'],
                 'customer_phone' => $header['customer_phone'] ?? null,
@@ -320,6 +330,55 @@ final class WorkOrderService
     {
         $this->consumeParts($tenantId, $userId, $workOrderId);
         $this->transition($tenantId, $userId, $workOrderId, 'cerrada', $note ?? 'Cierre sin venta en POS');
+    }
+
+    /** @param array<string, mixed> $header */
+    private function normalizeHeader(int $tenantId, array $header): array
+    {
+        $customerId = !empty($header['customer_id']) ? (int) $header['customer_id'] : null;
+        $vehicleId = !empty($header['customer_vehicle_id']) ? (int) $header['customer_vehicle_id'] : null;
+
+        if ($customerId) {
+            $customer = (new CustomerModel())->find($customerId, $tenantId);
+            if (!$customer) {
+                throw new \InvalidArgumentException('Cliente no válido.');
+            }
+            if (trim((string) ($header['customer_name'] ?? '')) === '') {
+                $header['customer_name'] = $customer['name'];
+            }
+            if (empty($header['customer_phone'])) {
+                $header['customer_phone'] = $customer['phone'];
+            }
+            if (empty($header['customer_email'])) {
+                $header['customer_email'] = $customer['email'];
+            }
+        } else {
+            $customerId = null;
+            $vehicleId = null;
+        }
+
+        if ($vehicleId && $customerId) {
+            $vehicle = (new CustomerVehicleModel())->findForCustomer($tenantId, $customerId, $vehicleId);
+            if ($vehicle) {
+                if (empty($header['vehicle_label'])) {
+                    $header['vehicle_label'] = $vehicle['label'];
+                }
+                if (empty($header['vehicle_notes'])) {
+                    $header['vehicle_notes'] = $vehicle['description'];
+                }
+            }
+        } elseif (!$customerId) {
+            $vehicleId = null;
+        }
+
+        $header['customer_id'] = $customerId;
+        $header['customer_vehicle_id'] = $vehicleId;
+
+        if (trim((string) ($header['customer_name'] ?? '')) === '') {
+            throw new \InvalidArgumentException('Indicá el cliente o seleccioná uno del directorio.');
+        }
+
+        return $header;
     }
 
     /** @param list<array<string, mixed>> $lines */

@@ -19,7 +19,13 @@ require __DIR__ . '/../partials/crud_page_header.php';
     <div class="card">
       <h3 class="font-semibold text-navy-900 mb-4">Cliente y vehículo</h3>
       <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-        <div><dt class="text-slate-500">Cliente</dt><dd class="font-medium"><?= e($order['customer_name']) ?></dd></div>
+        <div><dt class="text-slate-500">Cliente</dt><dd class="font-medium">
+          <?php if (!empty($order['customer_id']) && module_enabled('customers')): ?>
+          <a href="<?= url('/customers/' . $order['customer_id']) ?>" class="text-accent-600 hover:underline"><?= e($order['customer_name']) ?></a>
+          <?php else: ?>
+          <?= e($order['customer_name']) ?>
+          <?php endif; ?>
+        </dd></div>
         <div><dt class="text-slate-500">Teléfono</dt><dd><?= e($order['customer_phone'] ?? '—') ?></dd></div>
         <div><dt class="text-slate-500">Vehículo / ref.</dt><dd><?= e($order['vehicle_label'] ?? '—') ?></dd></div>
         <div><dt class="text-slate-500">Detalle</dt><dd><?= e($order['vehicle_notes'] ?? '—') ?></dd></div>

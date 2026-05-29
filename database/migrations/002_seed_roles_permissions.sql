@@ -19,7 +19,8 @@ INSERT INTO permissions (slug, name, module) VALUES
 ('reports.view', 'Ver reportes', 'reports'),
 ('users.manage', 'Gestionar usuarios', 'users'),
 ('settings.manage', 'Configuración', 'settings'),
-('work_orders.manage', 'Gestionar órdenes de trabajo', 'work_orders')
+('work_orders.manage', 'Gestionar órdenes de trabajo', 'work_orders'),
+('customers.manage', 'Gestionar clientes', 'customers')
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 -- Owner: todos los permisos
@@ -31,13 +32,13 @@ INSERT IGNORE INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r
 JOIN permissions p ON p.slug IN (
     'dashboard.view','products.manage','stock.manage','pos.sell',
-    'suppliers.manage','purchases.manage','cash.manage','reports.view','work_orders.manage'
+    'suppliers.manage','purchases.manage','cash.manage','reports.view','work_orders.manage','customers.manage'
 ) WHERE r.slug = 'manager';
 
 -- Vendedor
 INSERT IGNORE INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id FROM roles r
-JOIN permissions p ON p.slug IN ('dashboard.view','pos.sell','products.manage')
+JOIN permissions p ON p.slug IN ('dashboard.view','pos.sell','products.manage','customers.manage')
 WHERE r.slug = 'seller';
 
 -- Depósito

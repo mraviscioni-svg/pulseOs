@@ -9,6 +9,7 @@ return [
     'stock' => 'Stock / inventario',
     'pos' => 'Punto de venta',
     'suppliers' => 'Proveedores',
+    'customers' => 'Clientes',
     'purchases' => 'Compras',
     'cash' => 'Caja',
     'reports' => 'Reportes',

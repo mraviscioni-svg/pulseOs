@@ -8,6 +8,8 @@ use App\Controllers\Concerns\ExportableList;
 use App\Core\Controller;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Models\CustomerModel;
+use App\Models\CustomerVehicleModel;
 use App\Models\ProductModel;
 use App\Models\UserModel;
 use App\Models\WorkOrderModel;
@@ -65,7 +67,13 @@ final class WorkOrderController extends Controller
 
     public function create(): void
     {
-        $this->view('work_orders/form', $this->formViewData(null));
+        $prefill = null;
+        $customerId = (int) ($_GET['customer_id'] ?? 0);
+        if ($customerId > 0 && module_enabled('customers')) {
+            $prefill = (new CustomerModel())->findWithVehicles($this->tenantId(), $customerId);
+        }
+
+        $this->view('work_orders/form', $this->formViewData(null, [], $prefill));
     }
 
     public function store(): void
@@ -237,15 +245,30 @@ final class WorkOrderController extends Controller
         $this->redirect('/work-orders/' . $id);
     }
 
+    /** @param array<string, mixed>|null $prefillCustomer */
     /** @return array<string, mixed> */
-    private function formViewData(?array $order, array $lines = []): array
+    private function formViewData(?array $order, array $lines = [], ?array $prefillCustomer = null): array
     {
+        $vehicles = [];
+        if ($order && !empty($order['customer_id']) && module_enabled('customers')) {
+            $vehicles = (new CustomerVehicleModel())->forCustomer(
+                $this->tenantId(),
+                (int) $order['customer_id'],
+                true
+            );
+        } elseif ($prefillCustomer) {
+            $vehicles = $prefillCustomer['vehicles'] ?? [];
+        }
+
         return [
             'title' => $order ? 'Editar ' . $order['order_number'] : 'Nueva orden de trabajo',
             'order' => $order,
             'lines' => $lines,
             'products' => (new ProductModel())->search($this->tenantId(), null, 300, 'active'),
             'users' => (new UserModel())->listForTenant($this->tenantId(), null, 'active'),
+            'customersEnabled' => module_enabled('customers') && can('customers.manage'),
+            'prefillCustomer' => $prefillCustomer,
+            'customerVehicles' => $vehicles,
         ];
     }
 
@@ -265,6 +288,8 @@ final class WorkOrderController extends Controller
         return [
             'status' => 'borrador',
             'priority' => $data['priority'] ?? 'normal',
+            'customer_id' => $data['customer_id'] ?? null,
+            'customer_vehicle_id' => $data['customer_vehicle_id'] ?? null,
             'customer_name' => trim((string) ($data['customer_name'] ?? '')),
             'customer_phone' => trim((string) ($data['customer_phone'] ?? '')),
             'customer_email' => trim((string) ($data['customer_email'] ?? '')),

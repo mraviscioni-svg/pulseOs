@@ -1,5 +1,6 @@
 <?php
-$isEdit = !empty($order);
+$order = $order ?? [];
+$isEdit = !empty($order['id']);
 $formAction = $isEdit ? url('/work-orders/' . $order['id']) : url('/work-orders');
 $pageEyebrow = 'Taller';
 $pageTitle = $title ?? ($isEdit ? 'Editar orden' : 'Nueva orden de trabajo');
@@ -12,6 +13,11 @@ require __DIR__ . '/../partials/crud_page_header.php';
   <a href="<?= url($isEdit ? '/work-orders/' . $order['id'] : '/work-orders') ?>" class="text-sm text-accent-600 hover:underline">← Volver</a>
 </p>
 
+<?php
+$prefill = $prefillCustomer ?? [];
+$initialCustomerId = (int) ($order['customer_id'] ?? ($prefill['id'] ?? 0));
+$initialVehicleId = (int) ($order['customer_vehicle_id'] ?? 0);
+?>
 <div x-data="workOrderForm()" class="grid gap-6 xl:grid-cols-3">
   <div class="card xl:col-span-2 space-y-6">
     <div>
@@ -68,29 +74,65 @@ require __DIR__ . '/../partials/crud_page_header.php';
   <form method="post" action="<?= $formAction ?>" class="card space-y-4 h-fit">
     <?= csrf_field() ?>
     <input type="hidden" name="lines_json" :value="JSON.stringify(items)">
+    <input type="hidden" name="customer_id" :value="customerId || ''">
+    <input type="hidden" name="customer_vehicle_id" :value="vehicleId || ''">
+
+    <?php if (!empty($customersEnabled)): ?>
+    <div>
+      <label class="label">Buscar en directorio</label>
+      <input type="search" x-model="customerSearch" @input.debounce.300ms="searchCustomers" placeholder="Nombre o teléfono…" class="input-field">
+      <div x-show="customerResults.length" class="mt-2 max-h-36 overflow-y-auto rounded-lg border border-slate-200 text-sm">
+        <template x-for="c in customerResults" :key="c.id">
+          <button type="button" @click="pickCustomer(c)" class="flex w-full justify-between px-3 py-2 text-left hover:bg-slate-50">
+            <span x-text="c.name"></span>
+            <span class="text-slate-400" x-text="c.phone || ''"></span>
+          </button>
+        </template>
+      </div>
+      <p x-show="customerId" class="mt-2 text-xs text-emerald-700">
+        Cliente del directorio seleccionado.
+        <button type="button" @click="clearCustomer()" class="text-accent-600 hover:underline ml-1">Quitar</button>
+        <?php if (can('customers.manage')): ?>
+        · <a href="<?= url('/customers/create') ?>" target="_blank" rel="noopener" class="text-accent-600 hover:underline">+ Nuevo cliente</a>
+        <?php endif; ?>
+      </p>
+    </div>
+    <?php endif; ?>
 
     <div>
       <label class="label">Cliente *</label>
-      <input name="customer_name" required class="input-field" value="<?= e($order['customer_name'] ?? old('customer_name', '')) ?>">
+      <input name="customer_name" required class="input-field" x-model="customerName" value="<?= e($order['customer_name'] ?? old('customer_name', $prefill['name'] ?? '')) ?>">
     </div>
     <div class="grid grid-cols-2 gap-3">
       <div>
         <label class="label">Teléfono</label>
-        <input name="customer_phone" class="input-field" value="<?= e($order['customer_phone'] ?? old('customer_phone', '')) ?>">
+        <input name="customer_phone" class="input-field" x-model="customerPhone" value="<?= e($order['customer_phone'] ?? old('customer_phone', $prefill['phone'] ?? '')) ?>">
       </div>
       <div>
         <label class="label">Email</label>
-        <input name="customer_email" type="email" class="input-field" value="<?= e($order['customer_email'] ?? old('customer_email', '')) ?>">
+        <input name="customer_email" type="email" class="input-field" x-model="customerEmail" value="<?= e($order['customer_email'] ?? old('customer_email', $prefill['email'] ?? '')) ?>">
       </div>
     </div>
 
+    <?php if (!empty($customersEnabled)): ?>
+    <div x-show="vehicles.length">
+      <label class="label">Vehículo del cliente</label>
+      <select class="input-field" x-model="vehicleId" @change="pickVehicle()">
+        <option value="">— Manual / otro —</option>
+        <template x-for="v in vehicles" :key="v.id">
+          <option :value="v.id" x-text="v.label + (v.description ? ' — ' + v.description : '')"></option>
+        </template>
+      </select>
+    </div>
+    <?php endif; ?>
+
     <div>
       <label class="label">Patente / referencia vehículo</label>
-      <input name="vehicle_label" class="input-field" placeholder="Ej. AB123CD" value="<?= e($order['vehicle_label'] ?? old('vehicle_label', '')) ?>">
+      <input name="vehicle_label" class="input-field" placeholder="Ej. AB123CD" x-model="vehicleLabel" value="<?= e($order['vehicle_label'] ?? old('vehicle_label', '')) ?>">
     </div>
     <div>
       <label class="label">Datos del vehículo</label>
-      <input name="vehicle_notes" class="input-field" placeholder="Marca, modelo, color…" value="<?= e($order['vehicle_notes'] ?? old('vehicle_notes', '')) ?>">
+      <input name="vehicle_notes" class="input-field" placeholder="Marca, modelo, color…" x-model="vehicleNotes" value="<?= e($order['vehicle_notes'] ?? old('vehicle_notes', '')) ?>">
     </div>
     <div>
       <label class="label">Kilometraje</label>
@@ -106,7 +148,7 @@ require __DIR__ . '/../partials/crud_page_header.php';
       <select name="assigned_user_id" class="input-field">
         <option value="">— Sin asignar —</option>
         <?php foreach ($users as $u): ?>
-        <option value="<?= (int) $u['id'] ?>" <?= (int) ($order['assigned_user_id'] ?? 0) === (int) $u['id'] ? 'selected' : '' ?>><?= e($u['name']) ?></option>
+        <option value="<?= (int) $u['id'] ?>" <?= (int) (($order['assigned_user_id'] ?? null) ?: 0) === (int) $u['id'] ? 'selected' : '' ?>><?= e($u['name']) ?></option>
         <?php endforeach; ?>
       </select>
     </div>
@@ -115,18 +157,18 @@ require __DIR__ . '/../partials/crud_page_header.php';
       <label class="label">Prioridad</label>
       <select name="priority" class="input-field">
         <?php foreach (['baja' => 'Baja', 'normal' => 'Normal', 'alta' => 'Alta'] as $val => $lab): ?>
-        <option value="<?= $val ?>" <?= ($order['priority'] ?? 'normal') === $val ? 'selected' : '' ?>><?= $lab ?></option>
+        <option value="<?= $val ?>" <?= (($order['priority'] ?? null) ?: 'normal') === $val ? 'selected' : '' ?>><?= $lab ?></option>
         <?php endforeach; ?>
       </select>
     </div>
 
     <div>
       <label class="label">Notas internas</label>
-      <textarea name="notes_internal" class="input-field" rows="2"><?= e($order['notes_internal'] ?? '') ?></textarea>
+      <textarea name="notes_internal" class="input-field" rows="2"><?= e($order['notes_internal'] ?? old('notes_internal', '')) ?></textarea>
     </div>
     <div>
       <label class="label">Notas para el cliente</label>
-      <textarea name="notes_customer" class="input-field" rows="2"><?= e($order['notes_customer'] ?? '') ?></textarea>
+      <textarea name="notes_customer" class="input-field" rows="2"><?= e($order['notes_customer'] ?? old('notes_customer', '')) ?></textarea>
     </div>
 
     <button type="submit" class="btn-primary w-full" :disabled="items.length === 0">
@@ -146,6 +188,10 @@ const initialLines = <?= json_encode(array_map(static function ($l) {
         'unit_price' => (float) $l['unit_price'],
     ];
 }, $lines), JSON_UNESCAPED_UNICODE) ?>;
+const customersApiBase = <?= json_encode(url('/api/customers'), JSON_UNESCAPED_UNICODE) ?>;
+const initialCustomerId = <?= (int) $initialCustomerId ?>;
+const initialVehicleId = <?= (int) $initialVehicleId ?>;
+const initialVehicles = <?= json_encode($customerVehicles ?? [], JSON_UNESCAPED_UNICODE) ?>;
 
 function workOrderForm() {
   return {
@@ -154,6 +200,16 @@ function workOrderForm() {
     laborPrice: 0,
     items: initialLines,
     filtered: allProducts,
+    customerSearch: '',
+    customerResults: [],
+    customerId: initialCustomerId || null,
+    vehicleId: initialVehicleId || '',
+    vehicles: initialVehicles,
+    customerName: <?= json_encode($order['customer_name'] ?? $prefill['name'] ?? '') ?>,
+    customerPhone: <?= json_encode($order['customer_phone'] ?? $prefill['phone'] ?? '') ?>,
+    customerEmail: <?= json_encode($order['customer_email'] ?? $prefill['email'] ?? '') ?>,
+    vehicleLabel: <?= json_encode($order['vehicle_label'] ?? '') ?>,
+    vehicleNotes: <?= json_encode($order['vehicle_notes'] ?? '') ?>,
     filterProducts() {
       const q = this.search.toLowerCase();
       this.filtered = allProducts.filter(p => p.name.toLowerCase().includes(q));
@@ -186,6 +242,49 @@ function workOrderForm() {
     },
     grandTotal() {
       return this.items.reduce((s, i) => s + this.lineTotal(i), 0);
+    },
+    async searchCustomers() {
+      const q = this.customerSearch.trim();
+      if (q.length < 2) {
+        this.customerResults = [];
+        return;
+      }
+      try {
+        const res = await fetch(customersApiBase + '/search?q=' + encodeURIComponent(q));
+        const json = await res.json();
+        this.customerResults = json.data || [];
+      } catch (e) {
+        this.customerResults = [];
+      }
+    },
+    async pickCustomer(c) {
+      this.customerId = c.id;
+      this.customerName = c.name;
+      this.customerPhone = c.phone || '';
+      this.customerEmail = c.email || '';
+      this.customerResults = [];
+      this.customerSearch = c.name;
+      this.vehicleId = '';
+      try {
+        const res = await fetch(customersApiBase + '/' + c.id);
+        const json = await res.json();
+        this.vehicles = json.data?.vehicles || [];
+      } catch (e) {
+        this.vehicles = [];
+      }
+    },
+    clearCustomer() {
+      this.customerId = null;
+      this.vehicleId = '';
+      this.vehicles = [];
+      this.customerSearch = '';
+    },
+    pickVehicle() {
+      const v = this.vehicles.find(x => String(x.id) === String(this.vehicleId));
+      if (v) {
+        this.vehicleLabel = v.label;
+        this.vehicleNotes = v.description || '';
+      }
     },
   };
 }

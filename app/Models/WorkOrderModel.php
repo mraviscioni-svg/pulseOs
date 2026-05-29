@@ -54,11 +54,13 @@ final class WorkOrderModel extends Model
             'SELECT wo.*,
                     au.name AS assigned_name,
                     cu.name AS created_by_name,
-                    s.sale_number
+                    s.sale_number,
+                    dc.name AS directory_customer_name
              FROM work_orders wo
              LEFT JOIN users au ON au.id = wo.assigned_user_id
              LEFT JOIN users cu ON cu.id = wo.created_by_user_id
              LEFT JOIN sales s ON s.id = wo.sale_id
+             LEFT JOIN customers dc ON dc.id = wo.customer_id
              WHERE wo.id = :id AND wo.tenant_id = :tenant_id
              LIMIT 1'
         );

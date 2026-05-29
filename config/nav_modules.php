@@ -7,6 +7,7 @@ return [
     'stock' => ['href' => '/inventory', 'label' => 'Inventario rápido', 'perm' => 'stock.manage'],
     'pos' => ['href' => '/pos', 'label' => 'Punto de venta', 'perm' => 'pos.sell'],
     'suppliers' => ['href' => '/suppliers', 'label' => 'Proveedores', 'perm' => 'suppliers.manage'],
+    'customers' => ['href' => '/customers', 'label' => 'Clientes', 'perm' => 'customers.manage'],
     'purchases' => ['href' => '/purchases', 'label' => 'Compras', 'perm' => 'purchases.manage'],
     'cash' => ['href' => '/cash', 'label' => 'Caja', 'perm' => 'cash.manage'],
     'reports' => ['href' => '/reports', 'label' => 'Reportes', 'perm' => 'reports.view'],

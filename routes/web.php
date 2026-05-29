@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Api\CustomerApiController;
 use App\Controllers\Api\ProductApiController;
+use App\Controllers\CustomerController;
 use App\Controllers\AuthController;
 use App\Controllers\CashRegisterController;
 use App\Controllers\CategoryController;
@@ -83,6 +85,18 @@ return function ($router, array $mw) {
     $router->post('/suppliers/{id}/toggle', [SupplierController::class, 'toggle'], $auth);
     $router->post('/suppliers/{id}/delete', [SupplierController::class, 'delete'], $auth);
 
+    $cust = fn () => PermissionMiddleware::require('customers.manage');
+    $router->get('/customers', [CustomerController::class, 'index'], array_merge($auth, [$cust()]));
+    $router->get('/customers/create', [CustomerController::class, 'create'], array_merge($auth, [$cust()]));
+    $router->post('/customers', [CustomerController::class, 'store'], array_merge($auth, [$cust()]));
+    $router->get('/customers/{id}', [CustomerController::class, 'show'], array_merge($auth, [$cust()]));
+    $router->get('/customers/{id}/edit', [CustomerController::class, 'edit'], array_merge($auth, [$cust()]));
+    $router->post('/customers/{id}', [CustomerController::class, 'update'], array_merge($auth, [$cust()]));
+    $router->post('/customers/{id}/toggle', [CustomerController::class, 'toggle'], array_merge($auth, [$cust()]));
+    $router->post('/customers/{id}/delete', [CustomerController::class, 'delete'], array_merge($auth, [$cust()]));
+    $router->post('/customers/{id}/vehicles', [CustomerController::class, 'storeVehicle'], array_merge($auth, [$cust()]));
+    $router->post('/customers/{id}/vehicles/{vehicle_id}/delete', [CustomerController::class, 'deleteVehicle'], array_merge($auth, [$cust()]));
+
     $router->get('/purchases', [PurchaseController::class, 'index'], $auth);
     $router->get('/purchases/create', [PurchaseController::class, 'create'], $auth);
     $router->post('/purchases', [PurchaseController::class, 'store'], $auth);
@@ -131,4 +145,6 @@ return function ($router, array $mw) {
 
     $router->get('/api/products/search', [ProductApiController::class, 'search'], $auth);
     $router->get('/api/products/barcode', [ProductApiController::class, 'barcode'], $auth);
+    $router->get('/api/customers/search', [CustomerApiController::class, 'search'], $auth);
+    $router->get('/api/customers/{id}', [CustomerApiController::class, 'show'], $auth);
 };
