@@ -29,7 +29,7 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
         <th>Ventas</th>
         <th>Estado</th>
         <th>Alta</th>
-        <th class="text-right w-[17rem]">Acciones</th>
+        <th class="text-right w-28">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -51,7 +51,7 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
         <?php endif; ?>
       </td>
       <td class="text-xs text-slate-500"><?= e($t['created_at']) ?></td>
-      <td>
+      <td class="text-right">
         <?php
         $context = 'row';
         require __DIR__ . '/_tenant_actions.php';
