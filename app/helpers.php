@@ -161,12 +161,6 @@ function has_tenant_session(): bool
     return \App\Services\TenantSessionService::isLoggedIn();
 }
 
-/** Admin de plataforma y comercio a la vez (validación en paralelo, sin impersonar). */
-function has_dual_auth_sessions(): bool
-{
-    return is_platform_admin() && has_tenant_session() && !is_platform_impersonating();
-}
-
 function is_platform_impersonating(): bool
 {
     return (bool) \App\Core\Session::get('platform_impersonating');

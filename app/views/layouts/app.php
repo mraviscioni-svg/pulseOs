@@ -14,11 +14,6 @@
       <button type="submit" class="btn-secondary !py-1.5 !text-xs">← Volver al admin</button>
     </form>
   </div>
-  <?php elseif (has_dual_auth_sessions()): ?>
-  <div class="impersonation-banner">
-    <span>Sesión de comercio en paralelo con el admin de plataforma.</span>
-    <a href="<?= url('/admin/tenants') ?>" class="btn-secondary !py-1.5 !text-xs" target="_blank" rel="noopener">Admin plataforma ↗</a>
-  </div>
   <?php endif; ?>
   <main class="p-8">
     <?php require __DIR__ . '/../partials/flash.php'; ?>
