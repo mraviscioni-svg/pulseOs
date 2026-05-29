@@ -29,7 +29,7 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
         <th>Ventas</th>
         <th>Estado</th>
         <th>Alta</th>
-        <th class="text-right">Acciones</th>
+        <th class="text-right w-[17rem]">Acciones</th>
       </tr>
     </thead>
     <tbody>
