@@ -43,7 +43,4 @@
   <p class="mt-4 text-center text-xs text-slate-400">
     El alta de comercios la gestiona el administrador de <?= e(app_name()) ?>.
   </p>
-  <p class="mt-2 text-center text-xs text-slate-400">
-    <a href="<?= url('/admin/login') ?>" class="link-accent">Administración plataforma</a>
-  </p>
 </form>
