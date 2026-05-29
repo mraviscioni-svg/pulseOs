@@ -12,10 +12,12 @@ final class PasswordResetService
     public function request(string $username): ?string
     {
         $username = normalize_username($username);
-        $user = (new UserModel())->findByUsernameGlobal($username);
-        if (!$user || empty($user['email'])) {
+        $resolved = (new UserModel())->resolveLoginUser($username, null);
+        if ($resolved['ambiguous'] || !$resolved['user'] || empty($resolved['user']['email'])) {
             return null;
         }
+
+        $user = $resolved['user'];
 
         $email = (string) $user['email'];
         $token = bin2hex(random_bytes(32));

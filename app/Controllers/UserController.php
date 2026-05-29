@@ -47,8 +47,8 @@ final class UserController extends Controller
             $this->redirect('/users?invite=1');
         }
 
-        if ((new UserModel())->usernameExists($data['username'])) {
-            Session::flash('error', 'Ese usuario ya está en uso.');
+        if ((new UserModel())->usernameExists($data['username'], $this->tenantId())) {
+            Session::flash('error', 'Ese usuario ya existe en este comercio.');
             Session::set('_old', $data);
             $this->redirect('/users?invite=1');
         }
@@ -82,8 +82,8 @@ final class UserController extends Controller
         $data['username'] = normalize_username((string) ($data['username'] ?? ''));
         $id = (int) $params['id'];
 
-        if ((new UserModel())->usernameExists($data['username'], $id)) {
-            Session::flash('error', 'Ese usuario ya está en uso.');
+        if ((new UserModel())->usernameExists($data['username'], $this->tenantId(), $id)) {
+            Session::flash('error', 'Ese usuario ya existe en este comercio.');
             Session::set('_old', $data);
             $this->redirect('/users/' . $id . '/edit');
         }
@@ -97,6 +97,31 @@ final class UserController extends Controller
     {
         (new UserModel())->setActive($this->tenantId(), (int) $params['id'], (int) ($this->input()['is_active'] ?? 0));
         Session::flash('success', 'Estado actualizado.');
+        $this->redirect('/users');
+    }
+
+    public function delete(array $params): void
+    {
+        $tenantId = $this->tenantId();
+        $id = (int) $params['id'];
+
+        if ($id === $this->userId()) {
+            Session::flash('error', 'No podés eliminar tu propio usuario.');
+            $this->redirect('/users');
+        }
+
+        if ((new UserModel())->countForTenant($tenantId) <= 1) {
+            Session::flash('error', 'No podés eliminar el único usuario del comercio.');
+            $this->redirect('/users');
+        }
+
+        try {
+            (new UserModel())->deleteForTenant($tenantId, $id);
+            Session::flash('success', 'Usuario eliminado.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'No se pudo eliminar: ' . $e->getMessage());
+        }
+
         $this->redirect('/users');
     }
 

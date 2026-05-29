@@ -53,18 +53,65 @@ final class UserModel extends Model
     /** @return array<string, mixed>|null */
     public function findByUsernameGlobal(string $username): ?array
     {
-        $stmt = $this->db->prepare(
-            'SELECT u.*, r.slug AS role_slug, t.name AS tenant_name, t.slug AS tenant_slug
+        $resolved = $this->resolveLoginUser($username, null);
+
+        return $resolved['ambiguous'] ? null : $resolved['user'];
+    }
+
+    /**
+     * Resuelve usuario para login. Con slug de comercio es inequívoco.
+     *
+     * @return array{user: ?array<string, mixed>, ambiguous: bool}
+     */
+    public function resolveLoginUser(string $username, ?string $tenantSlug = null): array
+    {
+        $username = normalize_username($username);
+        $sql = 'SELECT u.*, r.slug AS role_slug, t.name AS tenant_name, t.slug AS tenant_slug
              FROM users u
              JOIN roles r ON r.id = u.role_id
              JOIN tenants t ON t.id = u.tenant_id
-             WHERE u.username = :username AND u.is_active = 1 AND t.is_active = 1
-             LIMIT 1'
-        );
-        $stmt->execute(['username' => $username]);
-        $row = $stmt->fetch();
+             WHERE u.username = :username AND u.is_active = 1 AND t.is_active = 1';
+        $params = ['username' => $username];
 
-        return $row ?: null;
+        if ($tenantSlug !== null && $tenantSlug !== '') {
+            $sql .= ' AND t.slug = :slug LIMIT 1';
+            $params['slug'] = $tenantSlug;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch();
+
+            return ['user' => $row ?: null, 'ambiguous' => false];
+        }
+
+        $sql .= ' ORDER BY t.name';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll();
+        $count = count($rows);
+
+        if ($count === 0) {
+            return ['user' => null, 'ambiguous' => false];
+        }
+        if ($count === 1) {
+            return ['user' => $rows[0], 'ambiguous' => false];
+        }
+
+        return ['user' => null, 'ambiguous' => true];
+    }
+
+    public function usernameExists(string $username, int $tenantId, ?int $excludeUserId = null): bool
+    {
+        $sql = 'SELECT id FROM users WHERE username = :username AND tenant_id = :tenant_id';
+        $params = ['username' => normalize_username($username), 'tenant_id' => $tenantId];
+        if ($excludeUserId) {
+            $sql .= ' AND id != :id';
+            $params['id'] = $excludeUserId;
+        }
+        $sql .= ' LIMIT 1';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return (bool) $stmt->fetch();
     }
 
     /** @return array<string, mixed>|null */
@@ -84,19 +131,21 @@ final class UserModel extends Model
         return $row ?: null;
     }
 
-    public function usernameExists(string $username, ?int $excludeUserId = null): bool
+    public function countForTenant(int $tenantId): int
     {
-        $sql = 'SELECT id FROM users WHERE username = :username';
-        $params = ['username' => $username];
-        if ($excludeUserId) {
-            $sql .= ' AND id != :id';
-            $params['id'] = $excludeUserId;
-        }
-        $sql .= ' LIMIT 1';
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM users WHERE tenant_id = :tenant_id');
+        $stmt->execute(['tenant_id' => $tenantId]);
 
-        return (bool) $stmt->fetch();
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function deleteForTenant(int $tenantId, int $id): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM users WHERE id = :id AND tenant_id = :tenant_id');
+        $stmt->execute(['id' => $id, 'tenant_id' => $tenantId]);
+        if ($stmt->rowCount() === 0) {
+            throw new \RuntimeException('Usuario no encontrado.');
+        }
     }
 
     /** @return list<string> */

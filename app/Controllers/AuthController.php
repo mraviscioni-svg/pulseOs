@@ -51,11 +51,21 @@ final class AuthController extends Controller
         }
 
         try {
+            $username = normalize_username((string) $data['username']);
+            $userModel = new UserModel();
+            $resolved = $userModel->resolveLoginUser($username, $tenantSlug !== '' ? $tenantSlug : null);
+
+            if ($resolved['ambiguous']) {
+                Session::flash('error', 'Este usuario existe en más de un comercio. Ingresá desde el enlace de acceso de tu comercio.');
+                Session::set('_old', $data);
+                $this->redirect('/login');
+            }
+
             $auth = new AuthService();
             if (!$auth->attempt($data['username'], $data['password'], $tenantSlug !== '' ? $tenantSlug : null)) {
                 $msg = $tenantSlug !== ''
                     ? 'Usuario o contraseña incorrectos para este comercio.'
-                    : 'Usuario o contraseña incorrectos. Contactá al administrador de la plataforma.';
+                    : 'Usuario o contraseña incorrectos.';
                 Session::flash('error', $msg);
                 $this->redirect($tenantSlug !== '' ? tenant_login_url($tenantSlug, $data['username'] ?? null) : '/login');
             }
@@ -97,12 +107,6 @@ final class AuthController extends Controller
             'business_type' => 'required',
         ])) {
             Session::flash('error', implode(' ', $validator->errors()));
-            Session::set('_old', $data);
-            $this->redirect('/register');
-        }
-
-        if ((new UserModel())->usernameExists($data['username'])) {
-            Session::flash('error', 'Ese usuario ya está en uso.');
             Session::set('_old', $data);
             $this->redirect('/register');
         }

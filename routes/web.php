@@ -132,6 +132,7 @@ return function ($router, array $mw) {
     $router->get('/users/{id}/edit', [UserController::class, 'edit'], array_merge($auth, [$perm('users.manage')]));
     $router->post('/users/{id}', [UserController::class, 'update'], array_merge($auth, [$perm('users.manage')]));
     $router->post('/users/{id}/toggle', [UserController::class, 'toggle'], array_merge($auth, [$perm('users.manage')]));
+    $router->post('/users/{id}/delete', [UserController::class, 'delete'], array_merge($auth, [$perm('users.manage')]));
 
     $router->get('/settings', [SettingsController::class, 'index'], array_merge($auth, [$perm('settings.manage')]));
     $router->get('/settings/comercio', [SettingsController::class, 'comercio'], array_merge($auth, [$perm('settings.manage')]));

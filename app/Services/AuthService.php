@@ -20,12 +20,13 @@ final class AuthService
     public function attempt(string $username, string $password, ?string $tenantSlug = null): bool
     {
         $username = normalize_username($username);
-        $user = $this->users->findByUsernameGlobal($username);
-        if (!$user || !(int) $user['is_active'] || !password_verify($password, $user['password'])) {
+        $resolved = $this->users->resolveLoginUser($username, $tenantSlug);
+        if ($resolved['ambiguous']) {
             return false;
         }
 
-        if ($tenantSlug !== null && $tenantSlug !== '' && ($user['tenant_slug'] ?? '') !== $tenantSlug) {
+        $user = $resolved['user'];
+        if (!$user || !(int) $user['is_active'] || !password_verify($password, $user['password'])) {
             return false;
         }
 

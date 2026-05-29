@@ -43,12 +43,15 @@ require __DIR__ . '/../partials/crud_toolbar.php';
           <?php
           $editUrl = url('/users/' . $u['id'] . '/edit');
           $isActive = (bool) $u['is_active'];
-          if ((int) $u['id'] !== (int) \App\Core\Session::get('user_id')) {
+          $currentUserId = (int) \App\Core\Session::get('user_id');
+          if ((int) $u['id'] !== $currentUserId) {
               $toggleUrl = url('/users/' . $u['id'] . '/toggle');
+              $deleteUrl = url('/users/' . $u['id'] . '/delete');
+              $deleteConfirm = '¿Eliminar al usuario «' . $u['name'] . '»? Esta acción no se puede deshacer.';
           } else {
               $toggleUrl = null;
+              $deleteUrl = null;
           }
-          $deleteUrl = null;
           require __DIR__ . '/../partials/row_actions.php';
           ?>
         </td>

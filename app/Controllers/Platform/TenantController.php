@@ -83,12 +83,6 @@ final class TenantController extends Controller
             $this->redirect('/admin/tenants/create');
         }
 
-        if ((new UserModel())->usernameExists($data['username'])) {
-            Session::flash('error', 'Ese usuario ya está en uso en otro comercio.');
-            Session::set('_old', $data);
-            $this->redirect('/admin/tenants/create');
-        }
-
         $data['modules'] = is_array($data['modules'] ?? null) ? array_values($data['modules']) : null;
 
         try {
