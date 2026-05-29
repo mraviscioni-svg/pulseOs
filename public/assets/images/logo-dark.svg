@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 185 42" fill="none" role="img" aria-label="PulseOS">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 6 168 30" fill="none" role="img" aria-label="PulseOS">
   <path d="M2 21 H9 L11.25 17 L13.5 21 L20 21" stroke="#E8B44A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="11.25" cy="16.25" r="1.6" fill="#E8B44A"/>
   <rect x="20" y="8" width="26" height="26" rx="6" stroke="#ffffff" stroke-width="2.2"/>
@@ -6,7 +6,7 @@
   <rect x="37.5" y="12.5" width="4.5" height="4.5" rx="0.5" stroke="#ffffff" stroke-width="1.5"/>
   <rect x="28.5" y="23" width="9" height="7" rx="1" stroke="#ffffff" stroke-width="1.5"/>
   <path d="M20 21 H46" stroke="#E8B44A" stroke-width="2.2" stroke-linecap="round"/>
-  <text x="54" y="30" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" letter-spacing="-0.02em">
+  <text x="50" y="28" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" letter-spacing="-0.02em">
     <tspan fill="#ffffff">Pulse</tspan><tspan fill="#E8B44A">OS</tspan>
   </text>
 </svg>

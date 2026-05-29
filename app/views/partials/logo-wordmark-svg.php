@@ -7,9 +7,9 @@
 $palette = brand_palette($logoTheme ?? null);
 
 $viewBox = match ($logoSize ?? 'sm') {
-    'lg' => '0 0 118 36',
-    'md' => '0 0 106 32',
-    default => '0 0 96 28',
+    'lg' => '0 0 108 36',
+    'md' => '0 0 98 32',
+    default => '0 0 88 28',
 };
 $fontSize = match ($logoSize ?? 'sm') {
     'lg' => '28',

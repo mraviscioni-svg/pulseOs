@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-/** Geometría del isotipo (viewBox ancho, pico bajo, edificio cuadrado). */
+/** Geometría del isotipo (viewBox recortado al dibujo, sin margen derecho). */
 return [
-    'viewBox' => '0 0 66 42',
+    'viewBox' => '0 6 48 30',
     'stroke' => '2.2',
     'stroke_detail' => '1.5',
     'pulse_path' => 'M2 21 H9 L11.25 17 L13.5 21 L20 21',
