@@ -1,7 +1,7 @@
 <?php
 /**
- * Marca PulseOS — tema claro por defecto (sidebar, login, admin).
- * Pulse navy + OS dorado; ícono OS en blanco solo dentro del badge navy.
+ * Marca PulseOS — isotipo original (pulso + edificio) + wordmark.
+ * Tema claro: edificio navy, pulso dorado. Tema oscuro: edificio blanco.
  */
 $size = $logoSize ?? 'md';
 $logoSize = $size;
@@ -33,6 +33,7 @@ $themeClass = $logoTheme === 'dark' ? 'brand-theme-dark' : 'brand-theme-light';
 $wrapClass = trim("brand-lockup $themeClass $layoutClass " . ($logoClass ?? ''));
 
 ob_start();
+/** @var string $logoTheme */
 require __DIR__ . '/logo-mark-svg.php';
 $markSvg = ob_get_clean();
 
