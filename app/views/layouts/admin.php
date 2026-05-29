@@ -22,6 +22,9 @@
   </nav>
   <div class="sidebar-footer space-y-3">
     <p class="truncate font-medium text-navy-900"><?= e(\App\Core\Session::get('platform_admin_name', '')) ?></p>
+    <?php if (has_tenant_session()): ?>
+    <a href="<?= url('/dashboard') ?>" class="btn-secondary w-full !py-2 text-xs text-center" target="_blank" rel="noopener">Panel del comercio ↗</a>
+    <?php endif; ?>
     <form method="post" action="<?= url('/admin/logout') ?>">
       <?= csrf_field() ?>
       <button type="submit" class="btn-secondary w-full !py-2 text-xs">Salir</button>

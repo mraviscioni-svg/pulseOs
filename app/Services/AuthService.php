@@ -56,11 +56,7 @@ final class AuthService
             return;
         }
 
-        foreach (['user_id', 'tenant_id', 'user_name', 'user_email', 'role_slug', 'tenant_name', 'permissions', 'tenant_modules', 'business_type'] as $key) {
-            Session::forget($key);
-        }
-        Session::forget('platform_impersonating');
-        Session::forget('platform_return_url');
+        TenantSessionService::clear();
     }
 
     /** @param array<string, mixed> $user */
@@ -95,7 +91,7 @@ final class AuthService
         if ($tenantId && $userId) {
             $this->audit->log((int) $tenantId, (int) $userId, 'auth.logout');
         }
-        Session::destroy();
+        TenantSessionService::clear();
     }
 
     /** @return list<string> */

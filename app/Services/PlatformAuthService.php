@@ -22,7 +22,6 @@ final class PlatformAuthService
             return false;
         }
 
-        $this->clearTenantSession();
         Session::set('platform_admin_id', (int) $admin['id']);
         Session::set('platform_admin_name', $admin['name']);
         Session::set('platform_admin_email', $admin['email']);
@@ -42,12 +41,5 @@ final class PlatformAuthService
     public static function check(): bool
     {
         return (bool) Session::get('platform_admin_id');
-    }
-
-    private function clearTenantSession(): void
-    {
-        foreach (['user_id', 'tenant_id', 'user_name', 'user_email', 'role_slug', 'tenant_name', 'permissions', 'tenant_modules', 'business_type'] as $key) {
-            Session::forget($key);
-        }
     }
 }
