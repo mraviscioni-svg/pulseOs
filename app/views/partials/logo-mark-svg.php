@@ -1,0 +1,11 @@
+<svg class="brand-mark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+  <rect width="40" height="40" rx="10" fill="#0c1524"/>
+  <path d="M6 26H9.5L11.5 15L13.5 26H16" stroke="#E8B44A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="11.5" cy="11" r="2" fill="#E8B44A"/>
+  <path d="M16 26H18" stroke="#E8B44A" stroke-width="2" stroke-linecap="round"/>
+  <rect x="18.5" y="13" width="15" height="19" rx="3.5" stroke="#fff" stroke-width="1.75"/>
+  <rect x="24" y="26" width="4.5" height="6" rx="0.5" stroke="#fff" stroke-width="1.25"/>
+  <rect x="20" y="17" width="4" height="4" rx="0.5" stroke="#fff" stroke-width="1.25"/>
+  <rect x="28" y="17" width="4" height="4" rx="0.5" stroke="#fff" stroke-width="1.25"/>
+  <path d="M20 23H33" stroke="#E8B44A" stroke-width="2" stroke-linecap="round"/>
+</svg>

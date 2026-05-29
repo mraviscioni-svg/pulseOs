@@ -26,6 +26,11 @@ module.exports = {
         brand: {
           gold: '#E8B44A',
         },
+        surface: {
+          DEFAULT: '#f3f5f9',
+          card: '#ffffff',
+          muted: '#eef1f6',
+        },
       },
       boxShadow: {
         card: '0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06)',

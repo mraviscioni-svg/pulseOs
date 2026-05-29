@@ -34,7 +34,7 @@ $renderNavIcon = static function (string $key) use ($navIcons): string {
     require __DIR__ . '/logo.php';
     ?>
     <?php if ($tenantName !== ''): ?>
-    <p class="mt-2 truncate text-xs font-medium text-slate-500"><?= e($tenantName) ?></p>
+    <p class="mt-2.5 truncate text-xs font-medium text-slate-500"><?= e($tenantName) ?></p>
     <?php endif; ?>
   </div>
   <nav class="sidebar-nav">

@@ -13,7 +13,7 @@
     $logoHref = '/admin/tenants';
     require __DIR__ . '/../partials/logo.php';
     ?>
-    <p class="mt-2 text-xs text-slate-500">Platform</p>
+    <p class="mt-2.5 text-xs font-medium text-slate-500">Platform</p>
   </div>
   <nav class="sidebar-nav">
     <?php $current = $_SERVER['REQUEST_URI'] ?? ''; ?>

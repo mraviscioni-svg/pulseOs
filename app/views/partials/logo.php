@@ -1,6 +1,6 @@
 <?php
 /**
- * Marca PulseOS: badge (ícono) + wordmark «Pulse» + «OS».
+ * Marca PulseOS sobre fondo blanco: badge navy + Pulse (navy) + OS (dorado).
  *
  * @var string $logoSize sm|md|lg
  * @var bool $logoIconOnly
@@ -8,7 +8,6 @@
  * @var string $logoClass
  * @var string|null $logoTagline
  * @var string $logoAlign left|center
- * @var string $logoVariant light|dark
  * @var string $logoLayout inline|stacked
  */
 $size = $logoSize ?? 'md';
@@ -16,31 +15,36 @@ $iconOnly = $logoIconOnly ?? false;
 $href = $logoHref ?? null;
 $tagline = $logoTagline ?? null;
 $align = $logoAlign ?? 'center';
-$variant = $logoVariant ?? 'light';
 $layout = $logoLayout ?? ($align === 'left' ? 'inline' : 'stacked');
 
 $brandName = app_name();
 
-$markWrapSizes = ['sm' => 'brand-mark-wrap-sm', 'md' => 'brand-mark-wrap-md', 'lg' => 'brand-mark-wrap-lg'];
-$wordSizes = ['sm' => 'brand-wordmark-sm', 'md' => 'brand-wordmark-md', 'lg' => 'brand-wordmark-lg'];
-$markWrapClass = $markWrapSizes[$size] ?? $markWrapSizes['md'];
-$wordClass = $wordSizes[$size] ?? $wordSizes['md'];
-
-$markSrc = asset($variant === 'dark' ? 'images/logo-mark-light.svg' : 'images/logo-mark.svg');
+$markWrapClass = match ($size) {
+    'lg' => 'brand-mark-wrap brand-mark-wrap-lg',
+    'md' => 'brand-mark-wrap brand-mark-wrap-md',
+    default => 'brand-mark-wrap',
+};
+$wordClass = match ($size) {
+    'lg' => 'brand-wordmark brand-wordmark-lg',
+    'md' => 'brand-wordmark brand-wordmark-md',
+    default => 'brand-wordmark brand-wordmark-sm',
+};
 
 $layoutClass = $layout === 'inline'
     ? 'brand-inline'
-    : 'brand-stacked ' . ($align === 'center' ? 'items-center text-center' : 'items-start text-left');
+    : 'brand-stacked ' . ($align === 'center' ? '' : 'items-start text-left');
 
 $wrapClass = trim("brand-lockup $layoutClass " . ($logoClass ?? ''));
 
-$mark = '<span class="brand-mark-wrap ' . e($markWrapClass) . '">'
-    . '<img src="' . e($markSrc) . '" alt="" class="brand-mark" width="40" height="40" decoding="async">'
-    . '</span>';
+ob_start();
+require __DIR__ . '/logo-mark-svg.php';
+$markSvg = ob_get_clean();
+
+$mark = '<span class="' . e($markWrapClass) . '">' . $markSvg . '</span>';
 
 $wordmark = $iconOnly
     ? ''
-    : '<span class="brand-wordmark ' . e($wordClass) . '" aria-label="' . e($brandName) . '">'
+    : '<span class="' . e($wordClass) . '" aria-label="' . e($brandName) . '">'
         . '<span class="brand-pulse">Pulse</span><span class="brand-os">OS</span>'
         . '</span>';
 
