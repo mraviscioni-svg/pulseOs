@@ -177,22 +177,37 @@
     @apply border-t border-slate-100 transition hover:bg-slate-50/80;
   }
   .row-actions {
-    @apply flex flex-wrap items-center justify-end gap-1;
+    @apply flex flex-wrap items-center justify-end gap-1.5;
   }
   .btn-action {
-    @apply rounded-lg px-2.5 py-1 text-xs font-medium transition;
+    @apply inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
+  }
+  .btn-action svg {
+    @apply h-3.5 w-3.5 shrink-0 opacity-90;
+  }
+  .btn-action-md {
+    @apply px-3.5 py-2 text-sm;
+  }
+  .btn-action-md svg {
+    @apply h-4 w-4;
   }
   .btn-action-edit {
-    @apply inline-flex items-center gap-1 border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50;
+    @apply border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-slate-300;
   }
   .btn-action-ok {
-    @apply bg-emerald-50 text-emerald-700 hover:bg-emerald-100;
+    @apply border border-emerald-200/90 bg-emerald-50 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-100 focus-visible:ring-emerald-400;
   }
   .btn-action-warn {
-    @apply bg-rose-50 text-rose-600 hover:bg-rose-100;
+    @apply border border-amber-200/90 bg-amber-50 text-amber-900 hover:border-amber-300 hover:bg-amber-100 focus-visible:ring-amber-400;
   }
   .btn-action-danger {
-    @apply bg-rose-50 text-rose-700 hover:bg-rose-100;
+    @apply border border-rose-200/90 bg-white text-rose-700 hover:border-rose-300 hover:bg-rose-50 focus-visible:ring-rose-400;
+  }
+  .tenant-action-bar {
+    @apply mb-6 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/40 p-3 shadow-card sm:gap-3 sm:p-4;
+  }
+  .action-bar-sep {
+    @apply hidden h-8 w-px shrink-0 bg-slate-200 sm:block;
   }
   .badge {
     @apply inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium;

@@ -52,27 +52,10 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
       </td>
       <td class="text-xs text-slate-500"><?= e($t['created_at']) ?></td>
       <td>
-        <div class="row-actions">
-          <a href="<?= url('/admin/tenants/' . $t['id']) ?>" class="btn-action btn-action-edit">Gestionar</a>
-          <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>" class="inline"
-            data-confirm-title="<?= $t['is_active'] ? 'Suspender comercio' : 'Activar comercio' ?>"
-            data-confirm-message="<?= $t['is_active'] ? 'El comercio no podrá ingresar hasta que lo reactives.' : '¿Reactivar este comercio?' ?>"
-            data-confirm-label="<?= $t['is_active'] ? 'Suspender' : 'Activar' ?>"
-            data-confirm-danger="<?= $t['is_active'] ? '1' : '0' ?>">
-            <?= csrf_field() ?>
-            <input type="hidden" name="return" value="list">
-            <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
-            <button type="submit" class="btn-action <?= $t['is_active'] ? 'btn-action-warn' : 'btn-action-ok' ?>">
-              <?= $t['is_active'] ? 'Suspender' : 'Activar' ?>
-            </button>
-          </form>
-          <button type="button" class="btn-action btn-action-danger"
-            data-open-modal="delete-tenant-modal"
-            data-tenant-slug="<?= e($t['slug']) ?>"
-            data-delete-url="<?= url('/admin/tenants/' . $t['id'] . '/delete') ?>">
-            Eliminar
-          </button>
-        </div>
+        <?php
+        $context = 'row';
+        require __DIR__ . '/_tenant_actions.php';
+        ?>
       </td>
     </tr>
     <?php endforeach; ?>

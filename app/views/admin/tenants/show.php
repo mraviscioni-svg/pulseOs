@@ -13,20 +13,11 @@ require __DIR__ . '/../../partials/crud_page_header.php';
   <a href="<?= url('/admin/tenants') ?>" class="text-sm link-accent">← Volver al listado</a>
 </p>
 
-<div class="mb-6 flex flex-wrap gap-2">
-  <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>"
-    data-confirm-title="<?= $t['is_active'] ? 'Suspender comercio' : 'Activar comercio' ?>"
-    data-confirm-message="<?= $t['is_active'] ? 'El comercio no podrá ingresar hasta que lo reactives.' : '¿Reactivar este comercio?' ?>"
-    data-confirm-label="<?= $t['is_active'] ? 'Suspender' : 'Activar' ?>"
-    data-confirm-danger="<?= $t['is_active'] ? '1' : '0' ?>">
-    <?= csrf_field() ?>
-    <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
-    <button type="submit" class="btn-action <?= $t['is_active'] ? 'btn-action-warn' : 'btn-action-ok' ?>">
-      <?= $t['is_active'] ? 'Suspender comercio' : 'Activar comercio' ?>
-    </button>
-  </form>
-  <button type="button" class="btn-danger" data-open-modal="delete-tenant-modal" data-tenant-slug="<?= e($t['slug']) ?>" data-delete-url="<?= url('/admin/tenants/' . $t['id'] . '/delete') ?>">Eliminar comercio</button>
-</div>
+<?php
+$context = 'bar';
+$showManage = false;
+require __DIR__ . '/_tenant_actions.php';
+?>
 
 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-8">
   <div class="stat-card">
