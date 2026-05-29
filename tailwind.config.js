@@ -22,6 +22,8 @@ module.exports = {
           200: '#b8d9ff',
           500: '#3b82f6',
           600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
         },
         brand: {
           gold: '#E8B44A',
