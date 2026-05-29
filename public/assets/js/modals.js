@@ -5,34 +5,58 @@
     }
     if (el.id) {
       el.classList.add('hidden');
+      el.setAttribute('aria-hidden', 'true');
       return;
     }
     el.remove();
   }
 
-  function bindDismiss(root) {
-    root.querySelectorAll('[data-dismiss-modal]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        closeModal(btn.closest('.modal-backdrop'));
-      });
-    });
-    root.addEventListener('click', function (e) {
-      if (e.target === root) {
-        closeModal(root);
+  function openModal(modal, trigger) {
+    if (trigger) {
+      var slug = trigger.getAttribute('data-tenant-slug');
+      var action = trigger.getAttribute('data-delete-url');
+      if (slug) {
+        var slugEl = modal.querySelector('[data-tenant-slug-display]');
+        if (slugEl) {
+          slugEl.textContent = slug;
+        }
+        var input = modal.querySelector('[name="confirm_slug"]');
+        if (input) {
+          input.value = '';
+          input.placeholder = slug;
+        }
       }
-    });
+      if (action) {
+        var form = modal.querySelector('[data-tenant-delete-form]');
+        if (form) {
+          form.action = action;
+        }
+      }
+    }
+    modal.classList.remove('hidden');
+    modal.removeAttribute('aria-hidden');
   }
 
-  document.querySelectorAll('.flash-modal').forEach(bindDismiss);
+  document.addEventListener('click', function (e) {
+    var dismissBtn = e.target.closest('[data-dismiss-modal]');
+    if (dismissBtn) {
+      closeModal(dismissBtn.closest('.modal-backdrop'));
+      return;
+    }
 
-  document.querySelectorAll('[data-open-modal]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var id = btn.getAttribute('data-open-modal');
+    if (e.target.classList.contains('modal-backdrop') && !e.target.classList.contains('hidden')) {
+      closeModal(e.target);
+      return;
+    }
+
+    var openBtn = e.target.closest('[data-open-modal]');
+    if (openBtn) {
+      var id = openBtn.getAttribute('data-open-modal');
       var modal = id ? document.getElementById(id) : null;
       if (modal) {
-        modal.classList.remove('hidden');
+        openModal(modal, openBtn);
       }
-    });
+    }
   });
 
   function showConfirm(opts) {
@@ -53,7 +77,6 @@
       escapeHtml(opts.confirmLabel || 'Confirmar') +
       '</button></div></div></div>';
     document.body.appendChild(root);
-    bindDismiss(root);
     root.querySelector('[data-confirm-ok]').addEventListener('click', function () {
       closeModal(root);
       if (typeof opts.onConfirm === 'function') {

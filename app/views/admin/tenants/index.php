@@ -66,6 +66,12 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
               <?= $t['is_active'] ? 'Suspender' : 'Activar' ?>
             </button>
           </form>
+          <button type="button" class="btn-action btn-action-danger"
+            data-open-modal="delete-tenant-modal"
+            data-tenant-slug="<?= e($t['slug']) ?>"
+            data-delete-url="<?= url('/admin/tenants/' . $t['id'] . '/delete') ?>">
+            Eliminar
+          </button>
         </div>
       </td>
     </tr>
@@ -77,3 +83,8 @@ require __DIR__ . '/../../partials/crud_toolbar.php';
     </table>
   </div>
 </div>
+
+<?php
+$tenant = null;
+require __DIR__ . '/_delete_modal.php';
+?>
