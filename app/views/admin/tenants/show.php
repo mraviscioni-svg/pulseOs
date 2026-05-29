@@ -14,15 +14,6 @@ require __DIR__ . '/../../partials/crud_page_header.php';
 </p>
 
 <div class="mb-6 flex flex-wrap gap-2">
-  <?php if ($t['is_active'] && !empty($ownerUserId)): ?>
-  <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/enter') ?>">
-    <?= csrf_field() ?>
-    <button type="submit" class="btn-primary">Abrir panel del comercio</button>
-  </form>
-  <?php endif; ?>
-  <?php if (!empty($tenantLoginUrl)): ?>
-  <a href="<?= e($tenantLoginUrl) ?>" target="_blank" rel="noopener" class="btn-secondary">Login comercio ↗</a>
-  <?php endif; ?>
   <form method="post" action="<?= url('/admin/tenants/' . $t['id'] . '/toggle') ?>">
     <?= csrf_field() ?>
     <input type="hidden" name="is_active" value="<?= $t['is_active'] ? '0' : '1' ?>">
