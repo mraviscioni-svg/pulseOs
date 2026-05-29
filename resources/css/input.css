@@ -189,7 +189,7 @@
     @apply inline-flex;
   }
   .action-group-btn {
-    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center text-slate-500 transition hover:bg-slate-50 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-400;
+    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center text-slate-500 transition hover:bg-slate-50 hover:text-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-500;
   }
   .action-group-btn svg {
     @apply h-4 w-4;
@@ -223,10 +223,6 @@
   }
   .tenant-action-btn-danger {
     @apply border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300 hover:bg-rose-100 focus-visible:ring-rose-400;
-  }
-  .sr-only {
-    @apply absolute -m-px h-px w-px overflow-hidden whitespace-nowrap border-0 p-0;
-    clip: rect(0, 0, 0, 0);
   }
   .btn-action {
     @apply inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
