@@ -1,17 +1,23 @@
 <?php
 /**
- * Isotipo PulseOS — variante A en fondo claro: pulso dorado + edificio navy.
+ * Isotipo PulseOS — proporciones balanceadas (más ancho, pico bajo, edificio cuadrado).
  * @var string $logoTheme light|dark
  */
 $palette = brand_palette($logoTheme ?? null);
+$g = config('brand_isotype');
+$sw = (string) $g['stroke'];
+$sd = (string) $g['stroke_detail'];
+$b = $g['building'];
+$d = $g['door'];
+$dot = $g['pulse_dot'];
 ?>
-<svg class="brand-mark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 52" fill="none" aria-hidden="true">
-  <path d="M4 34 H14 L18 16 L22 34 H26" stroke="<?= $palette['pulse'] ?>" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="18" cy="10" r="2.5" fill="<?= $palette['pulse'] ?>"/>
-  <path d="M26 34 H30" stroke="<?= $palette['pulse'] ?>" stroke-width="2.5" stroke-linecap="round"/>
-  <rect x="28" y="14" width="32" height="36" rx="7" stroke="<?= $palette['structure'] ?>" stroke-width="2"/>
-  <rect x="40" y="38" width="8" height="12" rx="1" stroke="<?= $palette['structure'] ?>" stroke-width="1.5"/>
-  <rect x="32" y="24" width="7" height="7" rx="1" stroke="<?= $palette['structure'] ?>" stroke-width="1.5"/>
-  <rect x="49" y="24" width="7" height="7" rx="1" stroke="<?= $palette['structure'] ?>" stroke-width="1.5"/>
-  <path d="M30 32 H58" stroke="<?= $palette['pulse'] ?>" stroke-width="2.5" stroke-linecap="round"/>
+<svg class="brand-mark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="<?= e($g['viewBox']) ?>" fill="none" aria-hidden="true">
+  <path d="<?= e($g['pulse_path']) ?>" stroke="<?= $palette['pulse'] ?>" stroke-width="<?= $sw ?>" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="<?= $dot['cx'] ?>" cy="<?= $dot['cy'] ?>" r="<?= $dot['r'] ?>" fill="<?= $palette['pulse'] ?>"/>
+  <rect x="<?= $b['x'] ?>" y="<?= $b['y'] ?>" width="<?= $b['w'] ?>" height="<?= $b['h'] ?>" rx="<?= $b['rx'] ?>" stroke="<?= $palette['structure'] ?>" stroke-width="<?= $sw ?>"/>
+  <?php foreach ($g['windows'] as $w): ?>
+  <rect x="<?= $w['x'] ?>" y="<?= $w['y'] ?>" width="<?= $w['w'] ?>" height="<?= $w['h'] ?>" rx="0.5" stroke="<?= $palette['structure'] ?>" stroke-width="<?= $sd ?>"/>
+  <?php endforeach; ?>
+  <rect x="<?= $d['x'] ?>" y="<?= $d['y'] ?>" width="<?= $d['w'] ?>" height="<?= $d['h'] ?>" rx="1" stroke="<?= $palette['structure'] ?>" stroke-width="<?= $sd ?>"/>
+  <path d="<?= e($g['building_line']) ?>" stroke="<?= $palette['pulse'] ?>" stroke-width="<?= $sw ?>" stroke-linecap="round"/>
 </svg>

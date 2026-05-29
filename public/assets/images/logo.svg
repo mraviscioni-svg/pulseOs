@@ -1,13 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 52" fill="none" role="img" aria-label="PulseOS">
-  <path d="M4 34 H14 L18 16 L22 34 H26" stroke="#E8B44A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="18" cy="10" r="2.5" fill="#E8B44A"/>
-  <path d="M26 34 H30" stroke="#E8B44A" stroke-width="2.5" stroke-linecap="round"/>
-  <rect x="28" y="14" width="32" height="36" rx="7" stroke="#0c1524" stroke-width="2"/>
-  <rect x="40" y="38" width="8" height="12" rx="1" stroke="#0c1524" stroke-width="1.5"/>
-  <rect x="32" y="24" width="7" height="7" rx="1" stroke="#0c1524" stroke-width="1.5"/>
-  <rect x="49" y="24" width="7" height="7" rx="1" stroke="#0c1524" stroke-width="1.5"/>
-  <path d="M30 32 H58" stroke="#E8B44A" stroke-width="2.5" stroke-linecap="round"/>
-  <text x="72" y="36" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" font-weight="700" letter-spacing="-0.02em">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 185 42" fill="none" role="img" aria-label="PulseOS">
+  <path d="M2 21 H9 L11.25 17 L13.5 21 L20 21" stroke="#E8B44A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="11.25" cy="16.25" r="1.6" fill="#E8B44A"/>
+  <rect x="20" y="8" width="26" height="26" rx="6" stroke="#0c1524" stroke-width="2.2"/>
+  <rect x="24" y="12.5" width="4.5" height="4.5" rx="0.5" stroke="#0c1524" stroke-width="1.5"/>
+  <rect x="37.5" y="12.5" width="4.5" height="4.5" rx="0.5" stroke="#0c1524" stroke-width="1.5"/>
+  <rect x="28.5" y="23" width="9" height="7" rx="1" stroke="#0c1524" stroke-width="1.5"/>
+  <path d="M20 21 H46" stroke="#E8B44A" stroke-width="2.2" stroke-linecap="round"/>
+  <text x="54" y="30" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="26" font-weight="700" letter-spacing="-0.02em">
     <tspan fill="#0c1524">Pulse</tspan><tspan fill="#E8B44A">OS</tspan>
   </text>
 </svg>
