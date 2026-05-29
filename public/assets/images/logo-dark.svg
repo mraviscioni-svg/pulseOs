@@ -1,11 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 52" fill="none" role="img" aria-label="PulseOS">
-  <path d="M4 34 H14 L18 16 L22 34 H26" stroke="#E8B44A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="18" cy="10" r="2.5" fill="#E8B44A"/>
-  <path d="M26 34 H30" stroke="#E8B44A" stroke-width="2.5" stroke-linecap="round"/>
-  <rect x="28" y="14" width="32" height="36" rx="7" stroke="#FFFFFF" stroke-width="2"/>
-  <rect x="40" y="38" width="8" height="12" rx="1" stroke="#FFFFFF" stroke-width="1.5"/>
-  <rect x="32" y="24" width="7" height="7" rx="1" stroke="#FFFFFF" stroke-width="1.5"/>
-  <rect x="49" y="24" width="7" height="7" rx="1" stroke="#FFFFFF" stroke-width="1.5"/>
-  <path d="M30 32 H58" stroke="#E8B44A" stroke-width="2.5" stroke-linecap="round"/>
-  <text x="66" y="40" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" font-weight="700" fill="#FFFFFF" letter-spacing="-0.02em">PulseOS</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 52" fill="none" role="img" aria-label="PulseOS">
+  <rect x="0" y="6" width="40" height="40" rx="10" fill="#0c1524"/>
+  <path d="M6 32H9.5L11.5 21L13.5 32H16" stroke="#E8B44A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="11.5" cy="17" r="2" fill="#E8B44A"/>
+  <path d="M16 32H18" stroke="#E8B44A" stroke-width="2" stroke-linecap="round"/>
+  <rect x="18.5" y="19" width="15" height="19" rx="3.5" stroke="#ffffff" stroke-width="1.75"/>
+  <rect x="24" y="32" width="4.5" height="6" rx="0.5" stroke="#ffffff" stroke-width="1.25"/>
+  <rect x="20" y="23" width="4" height="4" rx="0.5" stroke="#ffffff" stroke-width="1.25"/>
+  <rect x="28" y="23" width="4" height="4" rx="0.5" stroke="#ffffff" stroke-width="1.25"/>
+  <path d="M20 29H33" stroke="#E8B44A" stroke-width="2" stroke-linecap="round"/>
+  <text x="50" y="36" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" font-weight="700" letter-spacing="-0.02em">
+    <tspan fill="#ffffff">Pulse</tspan><tspan fill="#E8B44A">OS</tspan>
+  </text>
 </svg>

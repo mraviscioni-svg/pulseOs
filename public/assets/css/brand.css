@@ -1,12 +1,19 @@
 /**
  * Marca PulseOS — estilos fijos (no dependen del build de Tailwind).
- * Wordmark: Pulse navy + OS dorado sobre fondo blanco.
+ * Tema claro: Pulse #0c1524, OS #e8b44a (fondos blancos / surface).
+ * Tema oscuro: Pulse #fff, OS #e8b44a (hero navy).
  */
 .brand-lockup {
   display: flex;
   min-width: 0;
   text-decoration: none;
   color: #0c1524;
+}
+.brand-theme-light {
+  color: #0c1524;
+}
+.brand-theme-dark {
+  color: #ffffff;
 }
 .brand-inline {
   flex-direction: row;
@@ -51,26 +58,32 @@
   height: 100%;
 }
 .brand-wordmark {
-  font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 0;
 }
-.brand-wordmark-sm {
-  font-size: 1.125rem;
+.brand-wordmark-svg {
+  display: block;
+  height: 1.125rem;
+  width: auto;
 }
-.brand-wordmark-md {
-  font-size: 1.25rem;
+.brand-wordmark-md .brand-wordmark-svg {
+  height: 1.25rem;
 }
-.brand-wordmark-lg {
-  font-size: 1.75rem;
+.brand-wordmark-lg .brand-wordmark-svg {
+  height: 1.75rem;
 }
+/* Respaldo HTML si se usa en otro lugar */
 .brand-pulse {
   color: #0c1524 !important;
+  -webkit-text-fill-color: #0c1524 !important;
 }
 .brand-os {
   color: #e8b44a !important;
+  -webkit-text-fill-color: #e8b44a !important;
+}
+.brand-theme-dark .brand-pulse {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 .brand-tagline {
   display: block;
@@ -81,4 +94,12 @@
 }
 .brand-stacked .brand-tagline {
   max-width: 18rem;
+}
+/* Sidebar / login: evitar que utilidades hereden color al wordmark */
+.sidebar-brand .brand-lockup,
+.sidebar-brand .brand-link {
+  color: #0c1524 !important;
+}
+.sidebar-brand .brand-tagline {
+  color: #64748b !important;
 }

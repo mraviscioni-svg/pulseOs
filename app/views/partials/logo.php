@@ -1,13 +1,16 @@
 <?php
 /**
- * Marca PulseOS sobre fondo blanco: badge navy + Pulse (navy) + OS (dorado).
+ * Marca PulseOS — tema claro por defecto (sidebar, login, admin).
+ * Pulse navy + OS dorado; ícono OS en blanco solo dentro del badge navy.
  */
 $size = $logoSize ?? 'md';
+$logoSize = $size;
 $iconOnly = $logoIconOnly ?? false;
 $href = $logoHref ?? null;
 $tagline = $logoTagline ?? null;
 $align = $logoAlign ?? 'center';
 $layout = $logoLayout ?? ($align === 'left' ? 'inline' : 'stacked');
+$logoTheme = $logoTheme ?? 'light';
 
 $brandName = app_name();
 
@@ -26,7 +29,8 @@ $layoutClass = $layout === 'inline'
     ? 'brand-inline'
     : 'brand-stacked ' . ($align === 'center' ? '' : 'items-start text-left');
 
-$wrapClass = trim("brand-lockup $layoutClass " . ($logoClass ?? ''));
+$themeClass = $logoTheme === 'dark' ? 'brand-theme-dark' : 'brand-theme-light';
+$wrapClass = trim("brand-lockup $themeClass $layoutClass " . ($logoClass ?? ''));
 
 ob_start();
 require __DIR__ . '/logo-mark-svg.php';
@@ -34,28 +38,26 @@ $markSvg = ob_get_clean();
 
 $mark = '<span class="' . e($markWrapClass) . '">' . $markSvg . '</span>';
 
-$pulseStyle = 'color:#0c1524';
-$osStyle = 'color:#E8B44A';
+ob_start();
+require __DIR__ . '/logo-wordmark-svg.php';
+$wordmarkSvg = ob_get_clean();
 
 $wordmark = $iconOnly
     ? ''
-    : '<span class="' . e($wordClass) . '" aria-label="' . e($brandName) . '">'
-        . '<span class="brand-pulse" style="' . $pulseStyle . '">Pulse</span>'
-        . '<span class="brand-os" style="' . $osStyle . '">OS</span>'
-        . '</span>';
+    : '<span class="' . e($wordClass) . '" aria-label="' . e($brandName) . '">' . $wordmarkSvg . '</span>';
 
 $taglineHtml = $tagline && !$iconOnly
-    ? '<span class="brand-tagline" style="color:#64748b">' . e($tagline) . '</span>'
+    ? '<span class="brand-tagline">' . e($tagline) . '</span>'
     : '';
 
 $inner = $mark . $wordmark . $taglineHtml;
 ?>
 <?php if ($href !== null): ?>
-<a href="<?= url($href) ?>" class="<?= e(trim($wrapClass . ' brand-link')) ?>" title="<?= e($brandName) ?>" style="color:#0c1524;text-decoration:none">
+<a href="<?= url($href) ?>" class="<?= e(trim($wrapClass . ' brand-link')) ?>" title="<?= e($brandName) ?>">
   <?= $inner ?>
 </a>
 <?php else: ?>
-<div class="<?= e($wrapClass) ?>" style="color:#0c1524">
+<div class="<?= e($wrapClass) ?>">
   <?= $inner ?>
 </div>
 <?php endif; ?>
