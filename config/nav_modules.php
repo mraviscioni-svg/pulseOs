@@ -11,7 +11,7 @@ return [
     'cash' => ['href' => '/cash', 'label' => 'Caja', 'perm' => 'cash.manage'],
     'reports' => ['href' => '/reports', 'label' => 'Reportes', 'perm' => 'reports.view'],
     'categories' => ['href' => '/categories', 'label' => 'Categorías y marcas', 'perm' => 'products.manage'],
-    'work_orders' => ['href' => '/work-orders', 'label' => 'Órdenes de trabajo', 'perm' => 'products.manage'],
+    'work_orders' => ['href' => '/work-orders', 'label' => 'Órdenes de trabajo', 'perm' => 'work_orders.manage'],
     'bar' => ['href' => '/bar', 'label' => 'Barras', 'perm' => 'pos.sell'],
     'entries' => ['href' => '/entries', 'label' => 'Entradas', 'perm' => 'pos.sell'],
     'memberships' => ['href' => '/memberships', 'label' => 'Membresías', 'perm' => 'products.manage'],

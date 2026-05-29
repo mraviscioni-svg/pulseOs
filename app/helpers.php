@@ -122,6 +122,26 @@ function module_enabled(string $module): bool
     return \App\Services\ModuleService::enabled($module);
 }
 
+function wo_status_label(string $status): string
+{
+    $labels = config('work_order_statuses')['labels'] ?? [];
+
+    return $labels[$status] ?? $status;
+}
+
+function wo_status_badge_class(string $status): string
+{
+    $map = config('work_order_statuses')['badge'] ?? [];
+    $key = $map[$status] ?? 'muted';
+
+    return match ($key) {
+        'success' => 'badge badge-success',
+        'warning' => 'badge badge-warning',
+        'info' => 'badge badge-warning',
+        default => 'badge badge-muted',
+    };
+}
+
 function is_platform_admin(): bool
 {
     return \App\Services\PlatformAuthService::check();

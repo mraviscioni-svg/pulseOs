@@ -17,6 +17,7 @@ use App\Controllers\ReportController;
 use App\Controllers\SettingsController;
 use App\Controllers\SupplierController;
 use App\Controllers\UserController;
+use App\Controllers\WorkOrderController;
 use App\Middleware\PermissionMiddleware;
 
 return function ($router, array $mw) {
@@ -111,8 +112,19 @@ return function ($router, array $mw) {
     $router->post('/settings/operacion', [SettingsController::class, 'updateOperacion'], array_merge($auth, [$perm('settings.manage')]));
     $router->post('/settings', [SettingsController::class, 'update'], array_merge($auth, [$perm('settings.manage')]));
 
+    $wo = fn () => PermissionMiddleware::require('work_orders.manage');
+    $router->get('/work-orders', [WorkOrderController::class, 'index'], array_merge($auth, [$wo()]));
+    $router->get('/work-orders/create', [WorkOrderController::class, 'create'], array_merge($auth, [$wo()]));
+    $router->post('/work-orders', [WorkOrderController::class, 'store'], array_merge($auth, [$wo()]));
+    $router->get('/work-orders/{id}', [WorkOrderController::class, 'show'], array_merge($auth, [$wo()]));
+    $router->get('/work-orders/{id}/edit', [WorkOrderController::class, 'edit'], array_merge($auth, [$wo()]));
+    $router->post('/work-orders/{id}', [WorkOrderController::class, 'update'], array_merge($auth, [$wo()]));
+    $router->post('/work-orders/{id}/status', [WorkOrderController::class, 'status'], array_merge($auth, [$wo()]));
+    $router->post('/work-orders/{id}/consume', [WorkOrderController::class, 'consume'], array_merge($auth, [$wo()]));
+    $router->post('/work-orders/{id}/charge', [WorkOrderController::class, 'charge'], array_merge($auth, [$wo()]));
+    $router->post('/work-orders/{id}/close', [WorkOrderController::class, 'close'], array_merge($auth, [$wo()]));
+
     $placeholder = [ModulePlaceholderController::class, 'show'];
-    $router->get('/work-orders', $placeholder, $auth);
     $router->get('/bar', $placeholder, $auth);
     $router->get('/entries', $placeholder, $auth);
     $router->get('/memberships', $placeholder, $auth);

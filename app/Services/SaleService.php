@@ -17,7 +17,7 @@ final class SaleService
     ) {
     }
 
-    /** @param list<array{product_id: int, quantity: float, unit_price: float, discount?: float, name: string}> $items */
+    /** @param list<array{product_id: int, quantity: float, unit_price: float, discount?: float, name: string, skip_stock?: bool}> $items */
     public function complete(
         array $items,
         float $discount,
@@ -83,14 +83,16 @@ final class SaleService
                     'total' => $lineTotal,
                 ]);
 
-                $this->stock->adjust(
-                    (int) $item['product_id'],
-                    -1 * (float) $item['quantity'],
-                    'venta',
-                    $userId,
-                    'sale',
-                    $saleId
-                );
+                if (empty($item['skip_stock'])) {
+                    $this->stock->adjust(
+                        (int) $item['product_id'],
+                        -1 * (float) $item['quantity'],
+                        'venta',
+                        $userId,
+                        'sale',
+                        $saleId
+                    );
+                }
             }
 
             $this->cash->addMovement(
