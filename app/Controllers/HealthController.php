@@ -53,6 +53,15 @@ final class HealthController extends Controller
             $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'username'");
             $checks['migration_004'] = $stmt->fetch() ? 'ok' : 'falta columna users.username — importá 004_username_login.sql';
 
+            $idx = $pdo->query("SHOW INDEX FROM users WHERE Key_name = 'uq_users_tenant_username'")->fetch();
+            if ($idx) {
+                $checks['migration_010'] = 'ok (username único por comercio)';
+            } elseif ($pdo->query("SHOW INDEX FROM users WHERE Key_name = 'uq_users_username'")->fetch()) {
+                $checks['migration_010'] = 'pendiente — ejecutá 010_tenant_scoped_username.sql o POST migrate-runner.php';
+            } else {
+                $checks['migration_010'] = 'revisar índices users — migración 004/010';
+            }
+
             $stmt = $pdo->query("SHOW COLUMNS FROM platform_admins LIKE 'username'");
             $checks['platform_username'] = $stmt->fetch() ? 'ok' : 'falta — importá 004_username_login.sql';
 
