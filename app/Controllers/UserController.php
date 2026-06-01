@@ -53,6 +53,12 @@ final class UserController extends Controller
             $this->redirect('/users?invite=1');
         }
 
+        if (!$this->isRoleAllowed((int) $data['role_id'])) {
+            Session::flash('error', 'Ese rol no está disponible para tu tipo de comercio.');
+            Session::set('_old', $data);
+            $this->redirect('/users?invite=1');
+        }
+
         try {
             (new UserModel())->create($this->tenantId(), $data);
             Session::flash('success', 'Usuario creado.');
@@ -84,6 +90,12 @@ final class UserController extends Controller
 
         if ((new UserModel())->usernameExists($data['username'], $this->tenantId(), $id)) {
             Session::flash('error', 'Ese usuario ya existe en este comercio.');
+            Session::set('_old', $data);
+            $this->redirect('/users/' . $id . '/edit');
+        }
+
+        if (!$this->isRoleAllowed((int) ($data['role_id'] ?? 0))) {
+            Session::flash('error', 'Ese rol no está disponible para tu tipo de comercio.');
             Session::set('_old', $data);
             $this->redirect('/users/' . $id . '/edit');
         }
@@ -170,7 +182,34 @@ final class UserController extends Controller
     /** @return list<array<string, mixed>> */
     private function roles(): array
     {
-        return Database::connection()->query('SELECT id, name, slug FROM roles ORDER BY id')->fetchAll();
+        $allowed = roles_for_business_type();
+        if ($allowed === []) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($allowed), '?'));
+        $stmt = Database::connection()->prepare(
+            "SELECT id, name, slug, description FROM roles WHERE slug IN ({$placeholders}) ORDER BY name"
+        );
+        $stmt->execute($allowed);
+
+        return $stmt->fetchAll();
+    }
+
+    private function isRoleAllowed(int $roleId): bool
+    {
+        if ($roleId <= 0) {
+            return false;
+        }
+
+        $allowed = roles_for_business_type();
+        $stmt = Database::connection()->prepare(
+            'SELECT slug FROM roles WHERE id = :id LIMIT 1'
+        );
+        $stmt->execute(['id' => $roleId]);
+        $slug = $stmt->fetchColumn();
+
+        return is_string($slug) && in_array($slug, $allowed, true);
     }
 
     /** @return array{title: string, subtitle: string, closeUrl: string} */

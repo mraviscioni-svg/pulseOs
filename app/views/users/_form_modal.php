@@ -41,7 +41,9 @@ $field = static function (string $key, mixed $default = '') use ($user): string 
       <label class="label">Rol</label>
       <select name="role_id" required class="input-field">
         <?php foreach ($roles as $r): ?>
-        <option value="<?= (int) $r['id'] ?>" <?= (int) $field('role_id', (string) ($user['role_id'] ?? '')) === (int) $r['id'] ? 'selected' : '' ?>><?= e($r['name']) ?></option>
+        <option value="<?= (int) $r['id'] ?>" <?= (int) $field('role_id', (string) ($user['role_id'] ?? '')) === (int) $r['id'] ? 'selected' : '' ?>>
+          <?= e($r['name']) ?><?= !empty($r['description']) ? ' — ' . e($r['description']) : '' ?>
+        </option>
         <?php endforeach; ?>
       </select>
     </div>

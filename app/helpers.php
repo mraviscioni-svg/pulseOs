@@ -122,6 +122,15 @@ function module_enabled(string $module): bool
     return \App\Services\ModuleService::enabled($module);
 }
 
+/** @return list<string> Slugs de roles asignables para un rubro de comercio. */
+function roles_for_business_type(?string $businessType = null): array
+{
+    $businessType ??= (string) Session::get('business_type', 'otro');
+    $cfg = config('tenant_roles');
+
+    return $cfg['by_business_type'][$businessType] ?? $cfg['default'];
+}
+
 /** @return array<string, mixed> Paleta de marca (variante A por defecto en UI). */
 function brand_palette(?string $theme = null): array
 {
