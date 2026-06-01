@@ -23,17 +23,23 @@ final class CashRegisterController extends Controller
         $history->execute(['tenant_id' => $tenantId]);
 
         $movements = [];
+        $expectedAmount = null;
+        $movementTotals = null;
         if ($open) {
             $m = Database::connection()->prepare(
                 'SELECT * FROM cash_movements WHERE cash_register_id = :id ORDER BY created_at DESC LIMIT 30'
             );
             $m->execute(['id' => $open['id']]);
             $movements = $m->fetchAll();
+            $expectedAmount = $service->expectedAmount((int) $open['id'], (float) $open['opening_amount']);
+            $movementTotals = $service->movementTotals((int) $open['id']);
         }
 
         $this->view('cash/index', [
             'title' => 'Caja',
             'openCash' => $open,
+            'expectedAmount' => $expectedAmount,
+            'movementTotals' => $movementTotals,
             'history' => $history->fetchAll(),
             'movements' => $movements,
         ]);

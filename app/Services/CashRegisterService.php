@@ -81,6 +81,36 @@ final class CashRegisterService
         $this->audit->log($tenantId, $userId, 'cash.closed', 'cash_register', $registerId);
     }
 
+    public function expectedAmount(int $registerId, float $openingAmount): float
+    {
+        return $this->calculateExpected($registerId, $openingAmount);
+    }
+
+    /**
+     * @return array{ventas: float, ingresos: float, egresos: float, retiros: float, count: int}
+     */
+    public function movementTotals(int $registerId): array
+    {
+        $db = Database::connection();
+        $stmt = $db->prepare(
+            'SELECT type, COALESCE(SUM(amount), 0) AS total, COUNT(*) AS cnt
+             FROM cash_movements WHERE cash_register_id = :id
+             GROUP BY type'
+        );
+        $stmt->execute(['id' => $registerId]);
+        $totals = ['ventas' => 0.0, 'ingresos' => 0.0, 'egresos' => 0.0, 'retiros' => 0.0, 'count' => 0];
+        foreach ($stmt->fetchAll() as $row) {
+            $type = (string) $row['type'];
+            $amount = (float) $row['total'];
+            $totals['count'] += (int) $row['cnt'];
+            if (isset($totals[$type])) {
+                $totals[$type] = $amount;
+            }
+        }
+
+        return $totals;
+    }
+
     public function addMovement(
         int $registerId,
         string $type,

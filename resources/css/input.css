@@ -9,6 +9,9 @@
   body {
     @apply bg-surface font-sans text-navy-900 antialiased;
   }
+  [x-cloak] {
+    display: none !important;
+  }
 }
 
 @layer components {
@@ -348,7 +351,7 @@
     @apply py-16 text-center text-slate-500;
   }
   .btn-danger {
-    @apply inline-flex items-center justify-center rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-rose-500;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/30;
   }
   .promo-card {
     @apply rounded-2xl bg-gradient-to-br from-navy-900 to-navy-800 p-6 text-white shadow-card;
@@ -373,6 +376,48 @@
   }
   .modal-panel-danger .modal-header-text h3 {
     @apply text-rose-900;
+  }
+  .cash-status-banner {
+    @apply mb-6 flex flex-wrap items-center gap-4 rounded-2xl border px-5 py-4 shadow-card;
+  }
+  .cash-status-open {
+    @apply border-emerald-200/80 bg-gradient-to-r from-emerald-50 to-white;
+  }
+  .cash-status-closed {
+    @apply border-slate-200/80 bg-gradient-to-r from-slate-50 to-white;
+  }
+  .cash-status-banner-icon {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-xl;
+  }
+  .cash-status-open .cash-status-banner-icon {
+    @apply bg-emerald-100 text-emerald-700;
+  }
+  .cash-status-closed .cash-status-banner-icon {
+    @apply bg-slate-100 text-slate-600;
+  }
+  .cash-status-banner-icon svg {
+    @apply h-6 w-6;
+  }
+  .cash-status-banner-title {
+    @apply text-base font-semibold text-navy-900;
+  }
+  .cash-status-banner-meta {
+    @apply mt-0.5 text-sm text-slate-600;
+  }
+  .cash-close-card {
+    @apply rounded-2xl border border-rose-200/80 bg-gradient-to-b from-rose-50/80 to-white p-6 shadow-card;
+  }
+  .cash-panel-head h3 {
+    @apply text-sm font-semibold text-navy-900;
+  }
+  .cash-panel-head p {
+    @apply mt-0.5 text-xs text-slate-500;
+  }
+  .cash-panel-head {
+    @apply mb-5;
+  }
+  .cash-expected-box {
+    @apply rounded-xl border border-slate-200/80 bg-white px-4 py-3;
   }
   .link-accent {
     @apply font-medium text-accent-600 hover:text-accent-500 hover:underline;
